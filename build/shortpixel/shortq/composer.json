@@ -13,6 +13,6 @@
     "minimum-stability": "dev",
     "require": {},
     "autoload": {
-        "psr-4": { "ShortPixel\\ShortQ\\" : "src" }
+        "psr-4": { "SPAATG\\ShortQ\\" : "src" }
     }
 }

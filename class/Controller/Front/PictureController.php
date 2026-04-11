@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Controller\Front;
+namespace SPAATG\Controller\Front;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Model\FrontImage as FrontImage;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\FrontImage as FrontImage;
 
-use ShortPixel\ShortPixelImgToPictureWebp as ShortPixelImgToPictureWebp;
+use SPAATG\ShortPixelImgToPictureWebp as ShortPixelImgToPictureWebp;
 
 /** Handle everything that SP is doing front-wise */
-class PictureController extends \ShortPixel\Controller\Front\PageConverter
+class PictureController extends \SPAATG\Controller\Front\PageConverter
 {
   // DeliverWebp option settings for front-end delivery of webp
   const WEBP_GLOBAL = 1;
@@ -27,7 +27,7 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
 
 	public function initWebpHooks()
   {
-    $webp_option = \wpSPIO()->settings()->deliverWebp;
+    $webp_option = \wpSPAATG()->settings()->deliverWebp;
     if (false === $this->shouldConvert())
     {
        return false;
@@ -36,8 +36,8 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
 
 		if ($webp_option ) {  // @tood Replace this function with the one in ENV.
         if(UtilHelper::shortPixelIsPluginActive('shortpixel-adaptive-images/short-pixel-ai.php')) {
-            Notices::addWarning(__('Please deactivate the ShortPixel Image Optimizer\'s
-                <a href="options-general.php?page=wp-shortpixel-settings&part=webp">Serve WebP/AVIF images from locally hosted files (without using a CDN)</a>
+            Notices::addWarning(__('Please deactivate the ShortPixel AI Alt Text Generator\'s
+                <a href="options-general.php?page=wp-spaatg-settings&part=webp">Serve WebP/AVIF images from locally hosted files (without using a CDN)</a>
                 option when the ShortPixel Adaptive Images plugin is active.','shortpixel-image-optimiser'), true);
         }
         elseif( $webp_option == self::WEBP_GLOBAL ){
@@ -87,7 +87,7 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
       if(function_exists('amp_is_request') && amp_is_request()) {
           //for AMP pages the <picture> tag is not allowed
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-          return $content . (isset($_GET['SHORTPIXEL_DEBUG']) ? '<!-- SPDBG is AMP -->' : '');
+          return $content . (isset($_GET['SPAATG_DEBUG']) ? '<!-- SPDBG is AMP -->' : '');
       }
 
       $content = $this->convert($content);
@@ -101,7 +101,7 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
       // Don't do anything with the RSS feed.
       if (is_feed() || is_admin()) {
           //Log::addInfo('SPDBG convert is_feed or is_admin');
-          return $content; // . (isset($_GET['SHORTPIXEL_DEBUG']) ? '<!--  -->' : '');
+          return $content; // . (isset($_GET['SPAATG_DEBUG']) ? '<!--  -->' : '');
       }
 
       $new_content = $this->testPictures($content);
@@ -187,7 +187,7 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
   */
   protected function convertImage($match)
   {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       $raw_image = $match[0];
 
@@ -343,7 +343,7 @@ class PictureController extends \ShortPixel\Controller\Front\PageConverter
   */
   protected function convertInlineStyle($matches, $content)
   {
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
     $allowed_exts = array('jpg', 'jpeg', 'gif', 'png');
     $converted = array();
 

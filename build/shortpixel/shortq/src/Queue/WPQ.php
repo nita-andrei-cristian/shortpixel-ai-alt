@@ -1,8 +1,8 @@
 <?php
-namespace ShortPixel\ShortQ\Queue;
-use ShortPixel\ShortQ\Item as Item;
-use ShortPixel\ShortQ\Status as Status;
-use \ShortPixel\ShortQ\ShortQ as ShortQ;
+namespace SPAATG\ShortQ\Queue;
+use SPAATG\ShortQ\Item as Item;
+use SPAATG\ShortQ\Status as Status;
+use \SPAATG\ShortQ\ShortQ as ShortQ;
 
 class WPQ implements Queue
 {

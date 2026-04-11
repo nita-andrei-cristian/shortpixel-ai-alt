@@ -1,11 +1,12 @@
 <?php
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-// Visual Composer and compat class.
-class visualComp
+// Visual Composer compatibility hook.
+class VisualComposerCompat
 {
 
   public function __construct()
@@ -24,4 +25,4 @@ class visualComp
 
 } // Class
 
-$vc = new visualComp();
+$vc = new VisualComposerCompat();

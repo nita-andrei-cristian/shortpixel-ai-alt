@@ -1,20 +1,20 @@
 <?php
 
-namespace ShortPixel\Model\Converter;
+namespace SPAATG\Model\Converter;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Replacer\Replacer as Replacer;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
-use ShortPixel\Model\File\FileModel as FileModel;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Replacer\Replacer as Replacer;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\File\DirectoryModel as DirectoryModel;
+use SPAATG\Model\File\FileModel as FileModel;
+use SPAATG\Controller\ResponseController as ResponseController;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
 
 
-/* ShortPixel Image Optimiser Converters. Unified interface for handling conversion between file types */
+/* ShortPixel AI Alt Text Generator Converters. Unified interface for handling conversion between file types */
 
 abstract class Converter
 {
@@ -147,7 +147,7 @@ abstract class Converter
 		}
 
 		$number = 0;
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		$base = $file->getFileBase();
 		$ext = $file->getExtension();
@@ -164,7 +164,7 @@ abstract class Converter
 
 	protected function getReplacementPath()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$image_id = $this->imageModel->get('id');
 
 		if ($this->imageModel->isScaled()) {

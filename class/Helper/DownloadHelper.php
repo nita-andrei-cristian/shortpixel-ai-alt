@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Helper;
+namespace SPAATG\Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\ResponseController as ResponseController;
 
 class DownloadHelper
 {
@@ -90,7 +90,7 @@ class DownloadHelper
           fclose($file);
           */
 
-					$fs = \wpSPIO()->filesystem();
+					$fs = \wpSPAATG()->filesystem();
 					$file = $fs->getFile($tempFile);
 
           
@@ -125,7 +125,7 @@ class DownloadHelper
 
       protected function moveDownload($fileObj, $destinationPath)
       {
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
           $destinationFile = $fs->getFile($destinationPath);
 
@@ -206,11 +206,11 @@ class DownloadHelper
 
 			private function setPreferredProtocol($url, $reset = false) {
 		      //switch protocol based on the formerly detected working protocol
-		      $settings = \wpSPIO()->settings();
+		      $settings = \wpSPAATG()->settings();
 
 		      if($settings->downloadProto == '' || $reset) {
 		          //make a test to see if the http is working
-		          $testURL = 'http://' . SHORTPIXEL_API . '/img/connection-test-image.png';
+		          $testURL = 'http://' . SPAATG_API . '/img/connection-test-image.png';
 		          $result = download_url($testURL, 10);
 		          $settings->downloadProto = is_wp_error( $result ) ? 'https' : 'http';
 

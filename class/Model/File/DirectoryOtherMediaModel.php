@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Model\File;
+namespace SPAATG\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
 
-use \ShortPixel\Model\File\DirectoryModel as DirectoryModel;
-use \ShortPixel\Model\Image\ImageModel as ImageModel;
+use \SPAATG\Model\File\DirectoryModel as DirectoryModel;
+use \SPAATG\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
 // extends DirectoryModel. Handles ShortPixel_meta database table
 // Replacing main parts of shortpixel-folder
@@ -309,14 +309,14 @@ class DirectoryOtherMediaModel extends DirectoryModel
         return false;
       }
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
       $filter = ($time > 0)  ? array('date_newer' => $time) : array();
       $filter['exclude_files'] = array('.avif');
 			$filter['include_files'] = ImageModel::PROCESSABLE_EXTENSIONS;
 
       $files = $fs->getFilesRecursive($this, $filter);
 
-      \wpSPIO()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
+      \wpSPAATG()->settings()->hasCustomFolders = time(); // note, check this against bulk when removing. Custom Media Bulk depends on having a setting.
 
     	$result = $this->addImages($files);
 
@@ -341,9 +341,9 @@ class DirectoryOtherMediaModel extends DirectoryModel
 	*/
 	public function checkDirectory($silent = false)
 	{
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
        $rootDir = $fs->getWPFileBase();
-       $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+       $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
 			 $otherMediaController = OtherMediaController::getInstance();
 
        if (! $this->exists())
@@ -381,7 +381,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
        }
        elseif( $otherMediaController->checkIfMediaLibrary($this) )
        {
-				 $message = __('This folder contains Media Library images. To optimize Media Library images please go to <a href="upload.php?mode=list">Media Library list view</a> or to <a href="upload.php?page=wp-short-pixel-bulk">ShortPixel Bulk page</a>.','shortpixel-image-optimiser');
+				 $message = __('This folder contains Media Library images. To optimize Media Library images please go to <a href="upload.php?mode=list">Media Library list view</a> or to <a href="upload.php?page=wp-spaatg-bulk">ShortPixel Bulk page</a>.','shortpixel-image-optimiser');
 				 $this->last_message = $message;
 
 				 if (false === $silent)
@@ -528,7 +528,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 			$otherMediaControl = OtherMediaController::getInstance();
 			$activeFolders = $otherMediaControl->getActiveDirectoryIDS();
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 			$updated = false;
 
       foreach($files as $fileObj)
@@ -555,7 +555,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
 						}
 
 						// If in Db, but not optimized and autoprocess is on; add to queue for optimizing
-						if (\wpSPIO()->env()->is_autoprocess && $imageObj->isProcessable())
+						if (\wpSPAATG()->env()->is_autoprocess && $imageObj->isProcessable())
 						{
 							 $queueControl->addItemToQueue($imageObj);
 						}
@@ -568,7 +568,7 @@ class DirectoryOtherMediaModel extends DirectoryModel
              $imageObj->saveMeta();
 						 $updated = true;
 
-             if (\wpSPIO()->env()->is_autoprocess)
+             if (\wpSPAATG()->env()->is_autoprocess)
              {
                 $queueControl->addItemToQueue($imageObj);
              }

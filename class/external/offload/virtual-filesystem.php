@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel\External\Offload;
+namespace SPAATG\External\Offload;
 
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPAATG\Model\File\FileModel as FileModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,7 +20,7 @@ class VirtualFileSystem
 
 		public function listen()
 		{
-				//  $fs = \wpSPIO()->fileSystem()->startTrustedMode(); // @todo check if this works trusted mode forever.
+				//  $fs = \wpSPAATG()->fileSystem()->startTrustedMode(); // @todo check if this works trusted mode forever.
 					add_filter('shortpixel/image/urltopath', array($this, 'checkIfOffloaded'), 10,3);
 					add_filter('shortpixel/file/virtual/translate', array($this, 'getLocalPathByURL'));
 					add_filter('shortpixel/file/virtual/heavy_features', array($this, 'extraFeatures'), 10);

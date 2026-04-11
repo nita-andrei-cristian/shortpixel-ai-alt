@@ -1,13 +1,13 @@
 'use strict';
 
-var ShortPixelToolTip = function(reserved, processor)
+var SPAATGToolTip = function(reserved, processor)
 {
 		this.strings = '';
 
     this.Init = function()
     {
 
-        var paused =  localStorage.getItem('tooltipPause'); // string returns, not boolean
+        var paused =  localStorage.getItem('spaatgTooltipPause'); // string returns, not boolean
         if (paused == 'true')
         {
           console.log('manual paused (tooltip)');
@@ -24,13 +24,13 @@ var ShortPixelToolTip = function(reserved, processor)
             this.ProcessPause();
         }
 
-			this.strings = spio_tooltipStrings;
+			this.strings = spaatg_tooltipStrings;
 
-      window.addEventListener('shortpixel.processor.paused', this.ProcessChange.bind(this));
+      window.addEventListener('spaatg.processor.paused', this.ProcessChange.bind(this));
     }
     this.GetToolTip = function() // internal function please.
     {
-        var element =  document.querySelector('li.shortpixel-toolbar-processing');
+        var element =  document.querySelector('li.spaatg-toolbar-processing');
 				if (element === null)
 				{
 					 console.error('Tooltip could not be found!');
@@ -39,7 +39,7 @@ var ShortPixelToolTip = function(reserved, processor)
     }
 		this.InitStats = function()
 		{
-		      var processData = ShortPixelProcessorData.startData;
+		      var processData = SPAATGProcessorData.startData;
 					if (typeof processData !== 'object')
 					{
 						 console.error('Tooltip: No start Data found.');
@@ -98,9 +98,9 @@ var ShortPixelToolTip = function(reserved, processor)
 			  var itemTitle = statTip.textContent + ' ';
 				itemTitle +=  (number == 1) ? this.strings.item : this.strings.items;
 
-				if (toolTip.querySelector('#short-pixel-notice-toolbar') !== null)
+				if (toolTip.querySelector('#spaatg-notice-toolbar') !== null)
 				{
-					toolTip.querySelector('#short-pixel-notice-toolbar').title = this.strings.processing + ' ' + itemTitle;
+					toolTip.querySelector('#spaatg-notice-toolbar').title = this.strings.processing + ' ' + itemTitle;
 				}
 				if (toolTip.querySelector('.dashicons.pause') !== null)
 				{
@@ -144,13 +144,13 @@ var ShortPixelToolTip = function(reserved, processor)
        if (processor.isManualPaused == false)
        {
           processor.PauseProcess();
-          localStorage.setItem('tooltipPause','true');
+          localStorage.setItem('spaatgTooltipPause','true');
           this.ProcessPause();
        }
         else
        {
           processor.ResumeProcess();
-          localStorage.setItem('tooltipPause','false');
+          localStorage.setItem('spaatgTooltipPause','false');
           this.ProcessResume();
        }
 
@@ -193,7 +193,7 @@ var ShortPixelToolTip = function(reserved, processor)
 
     this.AddNotice = function(message)
     {
-      var tooltip = this.GetToolTip(); // li.shortpixel-toolbar-processing
+      var tooltip = this.GetToolTip(); // li.spaatg-toolbar-processing
 			if (tooltip === null)
 				return false;
       var toolcontent = tooltip.querySelector('.toolbar-notice-wrapper');

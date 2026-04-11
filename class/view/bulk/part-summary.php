@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
-use ShortPixel\Helper\UiHelper;
+use SPAATG\Helper\UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="panel-container">
 
     <!--<h3 class="heading"><span>
-      <?php esc_html_e('ShortPixel Bulk Optimization - Summary','shortpixel-image-optimiser'); ?>
+      <?php esc_html_e('SPAATG Bulk Optimization - Summary','shortpixel-image-optimiser'); ?>
     </h3>
 
-    <p class='description'><?php esc_html_e('Welcome to the bulk optimization wizard, where you can select the images that ShortPixel will optimize in the background for you.','shortpixel-image-optimiser'); ?></p>
+    <p class='description'><?php esc_html_e('Welcome to the bulk optimization wizard, where you can select the images that SPAATG will optimize in the background for you.','shortpixel-image-optimiser'); ?></p>
 -->
 
     <?php 
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       <h3><?php esc_html_e('Review & Start Processing', 'shortpixel-image-optimiser'); ?>
        <!-- <span>
-            <img src="<?php echo esc_url(wpSPIO()->plugin_url('res/img/robo-notes.png')); ?>" style="transform: scale(-1, 1);height: 50px;"/>
+            <img src="<?php echo esc_url(wpSPAATG()->plugin_url('res/img/robo-notes.png')); ?>" style="transform: scale(-1, 1);height: 50px;"/>
         </span> -->
       </h3>
 
@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
       </div>
 
       <!--- ### CUSTOM BOX #### --> 
-    <div class="section-wrapper" data-check-visibility data-control="data-check-custom-total">
+    <div class="section-wrapper hidden" data-check-visibility data-control="data-check-custom-total">
     <h4><span class='dashicons dashicons-open-folder'>&nbsp;</span><?php esc_html_e('Custom Media', 'shortpixel-image-optimiser') ?> (<span data-stats-custom="in_queue">0</span> <?php esc_html_e('items','shortpixel-image-optimiser'); ?>)</h4>
       <div class="list-table">
 
@@ -91,11 +91,11 @@ if ( ! defined( 'ABSPATH' ) ) {
   <?php 
       if(true === $quotaData->unlimited): ?>
 
-				<p><span><?php _e('This site is currently on the ShortPixel Unlimited plan, so you do not have to worry about credits. Enjoy!', 'shortpixel-image-optimiser'); ?></span></p>
+				<p><span><?php _e('This site is currently on the SPAATG Unlimited plan, so you do not have to worry about credits. Enjoy!', 'shortpixel-image-optimiser'); ?></span></p>
       
       <!--	</div> -->
 	    <?php else: ?>
-      <p class='heading'><span><?php esc_html_e('Your ShortPixel Credits Available', 'shortpixel-image-optimiser'); ?></span>
+      <p class='heading'><span><?php esc_html_e('Your Available Credits', 'shortpixel-image-optimiser'); ?></span>
         <span><b><?php echo esc_html($this->formatNumber($quotaData->total->remaining, 0)) ?></b></span>
 
       </p>
@@ -168,10 +168,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <?php if (false == $quotaData->unlimited): ?>
   <div class="over-quota" data-check-visibility="false" data-control="data-quota-remaining" data-control-check="data-check-total-total">
-      <span><img src="<?php echo esc_url(wpSPIO()->plugin_url('res/img/bulk/over-quota.svg')) ?>" /></span>
-            <p><?php printf(esc_html('In your ShortPixel account you %shave only %s credits available %s, but you have chosen %s  images to be optimized in this bulk process. You can either go back and select less images, or you can upgrade to a higher plan or buy one-time credits.','shortpixel-image-optimiser'), '<span class="red">', esc_html($this->formatNumber($quotaData->total->remaining, 0)), '</span>', '<b data-stats-total="images-images">0</b>'); ?>
+      <span><img src="<?php echo esc_url(wpSPAATG()->plugin_url('res/img/bulk/over-quota.svg')) ?>" /></span>
+            <p><?php printf(esc_html('In your SPAATG account you %shave only %s credits available %s, but you have chosen %s  images to be optimized in this bulk process. You can either go back and select less images, or you can upgrade to a higher plan or buy one-time credits.','shortpixel-image-optimiser'), '<span class="red">', esc_html($this->formatNumber($quotaData->total->remaining, 0)), '</span>', '<b data-stats-total="images-images">0</b>'); ?>
 
-       <button type="button" class="button" onClick="ShortPixel.proposeUpgrade();"><?php esc_html_e('Show me the best options') ?></button>
+       <button type="button" class="button" onClick="SPAATG.proposeUpgrade();"><?php esc_html_e('Show me the best options') ?></button>
      </p>
 
        <span class='hidden' data-quota-remaining><?php
@@ -203,7 +203,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         else
         {
           ?>
-            <p><?php esc_html_e('Start Bulk Optimization', 'shortpixel-image-optimiser'); ?></p>
+            <p><?php esc_html_e('Start Bulk Alt Text Generation', 'shortpixel-image-optimiser'); ?></p>
           <?php 
         } ?>
 				

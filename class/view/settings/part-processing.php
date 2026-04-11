@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -95,25 +95,6 @@ if ( ! defined( 'ABSPATH' ) ) {
       </warning>
     </setting>
   <!-- // Backup -->
-
-  <!-- Custom Media Folders -->
-  <setting class='switch'>
-    <content>
-      <?php $this->printSwitchButton(
-            ['name' => 'showCustomMedia',
-             'checked' => $view->data->showCustomMedia,
-             'label' => esc_html__('Custom Media folders','shortpixel-image-optimiser'),
-            ]);
-      ?>
-
-      <name>
-        <?php esc_html_e('Display the Media > Custom Media menu, which allows optimization of images not listed in the Media Library.','shortpixel-image-optimiser');?>
-
-      </name>
-
-    </content>
-  </setting>
-  <!-- // Custom media Folders -->
 
 </settinglist>
 

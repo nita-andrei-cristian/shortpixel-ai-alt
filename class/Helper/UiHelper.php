@@ -1,26 +1,26 @@
 <?php
-namespace ShortPixel\Helper;
+namespace SPAATG\Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\AiDataModel;
+use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Model\AiDataModel;
 
 class UiHelper
 {
 
 	private static $outputMode = 'admin';
 
-	private static $knowledge_url = 'https://shortpixel.com/knowledge-base/article/common-shortpixel-bulk-processing-errors/'; // the URL of all knowledge.
+	private static $knowledge_url = 'https://shortpixel.com/knowledge-base/article/common-spaatg-bulk-processing-errors/'; // the URL of all knowledge.
 
 	public static function setOutputHandler($name)
 	{
@@ -35,7 +35,7 @@ class UiHelper
 
     $output .= "<div class='sp-column-actions '>
                     <div class='sp-dropdown'>
-                        <button onclick='ShortPixel.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='ShortPixel Actions'></button>";
+                        <button onclick='SPAATG.openImageMenu(event);' class='sp-dropbtn button dashicons dashicons-menu $primary' title='SPAATG Actions'></button>";
     $output .= "<div id='sp-dd-$id' class='sp-dropdown-content'>";
 
     foreach($actions as $actionName => $actionData)
@@ -428,7 +428,7 @@ class UiHelper
 						}
         } // hasBackup
 
-				if (\wpSPIO()->env()->is_debug && $mediaItem->get('type') == 'media')
+				if (\wpSPAATG()->env()->is_debug && $mediaItem->get('type') == 'media')
 				{
 					 $list_actions['redo_legacy'] = self::getAction('redo_legacy', $id);
 				}
@@ -438,7 +438,7 @@ class UiHelper
       if (false === is_null($aiDataModel) && $aiDataModel->isProcessable() && 'media' === $mediaItem->get('type') )
       {
          if (true === $mediaItem->isSomethingOptimized()) // Prevent displaying this when only the 'optimize now' buttons are visible.
-           $list_actions['shortpixel-generateai'] = self::getAction('shortpixel-generateai', $id);
+           $list_actions['spaatg-generateai'] = self::getAction('spaatg-generateai', $id);
       }
 
       if(! $quotaControl->hasQuota())
@@ -497,7 +497,7 @@ class UiHelper
   {
     $keyControl = ApiKeyController::getInstance();
     $queueController = new QueueController();
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPAATG()->settings();
 
     $text = '';
 
@@ -505,7 +505,7 @@ class UiHelper
 
     if (! $keyControl->keyIsVerified())
     {
-      $text = __('Invalid API Key. <a href="options-general.php?page=wp-shortpixel-settings">Check your Settings</a>','shortpixel-image-optimiser');
+      $text = __('Invalid API Key. <a href="options-general.php?page=wp-spaatg-settings">Check your Settings</a>','shortpixel-image-optimiser');
     }
 		// This basically happens when a NextGen gallery is not added to Custom Media.
 		elseif ($mediaItem->get('id') === 0)
@@ -516,7 +516,7 @@ class UiHelper
 				 $text  .= $mediaItem->getProcessableReason();
 			 }
 			 else {
-         if (\wpSPIO()->env()->has_nextgen && false == $settings->includeNextGen)
+         if (\wpSPAATG()->env()->has_nextgen && false == $settings->includeNextGen)
          {
            $text = __('This image was not found in our database. Enable "Optimize nextgen galleries" in the settings, or add this folder manually. ', 'shortpixel-image-optimiser');
          }
@@ -561,13 +561,13 @@ class UiHelper
 
 					if ($mediaItem->get('type') == 'media')
 					{
-	 					$was_converted = get_post_meta($mediaItem->get('id'), '_shortpixel_was_converted', true);
+	 					$was_converted = get_post_meta($mediaItem->get('id'), '_spaatg_was_converted', true);
 						$updateTs = 1656892800; // July 4th 2022 - 00:00 GMT
 
 						if ($was_converted < $updateTs)
 						{
 							$meta = $mediaItem->getWPMetaData();
-							if (is_array($meta) && isset($meta['ShortPixel']))
+							if (is_array($meta) && isset($meta['SPAATG']))
 							{
 								$redo_legacy = self::getAction('redo_legacy', $mediaItem->get('id'));
 							}
@@ -655,27 +655,27 @@ class UiHelper
     switch($name)
     {
       case 'optimize':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ')';
+         $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ')';
          $action['type']  = 'js';
          $action['text'] = __('Optimize Now', 'shortpixel-image-optimiser');
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
       break;
       case 'forceOptimize':
-        $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', true)';
+        $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ', true)';
         $action['type']  = 'js';
         $action['text'] = __('Override exclusions and optimize now', 'shortpixel-image-optimiser');
         $action['display'] = 'button';
         $action['is-optimizable'] = true;
       break;
 			case 'cancelOptimize':
-				 $action['function'] = 'window.ShortPixelProcessor.screen.CancelOptimizeItem(' . $id . ')';
+				 $action['function'] = 'window.SPAATGProcessor.screen.CancelOptimizeItem(' . $id . ')';
 				 $action['type']  = 'js';
 				 $action['text'] = __('Cancel item optimization', 'shortpixel-image-optimiser');
 				 $action['display'] = 'button';
 			break;
       case 'markCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.MarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPAATGProcessor.screen.MarkCompleted(' . $id . ')';
           $action['type']  = 'js';
           $action['text'] = __('Mark as Completed', 'shortpixel-image-optimiser');
           $action['display'] = 'button-secondary';
@@ -683,7 +683,7 @@ class UiHelper
           $action['title'] = __('This will cause the plugin to skip this image for optimization', 'shortpixel-image-optimiser');
       break;
       case 'unMarkCompleted':
-          $action['function'] = 'window.ShortPixelProcessor.screen.UnMarkCompleted(' . $id . ')';
+          $action['function'] = 'window.SPAATGProcessor.screen.UnMarkCompleted(' . $id . ')';
           $action['type']  = 'js';
           $action['text'] = __('Click to unmark this item as done', 'shortpixel-image-optimiser');
           $action['display'] = 'js';
@@ -691,11 +691,11 @@ class UiHelper
       case 'optimizethumbs':
           if (! is_null($compressionType))
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
+            $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
           }
           else
           {
-            $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+            $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ');';
           }
 
           $action['type'] = 'js';
@@ -704,71 +704,71 @@ class UiHelper
           $action['is-optimizable'] = true;
       break;
       case 'retry':
-         $action['function'] = 'window.ShortPixelProcessor.screen.Optimize(' . $id . ');';
+         $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ');';
          $action['type']  = 'js';
          $action['text'] = __('Retry', 'shortpixel-image-optimiser') ;
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
      break;
 		 case 'redo_legacy':
-		 			$action['function'] = 'window.ShortPixelProcessor.screen.RedoLegacy(' . $id . ');';
+		 			$action['function'] = 'window.SPAATGProcessor.screen.RedoLegacy(' . $id . ');';
 		 			$action['type']  = 'js';
 		 			$action['text'] = __('Redo Conversion', 'shortpixel-image-optimiser') ;
 		 			$action['display'] = 'button';
 		 break;
 
      case 'restore':
-         $action['function'] = 'window.ShortPixelProcessor.screen.RestoreItem(' . $id . ');';
+         $action['function'] = 'window.SPAATGProcessor.screen.RestoreItem(' . $id . ');';
          $action['type'] = 'js';
          $action['text'] = __('Restore backup','shortpixel-image-optimiser');
          $action['display'] = 'inline';
      break;
 
      case 'compare':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ')';
+        $action['function'] = 'SPAATG.loadComparer(' . $id . ')';
         $action['type'] = 'js';
         $action['text'] = __('Compare', 'shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 'compare-custom':
-        $action['function'] = 'ShortPixel.loadComparer(' . $id . ',"custom")';
+        $action['function'] = 'SPAATG.loadComparer(' . $id . ',"custom")';
         $action['type'] = 'js';
         $action['text'] = __('Compare', 'shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
      case 'reoptimize-glossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
+        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-optimize Glossy','shortpixel-image-optimiser') ;
         $action['display'] = 'inline';
      break;
      case 'reoptimize-lossy':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
+        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-optimize Lossy','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
 
      case 'reoptimize-lossless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
+        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-optimize Lossless','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
 		 case 'reoptimize-smartcrop':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
+        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-optimize with SmartCrop','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
 		 case 'reoptimize-smartcropless':
-        $action['function'] = 'window.ShortPixelProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
+        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
         $action['type'] = 'js';
         $action['text'] = __('Re-optimize without SmartCrop','shortpixel-image-optimiser');
         $action['display'] = 'inline';
      break;
-     case 'shortpixel-generateai': 
-      $action['function'] = 'window.ShortPixelProcessor.screen.RequestAlt(' . $id . ')';
+     case 'spaatg-generateai': 
+      $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
       $action['type'] = 'js';
       $action['text'] = __('Generate image SEO data','shortpixel-image-optimiser');     
       $action['ai-action'] = true;
@@ -780,7 +780,7 @@ class UiHelper
         $action['display'] = 'button';
      break;
      case 'checkquota':
-        $action['function'] = 'ShortPixel.checkQuota()';
+        $action['function'] = 'SPAATG.checkQuota()';
         $action['type'] = 'js';
         $action['display'] = 'button';
         $action['text'] = __('Check&nbsp;&nbsp;Quota','shortpixel-image-optimiser');
@@ -934,11 +934,11 @@ class UiHelper
 	{
 		if ($type == 'webp')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
+			$is_double = \wpSPAATG()->env()->useDoubleWebpExtension();
 		}
 		if ($type == 'avif')
 		{
-			$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
+			$is_double = \wpSPAATG()->env()->useDoubleAvifExtension();
 		}
 
 		if ($is_double)
@@ -1005,7 +1005,7 @@ class UiHelper
 
       );
 
-      $icon_url = plugins_url($path, SHORTPIXEL_PLUGIN_FILE);
+      $icon_url = plugins_url($path, SPAATG_PLUGIN_FILE);
 
       $attr = ''; 
       if (isset($args['width']))

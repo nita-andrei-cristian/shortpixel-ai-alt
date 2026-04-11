@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -27,7 +27,7 @@ class ShortPixelFeedback {
 				$this->key = $apiControl->forceGetApiKey();
 
         // Skip the feedback when constant.
-        if (defined('SHORTPIXEL_SKIP_FEEDBACK') && true == SHORTPIXEL_SKIP_FEEDBACK)
+        if (defined('SPAATG_SKIP_FEEDBACK') && true == SPAATG_SKIP_FEEDBACK)
         {
            return false;
         }
@@ -35,7 +35,7 @@ class ShortPixelFeedback {
         add_filter( 'plugin_action_links_' . plugin_basename( $this->plugin_file ), array( $this, 'filterActionLinks') );
 				add_filter('network_admin_plugin_action_links_' . plugin_basename( $this->plugin_file ), array( $this, 'filterActionLinks'));
         add_action( 'admin_footer-plugins.php', array( $this, 'goodbyeAjax') );
-        add_action( 'wp_ajax_shortpixel_deactivate_plugin', array( $this, 'deactivatePluginCallback') );
+        add_action( 'wp_ajax_spaatg_deactivate_plugin', array( $this, 'deactivatePluginCallback') );
 
     }
 
@@ -82,9 +82,9 @@ class ShortPixelFeedback {
             $html .= '</div><!-- .shortpixel-deactivate-options -->';
         }
         $html .= '<hr/>';
-        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk ShortPixel).', 'shortpixel-image-optimiser' )
+        $html .= '<span title="' . __( 'Un-check this if you don\\\'t plan to use ShortPixel AI Alt Text Generator in the future on this website. You might also want to run a Bulk Delete SP Metadata before removing the plugin (Media Library -> Bulk AI Alt Text).', 'shortpixel-image-optimiser' )
             . '">'
-            . sprintf(esc_html__(  'If you want to completely uninstall ShortPixel from your site, please go to %s Settings → ShortPixel → Tools %s.', 'shortpixel-image-optimiser' ),'<a href="' . esc_url(admin_url('/options-general.php?page=wp-shortpixel-settings&part=tools'))  . '">', '</a>') . '</span><br>';
+            . sprintf(esc_html__(  'If you want to completely uninstall ShortPixel AI Alt Text Generator from your site, please go to %s Settings → ShortPixel AI Alt Text Generator → Tools %s.', 'shortpixel-image-optimiser' ),'<a href="' . esc_url(admin_url('/options-general.php?page=wp-spaatg-settings&part=tools'))  . '">', '</a>') . '</span><br>';
         $html .= '<hr/>';
         $html .= '</div><!-- .shortpixel-deactivate-form-body -->';
         $html .= '<p class="deactivating-spinner"><span class="spinner"></span> ' . esc_html__( 'Submitting form', 'shortpixel-image-optimiser' ) . '</p>';
@@ -200,8 +200,8 @@ class ShortPixelFeedback {
                 $( deactivateURL ).on("click", function(){
 
                     var SubmitFeedback = function(data, formContainer){
-                        data['action']          = 'shortpixel_deactivate_plugin';
-                        data['security']        = '<?php echo sanitize_key(wp_create_nonce("shortpixel_deactivate_plugin" )); ?>';
+                        data['action']          = 'spaatg_deactivate_plugin';
+                        data['security']        = '<?php echo sanitize_key(wp_create_nonce("spaatg_deactivate_plugin" )); ?>';
                         data['dataType']        = 'json';
                         data['keep-settings']   = formContainer.find('#shortpixel-keep-settings:checked').length;
 
@@ -319,13 +319,13 @@ class ShortPixelFeedback {
 
     public function deactivatePluginCallback() {
 
-        check_ajax_referer( 'shortpixel_deactivate_plugin', 'security' );
+        check_ajax_referer( 'spaatg_deactivate_plugin', 'security' );
 
 
 				Log::addDebug('Deactive Plugin Callback POST', $_POST);
 
         if ( isset($_POST['reason']) && isset($_POST['details']) && isset($_POST['anonymous']) ) {
-            require_once(\WPSPIO()->plugin_path() . 'class/view/shortpixel-plugin-request.php');
+            require_once(\wpSPAATG()->plugin_path() . 'class/view/shortpixel-plugin-request.php');
             $anonymous = (intval($_POST['anonymous']) == 1) ? true : false;
             $args = array(
                 'key' =>  $this->key,
@@ -333,7 +333,7 @@ class ShortPixelFeedback {
                 'details' => sanitize_text_field(wp_unslash($_POST['details'])),
                 'anonymous' => $anonymous
             );
-            $request = new ShortPixelPluginRequest( $this->plugin_file, 'http://' . SHORTPIXEL_API . '/v2/feedback.php', $args );
+            $request = new ShortPixelPluginRequest( $this->plugin_file, 'http://' . SPAATG_API . '/v2/feedback.php', $args );
             if ( $request->request_successful ) {
                 echo json_encode( array(
                     'status' => 'ok',

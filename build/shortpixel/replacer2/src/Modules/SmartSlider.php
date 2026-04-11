@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel\Replacer\Modules;
+namespace SPAATG\Replacer\Modules;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class SmartSlider

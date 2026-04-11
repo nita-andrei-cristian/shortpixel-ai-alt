@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreenItemBase extends ShortPixelScreenBase {
+class SPAATGScreenItemBase extends SPAATGScreenBase {
 
 	type; // media / custom
 	currentMessage = '';
@@ -12,8 +12,8 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 	Init() {
 		super.Init();
 
-		window.addEventListener('shortpixel.' + this.type + '.resumeprocessing', this.processor.ResumeProcess.bind(this.processor));
-		window.addEventListener('shortpixel.RenderItemView', this.RenderItemView.bind(this));
+		window.addEventListener('spaatg.' + this.type + '.resumeprocessing', this.processor.ResumeProcess.bind(this.processor));
+		window.addEventListener('spaatg.RenderItemView', this.RenderItemView.bind(this));
 
 	}
 
@@ -49,7 +49,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 
 		if (element !== null && apiName !== 'ai')  {
 			element.innerHTML = '';
-			//  var event = new CustomEvent('shortpixel.loadItemView', {detail: {'type' : type, 'id': result.id }}); // send for new item view.
+			//  var event = new CustomEvent('spaatg.loadItemView', {detail: {'type' : type, 'id': result.id }}); // send for new item view.
 			var fileStatus = this.processor.fStatus[resultItem.fileStatus];
 
 			if (fileStatus == 'FILE_DONE' || fileStatus == 'FILE_RESTORED' || resultItem.is_done == true) {
@@ -144,7 +144,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 			 }
 			 else
 			 {
-				var elementName = 'shortpixel-data-' + id; 
+				var elementName = 'spaatg-data-' + id; 
 				
 			 }
 		 }
@@ -157,7 +157,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 				 return null; 
 			  }
 
-			  var parent = document.getElementById('shortpixel-data-' + id);
+			  var parent = document.getElementById('spaatg-data-' + id);
 			  if (parent !== null) {
 				  var element = document.createElement('div');
 				  element.classList.add('message');
@@ -300,7 +300,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		}
 
 		if (!this.processor.CheckActive())
-			data.callback = 'shortpixel.' + this.type + '.resumeprocessing';
+			data.callback = 'spaatg.' + this.type + '.resumeprocessing';
 
 		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);
@@ -314,7 +314,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		}
 
 		if (!this.processor.CheckActive())
-			data.callback = 'shortpixel.' + this.type + '.resumeprocessing';
+			data.callback = 'spaatg.' + this.type + '.resumeprocessing';
 
 		this.SetMessageProcessing(id, 'ai');
 		this.processor.AjaxRequest(data);
@@ -327,10 +327,10 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 			type: this.type,
 			'screen_action': 'ai/undoAlt',
 			'action_type' : action_type, 
-			'callback': 'shortpixel.HandleUndoAlt',
+			'callback': 'spaatg.HandleUndoAlt',
 		}
 
-		window.addEventListener('shortpixel.HandleUndoAlt', function (event) {
+		window.addEventListener('spaatg.HandleUndoAlt', function (event) {
 			var data = event.detail.media;
 			var original = data.current; 
 	
@@ -338,7 +338,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 			{
 				if (!this.processor.CheckActive())
 				{
-					let ev = new Event('shortpixel.' + this.type + '.resumeprocessing');
+					let ev = new Event('spaatg.' + this.type + '.resumeprocessing');
 					window.dispatchEvent(ev);
 
 				}
@@ -348,7 +348,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		}.bind(this), {once: true});
 
 	/*	if (!this.processor.CheckActive())
-			data.callback = 'shortpixel.' + this.type + '.resumeprocessing'; */
+			data.callback = 'spaatg.' + this.type + '.resumeprocessing'; */
 
 		//this.SetMessageProcessing(id, 'ai');
 		this.processor.AjaxRequest(data);
@@ -371,7 +371,7 @@ class ShortPixelScreenItemBase extends ShortPixelScreenBase {
 		}
 
 		if (!this.processor.CheckActive())
-			data.callback = 'shortpixel.' + this.type + '.resumeprocessing';
+			data.callback = 'spaatg.' + this.type + '.resumeprocessing';
 
 		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);

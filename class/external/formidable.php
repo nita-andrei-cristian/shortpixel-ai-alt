@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\AdminController as AdminController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\AdminController as AdminController;
 
 class Formidable
 {
     public function __construct()
     {
-        if (true === \wpSPIO()->env()->is_autoprocess )
+        if (true === \wpSPAATG()->env()->is_autoprocess )
         {
           $this->addHooks();
         }
@@ -110,7 +110,7 @@ class Formidable
 
     private function checkMediaLibrary($item_id)
     {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       $mediaItem = $fs->getMediaImage($item_id);
       if (is_object($mediaItem) && $mediaItem->isProcessable())

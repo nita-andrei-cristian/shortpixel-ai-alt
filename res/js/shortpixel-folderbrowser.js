@@ -4,7 +4,7 @@
 //       : Crawler to scan / refresh folders via ajax / JSON
 //
 
-class ShortPixelFolderTree
+class SPAATGFolderTree
 {
     strings = [];
     icons = [];
@@ -29,8 +29,8 @@ class ShortPixelFolderTree
         if (true === this.didInit)
           return;
 
-        this.strings = spio_folderbrowser.strings;
-        this.icons = spio_folderbrowser.icons;
+        this.strings = spaatg_folderbrowser.strings;
+        this.icons = spaatg_folderbrowser.icons;
 
         this.ShowLoading();
         this.AjaxLoadFolders('');
@@ -188,7 +188,7 @@ class ShortPixelFolderTree
         }
 
         li.classList.add('selected');
-        var selectEvent = new CustomEvent('shortpixel-folder.selected', { 'detail': {'relpath': relpath}});
+        var selectEvent = new CustomEvent('spaatg-folder.selected', { 'detail': {'relpath': relpath}});
         this.parentElement.dispatchEvent(selectEvent);
 
     }
@@ -211,10 +211,10 @@ class ShortPixelFolderTree
           type: 'folder',
           screen_action: 'browseFolders',
           relPath: relpath,
-          callback: 'shortpixel.folder.LoadFolders',
+          callback: 'spaatg.folder.LoadFolders',
         };
 
-        window.addEventListener('shortpixel.folder.LoadFolders', this.LoadFolderEvent.bind(this), {'once':true});
+        window.addEventListener('spaatg.folder.LoadFolders', this.LoadFolderEvent.bind(this), {'once':true});
 
         this.processor.AjaxRequest(data);
 

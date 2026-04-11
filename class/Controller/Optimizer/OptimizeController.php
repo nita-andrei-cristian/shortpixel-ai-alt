@@ -1,32 +1,32 @@
 <?php
 
-namespace ShortPixel\Controller\Optimizer;
+namespace SPAATG\Controller\Optimizer;
 
-use ShortPixel\Controller\Api\RequestManager;
+use SPAATG\Controller\Api\RequestManager;
 
 if (!defined('ABSPATH')) {
   exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
 
-use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\DownloadHelper as DownloadHelper;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\Api\ApiController as ApiController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
 
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPAATG\Model\Converter\Converter as Converter;
 
-use ShortPixel\Controller\AjaxController as AjaxController;
-use ShortPixel\Controller\Queue\QueueItems;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\StatsController as StatsController;
+use SPAATG\Controller\AjaxController as AjaxController;
+use SPAATG\Controller\Queue\QueueItems;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\StatsController as StatsController;
 
 class OptimizeController extends OptimizerBase
 {
@@ -63,7 +63,7 @@ class OptimizeController extends OptimizerBase
       );
       $args = wp_parse_args($args, $defaults); */
 
-    //$fs = \wpSPIO()->filesystem();
+    //$fs = \wpSPAATG()->filesystem();
 
     // $json = $this->getJsonResponse();
     $bool = $this->checkImageModel($qItem);
@@ -246,7 +246,7 @@ class OptimizeController extends OptimizerBase
   {
     $imageModel = $qItem->imageModel;
     $item_id = $qItem->item_id;
-    $fs = \wpSPIO()->filesystem(); 
+    $fs = \wpSPAATG()->filesystem(); 
     $q = $this->getCurrentQueue($qItem);
     $statsController = StatsController::getInstance();
 
@@ -563,7 +563,7 @@ class OptimizeController extends OptimizerBase
     }
 
     $files = $qItem->files;
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
     foreach ($files as $name => $data) {
       foreach ($data as $tmpPath) {

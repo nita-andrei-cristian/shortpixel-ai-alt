@@ -1,21 +1,21 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
+use SPAATG\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use SPAATG\Model\File\DirectoryModel as DirectoryModel;
 
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\InstallHelper as InstallHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 // Future contoller for the edit media metabox view.
-class OtherMediaController extends \ShortPixel\Controller
+class OtherMediaController extends \SPAATG\Controller
 {
     private $folderIDCache;
     private static $hasFoldersTable;
@@ -125,7 +125,7 @@ class OtherMediaController extends \ShortPixel\Controller
          $sql = $wpdb->prepare($sql, $path);
 
          $custom_id = $wpdb->get_var($sql);
-         $fs = \wpSPIO()->filesystem();
+         $fs = \wpSPAATG()->filesystem();
 
          if (! is_null($custom_id))
          {
@@ -162,7 +162,7 @@ class OtherMediaController extends \ShortPixel\Controller
 
 		public function showMenuItem()
 		{
-			  $settings = \wpSPIO()->settings();
+			  $settings = \wpSPAATG()->settings();
 				if ( $settings->showCustomMedia)
 				{
 					 return true;
@@ -172,7 +172,7 @@ class OtherMediaController extends \ShortPixel\Controller
 
 	   public function addDirectory($path)
     {
-       $fs = \wpSPIO()->filesystem();
+       $fs = \wpSPAATG()->filesystem();
        $directory = new DirectoryOtherMediaModel($path);
 
 			 // Check if this directory is allowed.
@@ -248,7 +248,7 @@ class OtherMediaController extends \ShortPixel\Controller
 
         $args = wp_parse_args($args, $defaults);
 
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPAATG()->filesystem();
 
         if (is_object($path_or_file)) // assume fileObject
         {
@@ -381,7 +381,7 @@ class OtherMediaController extends \ShortPixel\Controller
     /* Check if this directory is part of the MediaLibrary */
     public function checkifMediaLibrary(DirectoryModel $directory)
     {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
       $uploadDir = $fs->getWPUploadBase();
 		  $wpUploadDir = wp_upload_dir(null, false);
 
@@ -430,7 +430,7 @@ class OtherMediaController extends \ShortPixel\Controller
           return $error;
       }
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
       $rootDirObj = $fs->getWPFileBase();
       $path = $rootDirObj->getPath();
 
@@ -496,7 +496,7 @@ class OtherMediaController extends \ShortPixel\Controller
                        );
 
 
-                       if($dirpath == trailingslashit(SHORTPIXEL_BACKUP_FOLDER) || $this->checkifMediaLibrary($dir) )
+                       if($dirpath == trailingslashit(SPAATG_BACKUP_FOLDER) || $this->checkifMediaLibrary($dir) )
                        {
                           $folders[$i]['is_disabled']  = true;
                          // unset($subdirs[$index]);
@@ -550,7 +550,7 @@ class OtherMediaController extends \ShortPixel\Controller
         else
           return array();
       }
-      $fs =  \wpSPIO()->fileSystem();
+      $fs =  \wpSPAATG()->fileSystem();
 
       if ($args['only_count'])
         $selector = 'count(id) as id';

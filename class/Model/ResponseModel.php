@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPAATG\Controller\ResponseController as ResponseController;
 
 
 class ResponseModel

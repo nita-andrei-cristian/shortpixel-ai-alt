@@ -77,6 +77,22 @@
   height: auto;
   float: none;
 }
+.view-edit-media .generated-alt-box .generated-alt-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #50575e;
+}
+.view-edit-media .generated-alt-box .shortpixel-generated-alt-content {
+  margin: 0;
+  line-height: 1.5;
+}
+.view-edit-media .generated-alt-box .shortpixel-generated-alt-content.is-empty {
+  color: #646970;
+  font-style: italic;
+}
 
 .spio-message img {
   animation: cssload-spin 5000ms infinite linear;
@@ -410,12 +426,12 @@
   margin-left: 4px;
 }
 
-.column-wp-shortPixel .message {
+.column-wp-spaatg .message {
   font-size: 14px;
   font-weight: 700;
   margin: 12px 0;
 }
-.column-wp-shortPixel .message img {
+.column-wp-spaatg .message img {
   animation: cssload-spin 5000ms infinite linear;
   -o-animation: cssload-spin 5000ms infinite linear;
   -ms-animation: cssload-spin 5000ms infinite linear;
@@ -470,6 +486,15 @@
 .shortpixel-popup-info > div {
   padding-left: 8px;
   padding-bottom: 8px;
+}
+.shortpixel-popup-info.shortpixel-generated-alt-panel .shortpixel-generated-alt-content {
+  line-height: 1.5;
+  white-space: normal;
+}
+.shortpixel-popup-info.shortpixel-generated-alt-panel.is-empty .shortpixel-generated-alt-content,
+.shortpixel-popup-info.shortpixel-generated-alt-panel .shortpixel-generated-alt-content.is-empty {
+  color: #646970;
+  font-style: italic;
 }
 .media-sidebar .shortpixel-popup-info {
   padding-top: 20px;
@@ -809,4 +834,4 @@ body.debug-model-active {
   margin-right: 0px;
 }
 
-/*# sourceMappingURL=shortpixel-admin.css.map */
+/*# sourceMappingURL=spaatg-admin.css.map */

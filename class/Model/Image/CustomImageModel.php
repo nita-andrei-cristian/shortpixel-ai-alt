@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model\Image;
+namespace SPAATG\Model\Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 // @todo Custom Model for adding files, instead of meta DAO.
-class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
+class CustomImageModel extends \SPAATG\Model\Image\ImageModel
 {
 
     protected $folder_id;
@@ -94,13 +94,13 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
 						'returnParams' => array(),
 				);
 
-				$fs = \wpSPIO()->filesystem();
+				$fs = \wpSPAATG()->filesystem();
         if ($this->is_virtual())
           $url = $this->getFullPath();
         else
           $url = $this->getURL();
 
-				 $settings = \wpSPIO()->settings();
+				 $settings = \wpSPAATG()->settings();
 				 $isSmartCrop = ($settings->useSmartcrop == true && $this->getExtension() !== 'pdf') ? true : false;
 		 		 $paramListArgs = array(); // args for the params, yes.
 
@@ -135,7 +135,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
 
 		public function getURL()
 		{
-			  return \wpSPIO()->filesystem()->pathToUrl($this);
+			  return \wpSPAATG()->filesystem()->pathToUrl($this);
 		}
 
     public function getAllUrls()
@@ -280,7 +280,7 @@ class CustomImageModel extends \ShortPixel\Model\Image\ImageModel
         }
 
         $toOptimize = array();
-        $fs = \WPSPIO()->filesystem();
+        $fs = \wpSPAATG()->filesystem();
 
 				// The file must not exist yet.
         if (count($types) == 0 && ($this->isProcessable(true) || $this->isOptimized()) )

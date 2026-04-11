@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Replacer\Modules;
+namespace SPAATG\Replacer\Modules;
 // Note! This class doubles as integration for both Visual Composer *and* WP Bakery. They both need URLENCODE.
 class WpBakery
 {

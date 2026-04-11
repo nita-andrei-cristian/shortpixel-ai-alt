@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Notices;
+namespace SPAATG\Notices;
 
 class NoticeModel //extends ShortPixelModel
 {

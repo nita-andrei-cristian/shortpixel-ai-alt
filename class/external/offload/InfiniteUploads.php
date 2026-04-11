@@ -1,15 +1,15 @@
 <?php
 
-namespace ShortPixel\External\Offload;
+namespace SPAATG\External\Offload;
 
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPAATG\Model\File\FileModel as FileModel;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
 
 class InfiniteUploads
 {

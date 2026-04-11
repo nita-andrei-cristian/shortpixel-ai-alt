@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPAATG\Controller\Api;
 
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\ResponseController as ResponseController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 class ApiController extends RequestManager
 {
@@ -38,9 +38,9 @@ class ApiController extends RequestManager
 
 	public function __construct()
 	{
-		$settings = \wpSPIO()->settings();
-		$this->apiEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/reducer.php';
-		$this->apiDumpEndPoint = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/cleanup.php';
+		$settings = \wpSPAATG()->settings();
+		$this->apiEndPoint = $settings->httpProto . '://' . SPAATG_API . '/v2/reducer.php';
+		$this->apiDumpEndPoint = $settings->httpProto . '://' . SPAATG_API . '/v2/cleanup.php';
 	}
 
 	/*
@@ -67,13 +67,13 @@ class ApiController extends RequestManager
 			return;
 		}
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$keyControl = ApiKeyController::getInstance();
 		$flags = $qItem->data()->flags; 
 		$convertTo = implode("|", $flags);
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -116,7 +116,7 @@ class ApiController extends RequestManager
 		$keyControl = ApiKeyController::getInstance();
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'lossy' => $qItem->data()->compressionType,
@@ -161,7 +161,7 @@ class ApiController extends RequestManager
 	   */
 	public function dumpMediaItem(QueueItem $qItem)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$keyControl = ApiKeyController::getInstance();
 
 		if (is_null($qItem->data()->urls) || !is_array($qItem->data()->urls) || count($qItem->data()->urls) == 0) {
@@ -170,7 +170,7 @@ class ApiController extends RequestManager
 		}
 
 		$requestBody = [
-			'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+			'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
 			'key' => $keyControl->forceGetApiKey(),
 			'urllist' => $qItem->data()->urls,
 			'item_id' => $qItem->item_id,
@@ -446,7 +446,7 @@ class ApiController extends RequestManager
 	 */
 	protected function handleNewSuccess(QueueItem $qItem, $fileData, $data)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$compressionType = ! is_null($qItem->data()->compressionType) ? $qItem->data()->compressionType : $settings->compressionType;
 		//$savedSpace =  $originalSpace =  $optimizedSpace = $fileCount  = 0;
 
@@ -588,7 +588,7 @@ class ApiController extends RequestManager
 			return true;
 
 
-		if (\wpSPIO()->settings()->useSmartcrop == true && \wpSPIO()->settings()->smartCropIgnoreSizes == true) {
+		if (\wpSPAATG()->settings()->useSmartcrop == true && \wpSPAATG()->settings()->smartCropIgnoreSizes == true) {
 			return true;
 		}
 

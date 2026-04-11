@@ -1,20 +1,20 @@
 <?php
 
-namespace ShortPixel\Controller\Front;
+namespace SPAATG\Controller\Front;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\ApiKeyController;
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\FrontImage as FrontImage;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Replacer\Replacer as Replacer;
+use SPAATG\Controller\ApiKeyController;
+use SPAATG\Helper\UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\FrontImage as FrontImage;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Replacer\Replacer as Replacer;
 
 
-class CDNController extends \ShortPixel\Controller\Front\PageConverter
+class CDNController extends \SPAATG\Controller\Front\PageConverter
 {
 
 	protected $cdn_domain;
@@ -115,7 +115,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	public function purgeCDN($args = [])
 	{
 		$purge = $args['purge']; 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 	//	$purge_domain = 'https://no-cdn.shortpixel.ai/purge-cdn-cache-bulk'; 
 
 		$result = [
@@ -162,7 +162,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		$action = isset($args['action']) ? $args['action'] : ''; 
 		$purge_domain = 'https://no-cdn.shortpixel.ai'; 
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$apiKeyController = ApiKeyController::getInstance();
 
 		$site_domain = parse_url(get_site_url());
@@ -187,8 +187,8 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 	protected function createArguments($args = [])
 	{
-		$settings = \wpSPIO()->settings();
-		$env = \wpSPIO()->env();
+		$settings = \wpSPAATG()->settings();
+		$env = \wpSPAATG()->env();
 
 
 		$compressionType = $settings->compressionType;
@@ -238,7 +238,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 
 	protected function addWPHooks()
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		if (true === $settings->cdn_js) {
 
@@ -271,7 +271,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 		// 3 Probably check if Src is from local domain, otherwise not replace (?)
 		//$this->setCDNArgument('retauto', 'ret_auto'); // for each of this type.
 
-		$version = \wpSPIO()->settings()->cdn_purge_version;
+		$version = \wpSPAATG()->settings()->cdn_purge_version;
 
 		$replaceBlocks = [];
 		$block =  $this->getReplaceBlock($src);
@@ -294,7 +294,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 			return $src;
 		}
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$checkExtensions = []; 
 		$fonts = ['.ttf', '.woff', '.woff2', '.otf']; 
 
@@ -434,7 +434,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	{
 		if ($CDNDomain === false)
 		{
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPAATG()->settings();
 			$cdn_domain = $settings->CDNDomain;
 		}
 		else
@@ -474,7 +474,7 @@ class CDNController extends \ShortPixel\Controller\Front\PageConverter
 	 */
 	protected function filterFonts($replaceBlocks)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		if (true === $settings->cdn_css)
 		{

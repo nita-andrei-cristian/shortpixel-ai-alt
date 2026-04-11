@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\CacheModel as CacheModel;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\CacheModel as CacheModel;
 // Future replacement for everything that needs temporary storage
 // Storage agnostic -> called function should not need to know what is stored where, this is job of controller.
 // Works with cache-model, which handles the data representation and storage.
 //
 
-class CacheController extends \ShortPixel\Controller
+class CacheController extends \SPAATG\Controller
 {
   protected static $cached_items = array();
 

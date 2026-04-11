@@ -1,22 +1,22 @@
 <?php
-namespace ShortPixel\Model\Image;
+namespace SPAATG\Model\Image;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Controller\Api\ApiController as ApiController;
+use SPAATG\Controller\ResponseController as ResponseController;
+use SPAATG\Controller\Api\ApiController as ApiController;
 
-use ShortPixel\Model\File\FileModel as FileModel;
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\File\FileModel as FileModel;
+use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
-use ShortPixel\Model\Converter\Converter as Converter;
+use SPAATG\Model\Converter\Converter as Converter;
 
 /* ImageModel class.
 *
@@ -28,7 +28,7 @@ use ShortPixel\Model\Converter\Converter as Converter;
 * -- ShortPixel Class should be able to blindly call model for information, correct metadata and such.
 */
 
-abstract class ImageModel extends \ShortPixel\Model\File\FileModel
+abstract class ImageModel extends \SPAATG\Model\File\FileModel
 {
     // File Status Constants
     const FILE_STATUS_ERROR = -1;
@@ -232,7 +232,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
     public function isProcessableFileType($type = 'webp')
     {
-        $settings = \WPSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
 
 				if ( AccessModel::getInstance()->isFeatureAvailable($type) === false)
 				{
@@ -350,7 +350,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
             $message = __('Image Extension not processable', 'shortpixel-image-optimiser');
          break;
          case self::P_EXCLUDE_EXTENSION_PDF:
-            $message = sprintf(__('PDF processing is not enabled in the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="' .  esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=optimisation')) . '">', '</a>');
+            $message = sprintf(__('PDF processing is not enabled in the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="' .  esc_url(admin_url('options-general.php?page=wp-spaatg-settings&part=optimisation')) . '">', '</a>');
          break;
          case self::P_EXCLUDE_SIZE:
             $message = __('Image Size Excluded', 'shortpixel-image-optimiser');
@@ -422,18 +422,18 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
         }
 
 
-				if (is_null($this->mime) && \wpSPIO()->env()->is_function_usable('finfo_open')) // Faster function for getting mime types
+				if (is_null($this->mime) && \wpSPAATG()->env()->is_function_usable('finfo_open')) // Faster function for getting mime types
 					 {
 						 $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
 						 $this->mime = finfo_file($fileinfo, $this->getFullPath());
              // Deprecated from version 8.5
-             if (false === \wpSPIO()->env()->checkPHPversion('8.5') )
+             if (false === \wpSPAATG()->env()->checkPHPversion('8.5') )
              {
 						  finfo_close($fileinfo);
              }
 					 	 //FILEINFO_MIME_TYPE
 					}
-					elseif(is_null($this->mime) && \wpSPIO()->env()->is_function_usable('mime_content_type')) {
+					elseif(is_null($this->mime) && \wpSPAATG()->env()->is_function_usable('mime_content_type')) {
 						$this->mime = mime_content_type($this->getFullPath());
 					}
 					elseif(is_null($this->mime)) {
@@ -519,7 +519,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
 	  protected function getImageType($type = 'webp')
 	  {
-	    $fs = \wpSPIO()->filesystem();
+	    $fs = \wpSPAATG()->filesystem();
 			if ($this->getMeta($type) === self::FILETYPE_BIGGER)
 				return false;
 
@@ -538,11 +538,11 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
 			if ($type == 'webp')
 			{
-	    	$is_double = \wpSPIO()->env()->useDoubleWebpExtension();
+	    	$is_double = \wpSPAATG()->env()->useDoubleWebpExtension();
 			}
 			if ($type == 'avif')
 			{
-				$is_double = \wpSPIO()->env()->useDoubleAvifExtension();
+				$is_double = \wpSPAATG()->env()->useDoubleAvifExtension();
 			}
 
 			$double_filepath = $this->getFileDir() .  $this->getFileName() . '.' . $type;
@@ -715,8 +715,8 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 		*/
     public function handleOptimized($results, $args = array())
     {
-        $settings = \wpSPIO()->settings();
-        $fs = \wpSPIO()->filesystem();
+        $settings = \wpSPAATG()->settings();
+        $fs = \wpSPAATG()->filesystem();
 
 				$defaults = array('isConverted' => false,
 				);
@@ -870,7 +870,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
     public function handleOptimizedFileType($downloadResult)
     {
-				 $fs = \wpSPIO()->filesystem();
+				 $fs = \wpSPAATG()->filesystem();
 
           if (isset($downloadResult['webp']) && isset($downloadResult['webp']['file'])) // check if there is webp with same filename
           {
@@ -1101,7 +1101,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
     protected function handleWebp(FileModel $tempFile)
     {
-         $fs = \wpSPIO()->filesystem();
+         $fs = \wpSPAATG()->filesystem();
 				 if ($this->is_virtual())
 				 {
 					 	$fullpath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
@@ -1115,7 +1115,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
          $target = $fs->getFile( (string) $fileDir . $this->getFileBase() . '.webp');
 
             // only copy when this constant is set.
-            if( true === \wpSPIO()->env()->useDoubleWebpExtension() ) {
+            if( true === \wpSPAATG()->env()->useDoubleWebpExtension() ) {
                  $target = $fs->getFile((string) $fileDir . $this->getFileName() . '.webp'); // double extension, if exists.
             }
 
@@ -1142,7 +1142,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
     protected function handleAvif(FileModel $tempFile)
     {
-         $fs = \wpSPIO()->filesystem();
+         $fs = \wpSPAATG()->filesystem();
 				 if ($this->is_virtual())
 				 {
 						$fullpath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
@@ -1156,7 +1156,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
             $target = $fs->getFile( (string) $fileDir . $this->getFileBase() . '.avif');
 
 						// only copy when this constant is set.
-            if( true === \wpSPIO()->env()->useDoubleAvifExtension() ) {
+            if( true === \wpSPAATG()->env()->useDoubleAvifExtension() ) {
                  $target = $fs->getFile((string) $fileDir . $this->getFileName() . '.avif'); // double extension, if exists.
             }
 
@@ -1207,7 +1207,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
        if ('pdf' === $this->getExtension())
        {
-         $settings = \wpSPIO()->settings();
+         $settings = \wpSPAATG()->settings();
          if (! $settings->optimizePdfs )
          {
            $this->processable_status = self::P_EXCLUDE_EXTENSION_PDF;
@@ -1475,7 +1475,7 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
           exit('Fatal error, createbackup protection - this should never reach');
        }
        $directory = $this->getBackupDirectory(true);
-       $fs = \wpSPIO()->filesystem();
+       $fs = \wpSPAATG()->filesystem();
 
        // @Deprecated
        if(apply_filters('shortpixel_skip_backup', false, $this->getFullPath(), $this->is_main_file)){
@@ -1521,12 +1521,12 @@ abstract class ImageModel extends \ShortPixel\Model\File\FileModel
 
     protected function fs()
     {
-       return \wpSPIO()->filesystem();
+       return \wpSPAATG()->filesystem();
     }
 
 		protected function createParamList($args = array())
 		{
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPAATG()->settings();
 
 		 $resize = false;
 		 $hasResizeSizes = (intval($settings->resizeImages) > 0) ? true : false;

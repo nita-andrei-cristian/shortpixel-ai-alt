@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Controller\BulkController as BulkController;
+use \SPAATG\Controller\BulkController as BulkController;
 
 	$bulk = BulkController::getInstance();
 	$queueRunning = $bulk->isAnyBulkRunning();
@@ -40,10 +40,10 @@ use \ShortPixel\Controller\BulkController as BulkController;
 					</div>
 
 
-					<div class='optiongroup' data-check-visibility data-control="data-check-custom-hascustom">
+					<div class='optiongroup hidden' data-check-visibility data-control="data-check-custom-hascustom">
 						<div class='switch_button'>
 							<label>
-								<input type="checkbox" class="switch" id="restore_custom_checkbox" value='1' >
+								<input type="checkbox" class="switch" id="restore_custom_checkbox" value='1' disabled>
 								<div class="the_switch">&nbsp; </div>
 							</label>
 						</div>

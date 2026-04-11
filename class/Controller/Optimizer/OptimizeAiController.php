@@ -1,21 +1,21 @@
 <?php
-namespace ShortPixel\Controller\Optimizer;
+namespace SPAATG\Controller\Optimizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Controller\Api\RequestManager as RequestManager;
-use ShortPixel\Controller\Api\AiController;
-use ShortPixel\Controller\Api\ApiController;
-use ShortPixel\Controller\Queue\Queue;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Replacer\Replacer;
-use ShortPixel\ViewController as ViewController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Controller\Api\RequestManager as RequestManager;
+use SPAATG\Controller\Api\AiController;
+use SPAATG\Controller\Api\ApiController;
+use SPAATG\Controller\Queue\Queue;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\AiDataModel;
+use SPAATG\Replacer\Replacer;
+use SPAATG\ViewController as ViewController;
 
 // Class for AI Operations.  In time split off OptimizeController / Optimize actions to a main queue runner seperately.
 class OptimizeAiController extends OptimizerBase
@@ -281,7 +281,7 @@ class OptimizeAiController extends OptimizerBase
   protected function HandleSuccess(QueueItem $qItem)
   {
         $aiData = $qItem->result()->aiData;  
-        // $settings = \wpSPIO()->settings();
+        // $settings = \wpSPAATG()->settings();
 
         /* $checks = ['alt' => 'ai_gen_alt', 
         'caption' => 'ai_gen_caption', 
@@ -358,7 +358,7 @@ class OptimizeAiController extends OptimizerBase
                  $url = $qItem->imageModel->getUrl(); 
              }
 
-             $replacer2 = \ShortPixel\Replacer\Replacer::getInstance(); 
+             $replacer2 = \SPAATG\Replacer\Replacer::getInstance(); 
              $setup = $replacer2->Setup(); 
              $setup->forSearch()->URL()->addData($url);
              
@@ -379,7 +379,7 @@ class OptimizeAiController extends OptimizerBase
       $item_id = $qItem->item_id; 
 
       $files = $imageModel->getAllFiles();
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       if (isset($files['files'][$imageModel->getImageKey('original')]))
       {
@@ -507,7 +507,7 @@ class OptimizeAiController extends OptimizerBase
   public function handleReplace($results, $args)
   {
 
-    $replacer2 = \ShortPixel\Replacer\Replacer::getInstance();
+    $replacer2 = \SPAATG\Replacer\Replacer::getInstance();
     $aiData = $args['aiData'];
     $qItem = $args['qItem'];
 
@@ -528,7 +528,7 @@ class OptimizeAiController extends OptimizerBase
             {
 
             // @todo The result of the post, should parse the content somehow via regex, then load.
-             $frontImage = new \ShortPixel\Model\FrontImage($match); 
+             $frontImage = new \SPAATG\Model\FrontImage($match); 
 
              $src = $frontImage->src; 
              // Only replace in post content the image we did
@@ -598,7 +598,7 @@ class OptimizeAiController extends OptimizerBase
    */
   public function isAiEnabled()
   {
-     $settings = \wpSPIO()->settings(); 
+     $settings = \wpSPAATG()->settings(); 
 
      $bool = (true == $settings->enable_ai) ? true : false; // make sure boolean is hard type. 
     
@@ -619,7 +619,7 @@ class OptimizeAiController extends OptimizerBase
          return $bool; 
       }
 
-      $settings = \wpSPIO()->settings(); 
+      $settings = \wpSPAATG()->settings(); 
 
       $bool = (true == $settings->autoAI) ? true : false; 
 
@@ -693,11 +693,11 @@ public function getAltData(QueueItem $qItem)
     // check for old data
     if (AiDataModel::AI_STATUS_NOTHING === $status) // old data 
     {
-         $metacheck = get_post_meta($item_id, 'shortpixel_alt_requests', true); 
+         $metacheck = get_post_meta($item_id, 'spaatg_alt_requests', true); 
          if (false !== $metacheck && is_array($metacheck))
          {
                 $aiModel->migrate($metacheck);
-                delete_post_meta($item_id, 'shortpixel_alt_requests');
+                delete_post_meta($item_id, 'spaatg_alt_requests');
                 $aiModel = AiDataModel::getModelByAttachment($item_id, 'media');
                 $status = $aiModel->getStatus();
          }

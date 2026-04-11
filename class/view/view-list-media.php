@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -21,7 +21,7 @@ if (property_exists($this->view, 'infoData'))
 
 <div class='sp-column-info <?php echo property_exists($this->view, 'infoClass') ? $this->view->infoClass : '' ?>'
 	 	  <?php echo $datastring; ?>
-			id='shortpixel-data-<?php echo esc_attr($this->view->id );?>'>
+			id='spaatg-data-<?php echo esc_attr($this->view->id );?>'>
 <?php	if (isset($this->view->list_actions))
 	{
 	   echo $this->view->list_actions;

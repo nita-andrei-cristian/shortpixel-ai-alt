@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
 // Gravity Forms integrations.
 class gravityForms
@@ -27,7 +27,7 @@ class gravityForms
   public function handleGravityFormsImageField($value) {
 
 
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$otherMediaController = OtherMediaController::getInstance();
 			$uploadBase = $fs->getWPUploadBase();
 

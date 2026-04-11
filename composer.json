@@ -23,12 +23,12 @@
 
     },
    "autoload": {
-       "psr-4": { "ShortPixel\\" : "class" , "ShortPixel\\Tests\\" : "tests"}
+       "psr-4": { "SPAATG\\" : "class" , "SPAATG\\Tests\\" : "tests"}
    },
     "scripts": {
-        "post-update-cmd" : "\\ShortPixel\\Build\\Build::BuildIt",
-        "buildSP" : "\\ShortPixel\\Build\\Build::BuildIt",
-        "buildLoader": "\\ShortPixel\\BuildAutoLoader::buildJSON"
+        "post-update-cmd" : "\\SPAATG\\Build\\Build::BuildIt",
+        "buildSP" : "\\SPAATG\\Build\\Build::BuildIt",
+        "buildLoader": "\\SPAATG\\BuildAutoLoader::buildJSON"
     },
     "extra": {
          "targetNamespace" : "ShortPixel"

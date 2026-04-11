@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: ShortPixel Image Optimizer
+ * Plugin Name: ShortPixel AI Alt Text Generator
  * Plugin URI: https://shortpixel.com/
- * Description: ShortPixel optimizes images automatically, while guarding the quality of your images. Check your <a href="/wp-admin/options-general.php?page=wp-shortpixel-settings" target="_blank">Settings &gt; ShortPixel</a> page on how to start optimizing your image library and make your website load faster.
- * Version: 6.4.4
- * Author: ShortPixel - Convert WebP/AVIF & Optimize Images
+ * Description: Generate AI-powered alt text and image SEO fields for your WordPress media library. Configure the plugin in <a href="/wp-admin/options-general.php?page=wp-spaatg-settings" target="_blank">Settings &gt; ShortPixel AI Alt Text Generator</a>.
+ * Version: 6.4.4.5
+ * Author: ShortPixel
  * Author URI: https://shortpixel.com
  * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-image-optimiser
  * Text Domain: shortpixel-image-optimiser
@@ -17,77 +17,77 @@
  }
 
 // Preventing double load crash.
-if (function_exists('wpSPIO'))
+if (function_exists('wpSPAATG'))
 {
     add_action('admin_notices', function () {
       echo '<div class="error"><h4>';
-      printf(esc_html__('ShortPixel plugin already loaded. You might have two versions active. Not loaded: %s', 'shortpixel-image-optimiser'), __FILE__);
+      printf(esc_html__('ShortPixel AI Alt Text Generator plugin already loaded. You might have two versions active. Not loaded: %s', 'shortpixel-image-optimiser'), __FILE__);
       echo '</h4></div>';
     });
     return;
 }
 
-if (! defined('SHORTPIXEL_RESET_ON_ACTIVATE'))
-  define('SHORTPIXEL_RESET_ON_ACTIVATE', false);
+if (! defined('SPAATG_RESET_ON_ACTIVATE'))
+  define('SPAATG_RESET_ON_ACTIVATE', false);
 
-//define('SHORTPIXEL_DEBUG', true);
-//define('SHORTPIXEL_DEBUG_TARGET', true);
+//define('SPAATG_DEBUG', true);
+//define('SPAATG_DEBUG_TARGET', true);
 
-define('SHORTPIXEL_PLUGIN_FILE', __FILE__);
-define('SHORTPIXEL_PLUGIN_DIR', __DIR__);
+define('SPAATG_PLUGIN_FILE', __FILE__);
+define('SPAATG_PLUGIN_DIR', __DIR__);
 
-define('SHORTPIXEL_IMAGE_OPTIMISER_VERSION', "6.4.4");
+define('SPAATG_IMAGE_OPTIMISER_VERSION', "6.4.4.5");
 
-define('SHORTPIXEL_BACKUP', 'ShortpixelBackups');
-define('SHORTPIXEL_MAX_FAIL_RETRIES', 3);
+define('SPAATG_BACKUP', 'ShortpixelBackups');
+define('SPAATG_MAX_FAIL_RETRIES', 3);
 
-if(!defined('SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION')) { //can be defined in wp-config.php
-    define('SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION', false);
+if(!defined('SPAATG_USE_DOUBLE_WEBP_EXTENSION')) { //can be defined in wp-config.php
+    define('SPAATG_USE_DOUBLE_WEBP_EXTENSION', false);
 }
 
-if(!defined('SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION')) { //can be defined in wp-config.php
-    define('SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION', false);
+if(!defined('SPAATG_USE_DOUBLE_AVIF_EXTENSION')) { //can be defined in wp-config.php
+    define('SPAATG_USE_DOUBLE_AVIF_EXTENSION', false);
 }
 
-define('SHORTPIXEL_API', 'api.shortpixel.com');
+define('SPAATG_API', 'api.shortpixel.com');
 
 $max_exec = intval(ini_get('max_execution_time'));
 if ($max_exec === 0) // max execution time of zero means infinite. Quantify.
   $max_exec = 60;
 elseif($max_exec < 0) // some hosts like to set negative figures on this. Ignore that.
   $max_exec = 30;
-define('SHORTPIXEL_MAX_EXECUTION_TIME', $max_exec);
+define('SPAATG_MAX_EXECUTION_TIME', $max_exec);
 
 // ** Load the modules */
-require_once(SHORTPIXEL_PLUGIN_DIR . '/build/shortpixel/autoload.php');
+require_once(SPAATG_PLUGIN_DIR . '/build/shortpixel/autoload.php');
 
 $sp__uploads = wp_get_upload_dir();
 
-define('SHORTPIXEL_UPLOADS_BASE', (file_exists($sp__uploads['basedir']) ? '' : ABSPATH) . $sp__uploads['basedir'] );
-define('SHORTPIXEL_UPLOADS_URL', is_main_site() ? $sp__uploads['baseurl'] : dirname(dirname($sp__uploads['baseurl'])));
-define('SHORTPIXEL_UPLOADS_NAME', basename(is_main_site() ? SHORTPIXEL_UPLOADS_BASE : dirname(dirname(SHORTPIXEL_UPLOADS_BASE))));
-$sp__backupBase = is_main_site() ? SHORTPIXEL_UPLOADS_BASE : dirname(dirname(SHORTPIXEL_UPLOADS_BASE));
-define('SHORTPIXEL_BACKUP_FOLDER', $sp__backupBase . '/' . SHORTPIXEL_BACKUP);
+define('SPAATG_UPLOADS_BASE', (file_exists($sp__uploads['basedir']) ? '' : ABSPATH) . $sp__uploads['basedir'] );
+define('SPAATG_UPLOADS_URL', is_main_site() ? $sp__uploads['baseurl'] : dirname(dirname($sp__uploads['baseurl'])));
+define('SPAATG_UPLOADS_NAME', basename(is_main_site() ? SPAATG_UPLOADS_BASE : dirname(dirname(SPAATG_UPLOADS_BASE))));
+$sp__backupBase = is_main_site() ? SPAATG_UPLOADS_BASE : dirname(dirname(SPAATG_UPLOADS_BASE));
+define('SPAATG_BACKUP_FOLDER', $sp__backupBase . '/' . SPAATG_BACKUP);
 
 
 
-//define('SHORTPIXEL_SILENT_MODE', true); // no global notifications. Can lead to data damage. After setting, reactivate plugin.
-//define('SHORTPIXEL_TRUSTED_MODE', false); // doesn't do any file checks on the view-side of things.
-// define('SHORTPIXEL_SKIP_FEEDBACK', true);
+//define('SPAATG_SILENT_MODE', true); // no global notifications. Can lead to data damage. After setting, reactivate plugin.
+//define('SPAATG_TRUSTED_MODE', false); // doesn't do any file checks on the view-side of things.
+// define('SPAATG_SKIP_FEEDBACK', true);
 
 // Starting logging services, early as possible.
-if (! defined('SHORTPIXEL_DEBUG'))
+if (! defined('SPAATG_DEBUG'))
 {
-    define('SHORTPIXEL_DEBUG', false);
+    define('SPAATG_DEBUG', false);
 }
 
 
 if (false === defined( 'WP_CLI' ) || false === WP_CLI)
 {
-	$log = \ShortPixel\ShortPixelLogger\ShortPixelLogger::getInstance();
-	if (\ShortPixel\ShortPixelLogger\ShortPixelLogger::debugIsActive() )
+	$log = \SPAATG\ShortPixelLogger\ShortPixelLogger::getInstance();
+	if (\SPAATG\ShortPixelLogger\ShortPixelLogger::debugIsActive() )
 	{
-  	$log->setLogPath(SHORTPIXEL_BACKUP_FOLDER . "/shortpixel_log");
+  	$log->setLogPath(SPAATG_BACKUP_FOLDER . "/shortpixel_log");
 	}
 }
 
@@ -95,23 +95,23 @@ if (false === defined( 'WP_CLI' ) || false === WP_CLI)
 * Use to get plugin url, plugin path, or certain core controllers
 */
 
-if (! function_exists("wpSPIO"))	{
-  function wpSPIO()
+if (! function_exists("wpSPAATG"))	{
+  function wpSPAATG()
   {
-     return \ShortPixel\ShortPixelPlugin::getInstance();
+     return \SPAATG\ShortPixelPlugin::getInstance();
   }
 }
 // Start runtime here
-require_once(SHORTPIXEL_PLUGIN_DIR . '/shortpixel-plugin.php'); // loads runtime and needed classes.
+require_once(SPAATG_PLUGIN_DIR . '/shortpixel-plugin.php'); // loads runtime and needed classes.
 
 // PSR-4 package loader.
-$loader = new ShortPixel\Build\PackageLoader();
-$loader->setComposerFile(SHORTPIXEL_PLUGIN_DIR . '/class/plugin.json');
-$loader->load(SHORTPIXEL_PLUGIN_DIR);
+$loader = new SPAATG\Build\PackageLoader();
+$loader->setComposerFile(SPAATG_PLUGIN_DIR . '/class/plugin.json');
+$loader->load(SPAATG_PLUGIN_DIR);
 
-wpSPIO(); // let's go!
+wpSPAATG(); // let's go!
 
 // Activation / Deactivation services
-register_activation_hook( __FILE__, array('\ShortPixel\Helper\InstallHelper','activatePlugin') );
-register_deactivation_hook( __FILE__,  array('\ShortPixel\Helper\InstallHelper','deactivatePlugin') );
-register_uninstall_hook(__FILE__,  array('\ShortPixel\Helper\InstallHelper','uninstallPlugin') );
+register_activation_hook( __FILE__, array('\SPAATG\Helper\InstallHelper','activatePlugin') );
+register_deactivation_hook( __FILE__,  array('\SPAATG\Helper\InstallHelper','deactivatePlugin') );
+register_uninstall_hook(__FILE__,  array('\SPAATG\Helper\InstallHelper','uninstallPlugin') );

@@ -6,19 +6,19 @@
 	{
 		 return;
 	}
-	var ShortPixelFilter = wp.media.view.AttachmentFilters.extend
+	var SPAATGFilter = wp.media.view.AttachmentFilters.extend
 	({
-		id: 'shortpixel-media-filter',
+		id: 'spaatg-media-filter',
 
 		createFilters: function() {
 			 var filters = {};
-			 var optimizedfilter = spio_media.mediafilters.optimized;
+			 var optimizedfilter = spaatg_media.mediafilters.optimized;
 
 			 for (const [key,value] of Object.entries(optimizedfilter))
 			 {
 				  filters[key] =  {
 						 text: value,
-						 props: { 'shortpixel_status': key },
+						 props: { 'spaatg_status': key },
 						 priority: 10,
 					}
 			 };
@@ -26,7 +26,7 @@
 			 this.filters = filters;
 		}
 
-	}); // ShortPixelFilter
+	}); // SPAATGFilter
 
 	var AttachmentsBrowser = wp.media.view.AttachmentsBrowser;
 
@@ -37,8 +37,8 @@
 			AttachmentsBrowser.prototype.createToolbar.call( this );
 
 			this.toolbar.set(
-				'ShortPixelFilter',
-				new ShortPixelFilter({
+				'SPAATGFilter',
+				new SPAATGFilter({
 					controller: this.controller,
 					model:      this.collection.props,
 					priority:   -80

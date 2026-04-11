@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 if ( ! defined( 'ABSPATH' ) ) {

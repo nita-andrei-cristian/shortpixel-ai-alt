@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel\ShortQ\Queue;
-use ShortPixel\ShortQ\Item as Item;
+namespace SPAATG\ShortQ\Queue;
+use SPAATG\ShortQ\Item as Item;
 
 
 

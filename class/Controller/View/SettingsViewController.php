@@ -1,35 +1,35 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
+use SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\InstallHelper as InstallHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\SettingsModel as SettingsModel;
-use ShortPixel\Model\ApiKeyModel as ApiKeyModel;
+use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Model\SettingsModel as SettingsModel;
+use SPAATG\Model\ApiKeyModel as ApiKeyModel;
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QueueController as QueueController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\BulkController as BulkController;
+use SPAATG\Controller\StatsController as StatsController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\QueueController as QueueController;
 
-use ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\View\BulkViewController as BulkViewController;
-use ShortPixel\External\Offload\Offloader;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\NextGenController as NextGenController;
+use SPAATG\Controller\CacheController as CacheController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\View\BulkViewController as BulkViewController;
+use SPAATG\External\Offload\Offloader;
+use SPAATG\Model\AiDataModel;
+use SPAATG\NextGenController as NextGenController;
 
-class SettingsViewController extends \ShortPixel\ViewController
+class SettingsViewController extends \SPAATG\ViewController
 {
 
      //env
@@ -65,7 +65,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
       public function __construct()
       {
-          $this->model = \wpSPIO()->settings();
+          $this->model = \wpSPAATG()->settings();
 					$keyControl = ApiKeyController::getInstance();
           $this->keyModel = $keyControl->getKeyModel();
 
@@ -151,7 +151,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
 
 					$bodyArgs = array(
-							'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+							'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
 							'email' => $email,
 							'ip' => isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? sanitize_text_field($_SERVER["HTTP_X_FORWARDED_FOR"]) : sanitize_text_field($_SERVER['REMOTE_ADDR']),
 					);
@@ -189,7 +189,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 							$valid = $this->keyModel->checkKey($key);
 
 	            if($valid === true) {
-	                \ShortPixel\Controller\AdminNoticesController::resetAPINotices();
+	                \SPAATG\Controller\AdminNoticesController::resetAPINotices();
 
 	            }
 							$this->doRedirect('reload');
@@ -400,7 +400,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 				global $wpdb;
 				$sql = 'delete from ' . $wpdb->postmeta . ' where meta_key = %s';
 
-				$sql = $wpdb->prepare($sql, '_shortpixel_prevent_optimize');
+				$sql = $wpdb->prepare($sql, '_spaatg_prevent_optimize');
 
 				$wpdb->query($sql);
 
@@ -515,7 +515,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
          // @todo this might be converted at some point tho view->env or something to divide better. 
          $offLoader = Offloader::getInstance();
-         $this->view->cloudflare_constant = defined('SHORTPIXEL_CFTOKEN') ? true : false;
+         $this->view->cloudflare_constant = defined('SPAATG_CFTOKEN') ? true : false;
          $this->view->is_unlimited =  (!is_null($this->quotaData) && $this->quotaData->unlimited) ? true : false;
          $this->view->is_wpoffload = $offLoader->isActive('wp-offload');
 
@@ -527,7 +527,7 @@ class SettingsViewController extends \ShortPixel\ViewController
          if (true === $bool )
             $this->view->hide_banner = true; 
 
-         if ( defined('SHORTPIXEL_NO_BANNER') && SHORTPIXEL_NO_BANNER == true)
+         if ( defined('SPAATG_NO_BANNER') && SPAATG_NO_BANNER == true)
          {
            $this->view->hide_banner = true; 
          }
@@ -535,7 +535,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
          //$this->view->latest_ai = $this->getLatestAIExamples();
 
-         $settings = \wpSPIO()->settings();
+         $settings = \wpSPAATG()->settings();
 
 				 if ($this->view->data->createAvif == 1)
            $this->avifServerCheck();
@@ -551,7 +551,7 @@ class SettingsViewController extends \ShortPixel\ViewController
             $view_mode = 'page-quick-tour';
          }
 				 else {
-					 $view_mode = get_user_option('shortpixel-settings-mode');
+					 $view_mode = get_user_option('spaatg-settings-mode');
 	         if (false === $view_mode)
            {
 	          $view_mode = $this->view_mode;
@@ -584,7 +584,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 						/*
 						$mainblock->ok = false;
             $mainblock->header = __('Issue with API Key', 'shortpixel-image-optimiser');
-            $mainblock->message = __('Add your API Key to start optimizing', 'shortpixel-image-optimiser');
+            $mainblock->message = __('Add your API Key to start generating alt text', 'shortpixel-image-optimiser');
             $mainblock->cocktail = false;
             $mainblock->icon = 'alert';
 						*/
@@ -623,7 +623,7 @@ class SettingsViewController extends \ShortPixel\ViewController
         $bulkblock = new \stdClass;
         $bulkblock->icon = 'ok';
         $bulkblock->message = $message;
-        $bulkblock->link = admin_url("upload.php?page=wp-short-pixel-bulk");
+        $bulkblock->link = admin_url("upload.php?page=wp-spaatg-bulk");
         $bulkblock->show_button = (count($logs) == 0) ? true : false;
 
         $this->view->dashboard->bulkblock = $bulkblock;
@@ -684,7 +684,7 @@ class SettingsViewController extends \ShortPixel\ViewController
       /** Checks on things and set them for information. */
       protected function loadEnv()
       {
-          $env = wpSPIO()->env();
+          $env = wpSPAATG()->env();
 
           $this->is_nginx = $env->is_nginx;
           $this->has_image_library = ($env->is_gd_installed || $env->is_imagick_installed); // Any library 
@@ -696,7 +696,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           $this->is_mainsite = $env->is_mainsite;
           $this->has_nextgen = $env->has_nextgen;
 
-          $this->disable_heavy_features = (false === \wpSPIO()->env()->useVirtualHeavyFunctions()) ? true : false;
+          $this->disable_heavy_features = (false === \wpSPAATG()->env()->useVirtualHeavyFunctions()) ? true : false;
 
           $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'overview';
       }
@@ -714,7 +714,7 @@ class SettingsViewController extends \ShortPixel\ViewController
 
           $args = wp_parse_args($args, $defaults);
 
-          $link = esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=' . $args['part'] ));
+          $link = esc_url(admin_url('options-general.php?page=wp-spaatg-settings&part=' . $args['part'] ));
           $active = ($this->display_part == $args['part']) ? ' active ' : '';
 
           $title = $args['title'];
@@ -743,7 +743,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           if ($this->is_nginx)
             return false;
 
-					$file = \wpSPIO()->filesystem()->getFile(get_home_path() . '.htaccess');
+					$file = \wpSPAATG()->filesystem()->getFile(get_home_path() . '.htaccess');
 					if ($file->is_writable())
 					{
 						 return true;
@@ -852,7 +852,7 @@ class SettingsViewController extends \ShortPixel\ViewController
           $setting_useCDN = $this->model->useCDN; 
           $setting_CDNDomain = $this->model->CDNDomain; 
 
-          $CDNcontroller = new \ShortPixel\Controller\Front\CDNController();
+          $CDNcontroller = new \SPAATG\Controller\Front\CDNController();
 
           if ($post_useCDN !== $setting_useCDN)
           {
@@ -1075,23 +1075,23 @@ class SettingsViewController extends \ShortPixel\ViewController
         }
         elseif('bulk' == $redirect )
         {
-          $url = admin_url("upload.php?page=wp-short-pixel-bulk");
+          $url = admin_url("upload.php?page=wp-spaatg-bulk");
         }
 				elseif('bulk-migrate' == $redirect)
 				{
-					 $url = admin_url('upload.php?page=wp-short-pixel-bulk&panel=bulk-migrate');
+					 $url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-migrate');
 				}
 				elseif ('bulk-restore' == $redirect)
 				{
-						$url = admin_url('upload.php?page=wp-short-pixel-bulk&panel=bulk-restore');
+						$url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-restore');
 				}
         elseif ('bulk-restoreAI' == $redirect)
         {
-            $url = admin_url('upload.php?page=wp-short-pixel-bulk&panel=bulk-restoreAI');
+            $url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-restoreAI');
         }
 				elseif ('bulk-removeLegacy' == $redirect)
 				{
-						$url = admin_url('upload.php?page=wp-short-pixel-bulk&panel=bulk-removeLegacy');
+						$url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-removeLegacy');
 				}
 
         if (true === $this->is_ajax_save)

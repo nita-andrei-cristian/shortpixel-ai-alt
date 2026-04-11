@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
+use SPAATG\Notices\NoticeController as Notices;
 
 
 abstract class AdminNoticeModel

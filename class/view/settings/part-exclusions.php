@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
-use \ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+namespace SPAATG;
+use \SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -105,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) {
      <content>
          <info>
            <?php
-           printf(esc_html__('Use this section to exclude images based on specific patterns. There are three exclusion types: by file name, file path or file size. Each exclusion type can be applied to: all images and their thumbnails (including scaled or original images), only thumbnails (in which case the original and scaled images are not excluded), only Custom Media images (Media Library items are not affected by this exclusion) or a specific selection of thumbnails. Examples can be found in the fold-out section below.','shortpixel-image-optimiser'),
+           printf(esc_html__('Use this section to exclude images based on specific patterns. There are three exclusion types: by file name, file path or file size. Each exclusion type can be applied to: all images and their thumbnails (including scaled or original images), only thumbnails (in which case the original and scaled images are not excluded) or a specific selection of thumbnails. Examples can be found in the fold-out section below.','shortpixel-image-optimiser'),
              '<b>','</b>',
              '<b>','</b>'
            );
@@ -306,8 +306,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                            <select name='apply-select' class='thumbnail-type-option'>
                                <option value='all'><?php _e('All Images', 'shortpixel-image-optimiser'); ?></option>
                                <option value='only-thumbs'><?php _e('Only Thumbnails','shortpixel-image-optimiser'); ?>
-                               </option>
-                               <option value='only-custom'><?php _e('Only Custom Media images', 'shortpixel-image-optimiser'); ?>
                                </option>
                                <option value='selected-thumbs'><?php _e('Selected thumbnails', 'shortpixel-image-optimiser'); ?></option>
                            </select>

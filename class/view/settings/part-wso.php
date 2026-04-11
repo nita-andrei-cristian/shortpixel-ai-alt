@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -15,7 +15,7 @@ if (true === $view->hide_banner)
 <section class='wso banner'>
     <span class="image">
       <a href="https://fastpixel.io/?utm_source=SPIO" target="_blank">
-      <img src="<?php echo \wpSPIO()->plugin_url() ?>res/img/fastpixel-logo.svg" />
+      <img src="<?php echo \wpSPAATG()->plugin_url() ?>res/img/fastpixel-logo.svg" />
     </a>
     </span>
     <span class="line"><h3>

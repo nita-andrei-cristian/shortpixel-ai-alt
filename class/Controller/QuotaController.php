@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 class QuotaController
 {
@@ -32,7 +32,7 @@ class QuotaController
      */
     public function hasQuota()
     {
-      $settings = \wpSPIO()->settings();
+      $settings = \wpSPAATG()->settings();
 
       if ($settings->quotaExceeded)
 			{
@@ -156,7 +156,7 @@ class QuotaController
      */
 		public function setQuotaExceeded()
 		{
-			  $settings = \wpSPIO()->settings();
+			  $settings = \wpSPAATG()->settings();
 				$settings->quotaExceeded = 1;
 				$this->forceCheckRemoteQuota(); // remove the previous cache.
 		}
@@ -166,7 +166,7 @@ class QuotaController
      */
     private function resetQuotaExceeded()
     {
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
 
         AdminNoticesController::resetAPINotices();
 
@@ -193,13 +193,13 @@ class QuotaController
           $apiKey = $keyControl->forceGetApiKey();
         }
 
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
 
           if($settings->httpProto != 'https' && $settings->httpProto != 'http') {
               $settings->httpProto = 'https';
           }
 
-          $requestURL = $settings->httpProto . '://' . SHORTPIXEL_API . '/v2/api-status.php';
+          $requestURL = $settings->httpProto . '://' . SPAATG_API . '/v2/api-status.php';
 
           $args = array(
               'timeout'=> 15, // wait for 15 secs.
@@ -229,10 +229,10 @@ class QuotaController
 
           $args['body']['host'] = parse_url(get_site_url(),PHP_URL_HOST);
           $argsStr .= "&host={$args['body']['host']}";
-					if (defined('SHORTPIXEL_HTTP_AUTH_USER') && defined('SHORTPIXEL_HTTP_AUTH_PASSWORD'))
+					if (defined('SPAATG_HTTP_AUTH_USER') && defined('SPAATG_HTTP_AUTH_PASSWORD'))
 					{
-						$args['body']['user'] = stripslashes(SHORTPIXEL_HTTP_AUTH_USER);
-						$args['body']['pass'] = stripslashes(SHORTPIXEL_HTTP_AUTH_PASSWORD);
+						$args['body']['user'] = stripslashes(SPAATG_HTTP_AUTH_USER);
+						$args['body']['pass'] = stripslashes(SPAATG_HTTP_AUTH_PASSWORD);
 						$argsStr .= '&user=' . urlencode($args['body']['user']) . '&pass=' . urlencode($args['body']['pass']);
 					}
           elseif(! is_null($settings->siteAuthUser) && strlen($settings->siteAuthUser)) {

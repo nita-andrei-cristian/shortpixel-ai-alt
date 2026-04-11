@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\External\Themes;
+namespace SPAATG\External\Themes;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 class TotalTheme
 {
@@ -18,7 +18,7 @@ class TotalTheme
 
   public function resizeImage($attachment_id, $size)
   {
-    $image = \wpSPIO()->filesystem()->getMediaImage($attachment_id);
+    $image = \wpSPAATG()->filesystem()->getMediaImage($attachment_id);
 
     if (! is_object($image))
     {

@@ -1,15 +1,15 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use \ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use \SPAATG\Controller\CacheController as CacheController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
+class AvifNotice extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_AVIF_ERROR';
 	protected $errorLevel = 'error';
@@ -35,7 +35,7 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
 
 		if ($cache->getItem('avif_server_check')->exists() === false)
 		{
-			 $url = \WPSPIO()->plugin_url('res/img/test.avif');
+			 $url = \wpSPAATG()->plugin_url('res/img/test.avif');
 			 $headers = get_headers($url);
 			 $is_error = true;
 
@@ -104,7 +104,7 @@ class AvifNotice extends \ShortPixel\Model\AdminNoticeModel
 			$message = '<h4>' . $this->error_message . '</h4><p>' . $this->error_detail . '</p><p class="small">' . __('Returned headers for:<br>', 'shortpixel-image-optimiser') . print_r($headers, true) .  '</p>';
 
       $message .= '<div>
-        <button class="button button-primary notice-dismiss-action" data-dismisstype="remove" type="button" id="shortpixel-upgrade-advice" style="margin-right:10px;"><strong>' .  __('Dismiss and try again on next page load', 'shortpixel-image-optimiser') . '</strong></button>
+        <button class="button button-primary notice-dismiss-action" data-dismisstype="remove" type="button" id="spaatg-upgrade-advice" style="margin-right:10px;"><strong>' .  __('Dismiss and try again on next page load', 'shortpixel-image-optimiser') . '</strong></button>
         </div>';
 
 			return $message;

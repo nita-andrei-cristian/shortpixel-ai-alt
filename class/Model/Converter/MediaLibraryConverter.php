@@ -1,13 +1,13 @@
 <?php
 
-namespace ShortPixel\Model\Converter;
+namespace SPAATG\Model\Converter;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Replacer\Replacer as Replacer;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Replacer\Replacer as Replacer;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 /* Abstract base to use for image converters. Handles media library related functions ( replacing )  */
 
@@ -27,7 +27,7 @@ abstract class MediaLibraryConverter extends Converter
 	protected function setupReplacer()
 	{
 		$this->replacer = new Replacer();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		$url = $fs->pathToUrl($this->imageModel);
 
@@ -44,7 +44,7 @@ abstract class MediaLibraryConverter extends Converter
 
 	protected function setTarget($newFile)
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$this->newFile = $newFile; // set target newFile.
 
 		$url = $fs->pathToUrl($this->imageModel);

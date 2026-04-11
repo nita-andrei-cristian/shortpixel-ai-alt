@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 // Image gallery plugins that require a few small extra's
 class ImageGalleries
@@ -21,19 +21,19 @@ class ImageGalleries
 	// @integration Soliloquy
   public function addConstants()
   {
-    //if( !defined('SHORTPIXEL_CUSTOM_THUMB_SUFFIXES')) {
+    //if( !defined('SPAATG_CUSTOM_THUMB_SUFFIXES')) {
 
 
-    if (\wpSPIO()->env()->plugin_active('envira') || \wpSPIO()->env()->plugin_active('soliquy') )
+    if (\wpSPAATG()->env()->plugin_active('envira') || \wpSPAATG()->env()->plugin_active('soliquy') )
 		{
 
 						add_filter('shortpixel/image/unlisted_suffixes', array($this, 'envira_suffixes'));
-            //define('SHORTPIXEL_CUSTOM_THUMB_SUFFIXES', '_c,_tl,_tr,_br,_bl');
+            //define('SPAATG_CUSTOM_THUMB_SUFFIXES', '_c,_tl,_tr,_br,_bl');
     //    }
 
 		// not in use?
-    //    elseif(defined('SHORTPIXEL_CUSTOM_THUMB_SUFFIX')) {
-    //        define('SHORTPIXEL_CUSTOM_THUMB_SUFFIXES', SHORTPIXEL_CUSTOM_THUMB_SUFFIX);
+    //    elseif(defined('SPAATG_CUSTOM_THUMB_SUFFIX')) {
+    //        define('SPAATG_CUSTOM_THUMB_SUFFIXES', SPAATG_CUSTOM_THUMB_SUFFIX);
     //    }
     }
 

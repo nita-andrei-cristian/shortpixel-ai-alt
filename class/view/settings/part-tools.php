@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
-use \ShortPixel\Controller\BulkController as BulkController;
-use \ShortPixel\Helper\UiHelper as UiHelper;
+namespace SPAATG;
+use \SPAATG\Controller\BulkController as BulkController;
+use \SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -41,7 +41,7 @@ $queueRunning = $bulk->isAnyBulkRunning();
                 <i class='documentation down dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/spio-5-tells-me-to-convert-legacy-data-what-is-this/?target=iframe"></i>
 
                 <info>
-                  <?php printf(esc_html__('ShortPixel Image Optimizer version 5.0 brings a new format for saving the image optimization information. If you have upgraded from a version prior to version 5.0, you may want to convert all your image data to the new format. This conversion will speed up the plugin and ensure that all data is preserved. %sThis process is also useful for resolving errors that may occur during optimization due to leftover metadata.%s', 'shortpixel-image-optimiser'), '<br><b>', '</b>') ?>
+                  <?php printf(esc_html__('ShortPixel AI Alt Text Generator version 5.0 brings a new format for saving the image optimization information. If you have upgraded from a version prior to version 5.0, you may want to convert all your image data to the new format. This conversion will speed up the plugin and ensure that all data is preserved. %sThis process is also useful for resolving errors that may occur during optimization due to leftover metadata.%s', 'shortpixel-image-optimiser'), '<br><b>', '</b>') ?>
                 </info>
             </content>
     <!--        <name>

@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Replacer\Modules;
+namespace SPAATG\Replacer\Modules;
 
 class Elementor
 {

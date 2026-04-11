@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
-use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
+use SPAATG\Controller\Queue\CustomQueue as CustomQueue;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 // Future contoller for the edit media metabox view.
-class OtherMediaViewController extends \ShortPixel\ViewController
+class OtherMediaViewController extends \SPAATG\ViewController
 {
       //$this->model = new
       protected $template = 'view-other-media';
@@ -116,7 +116,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
       protected function getItems()
       {
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
           // [BS] Moving this from ts_added since often images get added at the same time, resulting in unpredictable sorting
           $items = $this->queryItems();
@@ -361,11 +361,11 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 
 					 // Try with controller URL, if not present, try with upload URL and page param.
 	         $admin_url = admin_url('upload.php');
-	         $url = (is_null($this->url)) ?  add_query_arg('page','wp-short-pixel-custom', $admin_url) : $this->url; // has url
+	         $url = (is_null($this->url)) ?  add_query_arg('page','wp-spaatg-custom', $admin_url) : $this->url; // has url
 					 $current_url = add_query_arg($page_args, $url);
 
 					 $url = remove_query_arg('page', $url);
-					 $page_args['page'] = 'wp-short-pixel-custom';
+					 $page_args['page'] = 'wp-spaatg-custom';
 
            $output = '<form method="GET" action="'. esc_attr($url) . '">';
 					 foreach($page_args as $arg => $val)
@@ -447,7 +447,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
       protected function getRowActions($item)
       {
 
-          $settings = \wpSPIO()->settings();
+          $settings = \wpSPAATG()->settings();
 
           $keyControl = ApiKeyController::getInstance();
 
@@ -474,7 +474,7 @@ class OtherMediaViewController extends \ShortPixel\ViewController
 			public function doActionColumn($item)
 			{
           ?>
-					<div id='shortpixel-data-<?php echo esc_attr($item->get('id')) ?>'  class='sp-column-info'><?php
+					<div id='spaatg-data-<?php echo esc_attr($item->get('id')) ?>'  class='sp-column-info'><?php
 							$this->printItemActions($item);
 
             echo "<div>" .  UiHelper::getStatusText($item) . "</div>";

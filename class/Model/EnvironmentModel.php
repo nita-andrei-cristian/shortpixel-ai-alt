@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 /** Loads a few environment variables handy to have nearby
 *
-* Notice - This is meant to be loaded via the plugin class. Easy access with wpSPIO()->getEnv().
+* Notice - This is meant to be loaded via the plugin class. Easy access with wpSPAATG()->getEnv().
 */
-class EnvironmentModel extends \ShortPixel\Model
+class EnvironmentModel extends \SPAATG\Model
 {
     // Server and PHP
     public $is_nginx;
@@ -172,7 +172,7 @@ class EnvironmentModel extends \ShortPixel\Model
   /* https://github.com/WordPress/WordPress/blob/master/wp-includes/class-wp-image-editor-imagick.php */
   public function hasImagick()
   {
-    $editor = wp_get_image_editor(\wpSPIO()->plugin_path('res/img/test.jpg'));
+    $editor = wp_get_image_editor(\wpSPAATG()->plugin_path('res/img/test.jpg'));
     $className = get_class($editor);
 
     if ($className == 'WP_Image_Editor_Imagick')
@@ -183,7 +183,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function hasOffload()
 	{
-			$off = \ShortPixel\External\Offload\Offloader::getInstance();
+			$off = \SPAATG\External\Offload\Offloader::getInstance();
 			$name = $off->getOffloadName();
 			if (is_null($name))
 				return false;
@@ -193,7 +193,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function getOffloadName()
   {
-    $off = \ShortPixel\External\Offload\Offloader::getInstance();
+    $off = \SPAATG\External\Offload\Offloader::getInstance();
     $name = $off->getOffloadName();
     return $name;
   }
@@ -230,13 +230,13 @@ class EnvironmentModel extends \ShortPixel\Model
 
     $this->determineFrontBack();
 
-    $this->is_ajaxcall = wp_doing_ajax();
-		$this->is_jsoncall = wp_is_json_request();
-		$this->is_croncall = wp_doing_cron();
+    $this->is_ajaxcall = (function_exists('wp_doing_ajax') && wp_doing_ajax());
+		$this->is_jsoncall = (function_exists('wp_is_json_request') && wp_is_json_request());
+		$this->is_croncall = (function_exists('wp_doing_cron') && wp_doing_cron());
 
     $this->is_debug = Log::debugIsActive();
 
-    if (\wpSPIO()->settings()->autoMediaLibrary == 1)
+    if (\wpSPAATG()->settings()->autoMediaLibrary == 1)
       $this->is_autoprocess = true;
 
     
@@ -246,7 +246,9 @@ class EnvironmentModel extends \ShortPixel\Model
   // check if this request is front or back.
   protected function determineFrontBack()
   {
-    if ( is_admin() || wp_doing_ajax() )
+    $is_ajax = (function_exists('wp_doing_ajax') && wp_doing_ajax());
+
+    if ( is_admin() || $is_ajax )
       $this->is_admin = true;
     else
       $this->is_front = true;
@@ -277,7 +279,7 @@ class EnvironmentModel extends \ShortPixel\Model
     }
 
     // Our pages.
-    $admin_pages = \wpSPIO()->get_admin_pages();
+    $admin_pages = \wpSPAATG()->get_admin_pages();
     // the main WP pages where SPIO hooks a lot of functions into, our operating area.
     $wp_pages = array('upload', 'attachment');
     $pages = array_merge($admin_pages, $wp_pages);
@@ -299,7 +301,7 @@ class EnvironmentModel extends \ShortPixel\Model
        $this->is_our_screen = true;
        }
 			 // Strpos instead of full screen id, because the first page (media_page) is not reliable and can change.
-       if ( strpos($screen->id, 'wp-short-pixel-bulk') !== false)
+       if ( strpos($screen->id, 'wp-spaatg-bulk') !== false)
         $this->is_bulk_page = true;
     }
 		elseif (is_object($screen) && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
@@ -320,14 +322,14 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function setIntegrations()
   {
-    $ng = \ShortPixel\NextGenController::getInstance();
+    $ng = \SPAATG\NextGenController::getInstance();
     $this->has_nextgen = $ng->has_nextgen();
   }
 
   //set default move as "list". only set once, it won't try to set the default mode again.
   public function setDefaultViewModeList()
   {
-      $settings = \wpSPIO()->settings();
+      $settings = \wpSPAATG()->settings();
       if( $settings->mediaLibraryViewMode == false)
       {
           $settings->mediaLibraryViewMode = 1;
@@ -343,10 +345,10 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function getRelativePluginSlug()
   {
-      $dir = SHORTPIXEL_PLUGIN_DIR;
-      $file = SHORTPIXEL_PLUGIN_FILE;
+      $dir = SPAATG_PLUGIN_DIR;
+      $file = SPAATG_PLUGIN_FILE;
 
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       $plugins_dir = $fs->getDirectory($dir)->getParent();
 
@@ -357,7 +359,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
   public function useDoubleWebpExtension()
   {
-      if (defined('SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION') && SHORTPIXEL_USE_DOUBLE_WEBP_EXTENSION)
+      if (defined('SPAATG_USE_DOUBLE_WEBP_EXTENSION') && SPAATG_USE_DOUBLE_WEBP_EXTENSION)
         return true;
 
       return false;
@@ -365,7 +367,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function useDoubleAvifExtension()
   {
-      if (defined('SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION') && SHORTPIXEL_USE_DOUBLE_AVIF_EXTENSION)
+      if (defined('SPAATG_USE_DOUBLE_AVIF_EXTENSION') && SPAATG_USE_DOUBLE_AVIF_EXTENSION)
         return true;
 
       return false;
@@ -373,7 +375,7 @@ class EnvironmentModel extends \ShortPixel\Model
 
 	public function useTrustedMode()
 	{
-		 if (defined('SHORTPIXEL_TRUSTED_MODE') && true === SHORTPIXEL_TRUSTED_MODE)
+		 if (defined('SPAATG_TRUSTED_MODE') && true === SPAATG_TRUSTED_MODE)
 		 {
 			 	return true;
 		 }

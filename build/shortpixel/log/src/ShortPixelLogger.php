@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\ShortPixelLogger;
+namespace SPAATG\ShortPixelLogger;
 
   /*** Logger class
   *
@@ -41,8 +41,8 @@ namespace ShortPixel\ShortPixelLogger;
    protected $template = 'view-debug-box';
 
    /** Debugger constructor
-   *  Two ways to activate the debugger. 1) Define SHORTPIXEL_DEBUG in wp-config.php. Either must be true or a number corresponding to required LogLevel
-   *  2) Put SHORTPIXEL_DEBUG in the request. Either true or number.
+   *  Two ways to activate the debugger. 1) Define SPAATG_DEBUG in wp-config.php. Either must be true or a number corresponding to required LogLevel
+   *  2) Put SPAATG_DEBUG in the request. Either true or number.
    */
    public function __construct()
    {
@@ -53,35 +53,35 @@ namespace ShortPixel\ShortPixelLogger;
       $this->namespace = substr($ns, 0, strpos($ns, '\\')); // try to get first part of namespace
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-      if (isset($_REQUEST['SHORTPIXEL_DEBUG'])) // manual takes precedence over constants
+      if (isset($_REQUEST['SPAATG_DEBUG'])) // manual takes precedence over constants
       {
         $this->is_manual_request = true;
         $this->is_active = true;
 
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-        if ($_REQUEST['SHORTPIXEL_DEBUG'] === 'true')
+        if ($_REQUEST['SPAATG_DEBUG'] === 'true')
         {
           $this->logLevel = DebugItem::LEVEL_INFO;
         }
         else {
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
-          $this->logLevel = intval($_REQUEST['SHORTPIXEL_DEBUG']);
+          $this->logLevel = intval($_REQUEST['SPAATG_DEBUG']);
         }
 
       }
-      else if ( (defined('SHORTPIXEL_DEBUG') && SHORTPIXEL_DEBUG > 0) )
+      else if ( (defined('SPAATG_DEBUG') && SPAATG_DEBUG > 0) )
       {
             $this->is_active = true;
-            if (SHORTPIXEL_DEBUG === true)
+            if (SPAATG_DEBUG === true)
               $this->logLevel = DebugItem::LEVEL_INFO;
             else {
-              $this->logLevel = intval(SHORTPIXEL_DEBUG);
+              $this->logLevel = intval(SPAATG_DEBUG);
             }
       }
 
-      if (defined('SHORTPIXEL_DEBUG_TARGET') && SHORTPIXEL_DEBUG_TARGET || $this->is_manual_request)
+      if (defined('SPAATG_DEBUG_TARGET') && SPAATG_DEBUG_TARGET || $this->is_manual_request)
       {
-          if (defined('SHORTPIXEL_LOG_OVERWRITE')) // if overwrite, do this on init once.
+          if (defined('SPAATG_LOG_OVERWRITE')) // if overwrite, do this on init once.
             file_put_contents($this->logPath,'-- Log Reset -- ' .PHP_EOL);
 
       }

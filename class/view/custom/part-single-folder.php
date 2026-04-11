@@ -1,9 +1,9 @@
 <?php
 
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,7 +70,7 @@ if ($item->get('is_nextgen') && $view->settings->includeNextGen == 1)
     <span>
 
         <span title="<?php echo esc_attr($fullstatus); ?>" class='info-icon'>
-            <img alt='<?php esc_html_e('Info Icon', 'shortpixel-image-optimiser') ?>' src='<?php echo esc_url( wpSPIO()->plugin_url('res/img/info-icon.png' ));?>' style="margin-bottom: -2px;"/>
+            <img alt='<?php esc_html_e('Info Icon', 'shortpixel-image-optimiser') ?>' src='<?php echo esc_url( wpSPAATG()->plugin_url('res/img/info-icon.png' ));?>' style="margin-bottom: -2px;"/>
         </span>&nbsp;<?php
         //echo esc_html($type_display. ' ' );
         ?>

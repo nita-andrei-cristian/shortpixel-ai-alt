@@ -27,12 +27,12 @@
     "codeception/util-universalframework": "^1.0"
     },
    "autoload": {
-       "psr-4": { "ShortPixel\\" : "class" }
+       "psr-4": { "SPAATG\\" : "class" }
    },
     "scripts": {
-        "post-update-cmd" : "\\ShortPixel\\Build\\Build::BuildIt",
-        "buildSP" : "\\ShortPixel\\Build\\Build::BuildIt",
-        "buildLoader": "\\ShortPixel\\BuildAutoLoader::buildJSON"
+        "post-update-cmd" : "\\SPAATG\\Build\\Build::BuildIt",
+        "buildSP" : "\\SPAATG\\Build\\Build::BuildIt",
+        "buildLoader": "\\SPAATG\\BuildAutoLoader::buildJSON"
     },
     "extra": {
          "targetNamespace" : "ShortPixel"

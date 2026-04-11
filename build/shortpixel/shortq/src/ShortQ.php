@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel\ShortQ;
-//use \ShortPixel\ShortQ\Queue;
-//use \ShortPixel\ShortQ\DataProvider;
+namespace SPAATG\ShortQ;
+//use \SPAATG\ShortQ\Queue;
+//use \SPAATG\ShortQ\DataProvider;
 
 // init
 class ShortQ

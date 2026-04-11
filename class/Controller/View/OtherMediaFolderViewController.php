@@ -1,16 +1,16 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\InstallHelper as InstallHelper;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
 
-class OtherMediaFolderViewController extends \ShortPixel\ViewController
+class OtherMediaFolderViewController extends \SPAATG\ViewController
 {
 
   protected $template = 'view-other-media-folder';
@@ -34,7 +34,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
   {
     parent::__construct();
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
 		$this->controller = OtherMediaController::getInstance();
 
@@ -80,7 +80,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
   protected function loadSettings()
   {
 
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPAATG()->settings();
     $this->view->settings = new \stdclass;
     $this->view->settings->includeNextGen = $settings->includeNextGen;
 
@@ -96,14 +96,14 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
      $actions = array();
 
      $removeAction = array('remove' => array(
-        'function' => 'window.ShortPixelProcessor.screen.StopMonitoringFolder(' . intval($item->get('id')) . ')',
+        'function' => 'window.SPAATGProcessor.screen.StopMonitoringFolder(' . intval($item->get('id')) . ')',
         'type' => 'js',
         'text' => __('Stop Monitoring', 'shortpixel-image-optimiser'),
         'display' => 'inline',
      ));
 
      $refreshAction = array('refresh' => array(
-        'function' => 'window.ShortPixelProcessor.screen.RefreshFolder(' . intval($item->get('id')) . ')',
+        'function' => 'window.SPAATGProcessor.screen.RefreshFolder(' . intval($item->get('id')) . ')',
         'type' => 'js',
         'text' => __('Refresh Folder', 'shortpixel-image-optimiser'),
         'display' => 'inline',
@@ -170,7 +170,7 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
       else
         return array();
     }
-    $fs =  \wpSPIO()->fileSystem();
+    $fs =  \wpSPAATG()->fileSystem();
 
     if ($args['only_count'])
       $selector = 'count(id) as id';
@@ -371,11 +371,11 @@ class OtherMediaFolderViewController extends \ShortPixel\ViewController
 
          // Try with controller URL, if not present, try with upload URL and page param.
          $admin_url = admin_url('upload.php');
-         $url = (is_null($this->url)) ?  add_query_arg('page','wp-short-pixel-custom', $admin_url) : $this->url; // has url
+         $url = (is_null($this->url)) ?  add_query_arg('page','wp-spaatg-custom', $admin_url) : $this->url; // has url
          $current_url = add_query_arg($page_args, $url);
 
          $url = remove_query_arg('page', $url);
-         $page_args['page'] = 'wp-short-pixel-custom';
+         $page_args['page'] = 'wp-spaatg-custom';
 
 
          $output = '<form method="GET" action="'. esc_attr($url) . '">';

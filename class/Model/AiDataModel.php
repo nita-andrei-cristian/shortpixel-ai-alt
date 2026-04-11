@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Helper\InstallHelper;
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPAATG\Helper\InstallHelper;
+use SPAATG\Helper\UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
 
 // Class to handle the Database Table Data, store AI relevant data etc. 
 class AiDataModel
@@ -428,7 +428,7 @@ class AiDataModel
 
     private function isExifProcesssable()
     {
-        $fs = \wpSPIO()->filesystem(); 
+        $fs = \wpSPAATG()->filesystem(); 
         $imageModel = $fs->getMediaImage($this->attach_id); 
 
         if (false === $imageModel->isSomethingOptimized())
@@ -488,7 +488,7 @@ class AiDataModel
 
     protected function isExtensionIncluded()
     {
-        $fs = \wpSPIO()->filesystem(); 
+        $fs = \wpSPAATG()->filesystem(); 
         $imageModel = $fs->getMediaImage($this->attach_id); 
         
         // Gif removed here, since we (temporarily don't support it)

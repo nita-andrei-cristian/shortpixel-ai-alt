@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel\Replacer\Modules;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG\Replacer\Modules;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class Breakdance

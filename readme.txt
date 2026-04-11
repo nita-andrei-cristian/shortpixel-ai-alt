@@ -1,6 +1,6 @@
-=== ShortPixel Image Optimizer - Optimize Images, Convert WebP & AVIF ===
+=== ShortPixel AI Alt Text Generator ===
 Contributors: ShortPixel
-Tags: convert webp, optimize images, image optimization, resize, compress images
+Tags: ai alt text, alt text generator, image seo, accessibility, ai captions
 Requires at least: 4.8.0
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -8,15 +8,15 @@ Stable tag: 6.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Optimize images & PDFs smartly. Create and compress next-gen WebP and AVIF formats. Smart crop and resize.
+Generate AI-powered alt text, captions, descriptions, and image SEO fields for your WordPress media library.
 
 == Description ==
 
-###🚀 The Ultimate Image Optimization Plugin for WordPress###
+###🚀 AI Alt Text Generation For WordPress###
 
-**⚡ Boost your site’s speed instantly! Optimize images and PDFs with one click, bulk compress to WebP and AVIF, use lazy loading, and resize images.**
+**⚡ Generate alt text and image SEO fields with AI for your media library in just a few clicks.**
 
-Increase your website's SEO ranking, number of visitors, and ultimately your sales by optimising any image or PDF document on your website.
+Improve accessibility and help search engines understand your images by generating ALT text, captions, descriptions, and titles with AI.
 
 The <a href="https://shortpixel.com" target="_blank">ShortPixel</a> plugin is a lightweight, user-friendly, install-and-forget solution for image optimization.
 It is designed to work with any website type, whether it's a small blog or a large WooCommerce-powered online store with tens of thousands of products.
@@ -56,7 +56,7 @@ Make an instant <a href="https://shortpixel.com/image-compression-test" target="
 
 ### 🌍 Faster Websites for Global Audiences ###
 
-The ShortPixel plugin now includes a built-in global Content Delivery Network (CDN). This powerful feature ensures that ShortPixel-optimized WebP and AVIF images, as well as your website’s CSS and JavaScript files, are delivered quickly and efficiently to any location worldwide, minimizing delays and improving load times.
+The ShortPixel AI Alt Text Generator plugin now includes a built-in global Content Delivery Network (CDN). This powerful feature ensures that ShortPixel-optimized WebP and AVIF images, as well as your website’s CSS and JavaScript files, are delivered quickly and efficiently to any location worldwide, minimizing delays and improving load times.
 
 By leveraging this built-in solution, you enhance the user experience, reduce server strain, boost SEO performance, and simplify website management — all with minimal effort.
 
@@ -140,7 +140,7 @@ With ShortPixel, you can now add images in Apple's HEIC format directly from you
 
 **🚀 <a href="https://shortpixel.com/pricing" target="_blank">New Plan: ShortPixel Unlimited</a>**
 This is the ideal monthly plan for web agencies or website owners with multiple sites and frequent image uploads.
-It allows you to optimize an unlimited number of images with ShortPixel Image Optimizer or use <a href=”https://wordpress.org/plugins/shortpixel-adaptive-images/”>ShortPixel Adaptive Images</a> without worrying about CDN traffic limits.
+It allows you to optimize an unlimited number of images with ShortPixel AI Alt Text Generator or use <a href=”https://wordpress.org/plugins/shortpixel-adaptive-images/”>ShortPixel Adaptive Images</a> without worrying about CDN traffic limits.
 Read more details on our <a href="https://shortpixel.com/knowledge-base/article/how-does-the-unlimited-plan-work/" target="_blank">dedicated page</a>.
 
 * **free optimization credits for non-profits**, <a href="https://shortpixel.com/contact" target="_blank">contact us</a> for details
@@ -181,13 +181,13 @@ Help us spread the word by recommending ShortPixel to your friends and collect *
 
 == Installation ==
 
-Let's get the ShortPixel plugin running on your WordPress website:
+Let's get the ShortPixel AI Alt Text Generator plugin running on your WordPress website:
 
 
 1. Sign up using your email at <a href="https://shortpixel.com/wp-apikey" target="_blank">https://shortpixel.com/wp-apikey</a>.
 2. You will receive your personal API key in a confirmation email, to the address you provided.
-3. Upload the ShortPixel plugin to the /wp-content/plugins/ directory
-4. Use your unique API key to activate the ShortPixel plugin in the 'Plugins' menu in WordPress.
+3. Upload the ShortPixel AI Alt Text Generator plugin to the /wp-content/plugins/ directory
+4. Use your unique API key to activate the ShortPixel AI Alt Text Generator plugin in the 'Plugins' menu in WordPress.
 5. Uploaded images can be automatically optimized in the Media Library.
 6. Done!
 
@@ -208,7 +208,7 @@ Let's get the ShortPixel plugin running on your WordPress website:
 	Everyone has different needs, but generally, we recommend getting a One-Time plan to optimize your whole Media Library and then get a Monthly plan to optimize your future uploads. To learn more, have a look at <a href="https://shortpixel.com/knowledge-base/article/monthly-plans-vs-one-time-plans/" target="_blank">this comparison</a>
 
 = I don't know how many thumbnails do I have, what plan should I take?
-	To know how many thumbnails you have, just install the plugin and go to Media > Bulk ShortPixel. The plugin will tell you how many thumbnails you've got. Based on this, have a look at <a href="https://shortpixel.com/pricing" target="_blank">our plans</a>
+	To know how many thumbnails you have, just install the plugin and go to Media > Bulk AI Alt Text. The plugin will tell you how many thumbnails you've got. Based on this, have a look at <a href="https://shortpixel.com/pricing" target="_blank">our plans</a>
 
 = Can I upgrade/downgrade easily my plan? =
 	Of course. You can upgrade or downgrade your plans in a couple of clicks from your account on shortpixel.com.
@@ -219,11 +219,11 @@ Let's get the ShortPixel plugin running on your WordPress website:
 
 = Can I optimize images that aren't in Media Library? =
     Absolutely.
-    You can actually optimize any image you have on your site regardless of its place. You just need to add - in the Advanced section of the ShortPixel Settings - the folders where the images you want to optimize are located and ShortPixel will work its magic and do the rest.
+    You can actually optimize any image you have on your site regardless of its place. You just need to add - in the Advanced section of the ShortPixel AI Alt Text Generator settings - the folders where the images you want to optimize are located and ShortPixel will work its magic and do the rest.
 
 = Can I optimize images that are both past and new? =
     Sure!
-    You can optimize all your past/current images and photos using our "Bulk ShortPixel" page in your Media with a single click.
+    You can optimize all your past/current images and photos using our "Bulk AI Alt Text" page in your Media with a single click.
 
 = A credit = an optimized image? =
     Yes, that is correct.
@@ -312,7 +312,7 @@ where `APIKEY` is the API Key received upon sign up.
     Absolutely! Sometimes you'll need to make sure you whitelist some IPs, just <a href="https://shortpixel.com/contact">contact us</a> and we'll assist you with that.
 
 = Where do I report security bugs found in this plugin? =
-Please report security bugs found in the source code of the ShortPixel Image Optimizer plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-image-optimiser). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+Please report security bugs found in the source code of the ShortPixel AI Alt Text Generator plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/shortpixel-image-optimiser). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 = Does the plugin use any external services =
 This plugin integrates with Chatbase ([https://www.chatbase.co](https://www.chatbase.co/)) to provide AI-powered chat support directly within the plugin interface. This integration allows plugin users to ask questions and receive automated assistance. The only data collected is the Country(no city and no exact location) and the message itself.
@@ -324,7 +324,7 @@ Chatbase [ToS](https://www.chatbase.co/legal/terms).
 The ShortPixel team is here to help. <a href="https://shortpixel.com/contact">Contact us</a>!
 
 = How do I compress images without losing quality in WordPress? =
-The best way to compress images without losing quality in WordPress is by using the ShortPixel plugin. ShortPixel automatically compresses images with lossless compression, ensuring the visual quality remains intact while significantly reducing file sizes. Once installed, it optimizes your images in just one click, improving your website's loading speed and SEO performance. You can bulk optimize existing images or compress new ones as you upload them, all without sacrificing quality, making it an ideal solution for maintaining high-quality visuals and fast site performance.
+The best way to compress images without losing quality in WordPress is by using the ShortPixel AI Alt Text Generator plugin. ShortPixel automatically compresses images with lossless compression, ensuring the visual quality remains intact while significantly reducing file sizes. Once installed, it optimizes your images in just one click, improving your website's loading speed and SEO performance. You can bulk optimize existing images or compress new ones as you upload them, all without sacrificing quality, making it an ideal solution for maintaining high-quality visuals and fast site performance.
 
 = What is image optimization? =
 
@@ -332,19 +332,19 @@ Image optimization is reducing the file size of images without compromising thei
 
 = How to optimize a WordPress image? =
 
-The best way to optimize a WordPress image is by using the ShortPixel plugin. ShortPixel automatically optimizes images with both lossless and lossy compression options, reducing file size while keeping high visual quality. Once installed, it optimizes your images in one click, improving your site's load speed and SEO. You can bulk optimize existing images or new uploads, ensuring fast site performance without sacrificing image quality, making it the ideal solution for WordPress image optimization.
+The best way to optimize a WordPress image is by using the ShortPixel AI Alt Text Generator plugin. ShortPixel automatically optimizes images with both lossless and lossy compression options, reducing file size while keeping high visual quality. Once installed, it optimizes your images in one click, improving your site's load speed and SEO. You can bulk optimize existing images or new uploads, ensuring fast site performance without sacrificing image quality, making it the ideal solution for WordPress image optimization.
 
 = How to SEO optimize images? =
 
-To SEO optimize images in wordpress, use the ShortPixel plugin to compress and convert them without losing quality, reducing load times—a key SEO factor. Add descriptive file names and alt text with relevant keywords to help search engines understand your images. Additionally, resize images to appropriate dimensions and consider converting them to WebP for faster performance. ShortPixel makes this entire process easy, helping improve both your SEO rankings and site speed.
+To SEO optimize images in wordpress, use the ShortPixel AI Alt Text Generator plugin to compress and convert them without losing quality, reducing load times—a key SEO factor. Add descriptive file names and alt text with relevant keywords to help search engines understand your images. Additionally, resize images to appropriate dimensions and consider converting them to WebP for faster performance. ShortPixel makes this entire process easy, helping improve both your SEO rankings and site speed.
 
 = How do you optimize images for performance? =
 
-To optimize images for performance in WordPress, use the ShortPixel plugin to compress images without sacrificing quality, reducing file sizes for faster load times. Convert images to efficient formats like WebP and ensure they are properly resized to fit your site’s design. ShortPixel automates this process in one click, boosting your website's speed, improving user experience, and enhancing SEO—all key elements for optimal performance.
+To optimize images for performance in WordPress, use the ShortPixel AI Alt Text Generator plugin to compress images without sacrificing quality, reducing file sizes for faster load times. Convert images to efficient formats like WebP and ensure they are properly resized to fit your site’s design. ShortPixel automates this process in one click, boosting your website's speed, improving user experience, and enhancing SEO—all key elements for optimal performance.
 
 == Actions and Filters for Developers ==
 
-The ShortPixel Image Optimizer plugin calls the following actions and filters:
+The ShortPixel AI Alt Text Generator plugin calls the following actions and filters:
 
 `do_action( 'shortpixel_image_optimised', $post_id );`
 upon successful optimization;
@@ -458,27 +458,27 @@ Add HTTP basic authentication credentials by defining these constants in wp-conf
 
 == Screenshots ==
 
-1. Select bulk optimization options. (Media -> Bulk ShortPixel)
+1. Select bulk optimization options. (Media -> Bulk AI Alt Text)
 
-2. Bulk optimization running. (Media -> Bulk ShortPixel)
+2. Bulk optimization running. (Media -> Bulk AI Alt Text)
 
-3. Activate your API key in the plugin Settings. (Settings -> ShortPixel)
+3. Activate your API key in the plugin Settings. (Settings -> ShortPixel AI Alt Text Generator)
 
-4. Plugin dashboard after entering the API key. (Settings -> ShortPixel)
+4. Plugin dashboard after entering the API key. (Settings -> ShortPixel AI Alt Text Generator)
 
-5. Image Optimization settings. (Settings -> ShortPixel -> Image Optimization)
+5. Image Optimization settings. (Settings -> ShortPixel AI Alt Text Generator -> Image Optimization)
 
-6. Exclusion settings. (Settings -> ShortPixel -> Exclusions)
+6. Exclusion settings. (Settings -> ShortPixel AI Alt Text Generator -> Exclusions)
 
-7. Processing settings. (Settings -> ShortPixel -> Processing)
+7. Processing settings. (Settings -> ShortPixel AI Alt Text Generator -> Processing)
 
-8. Next generation and delivery settings. (Settings -> ShortPixel -> WebP/AVIF and CDN)
+8. Next generation and delivery settings. (Settings -> ShortPixel AI Alt Text Generator -> WebP/AVIF and CDN)
 
-9. Integrations. (Settings -> ShortPixel -> Integrations)
+9. Integrations. (Settings -> ShortPixel AI Alt Text Generator -> Integrations)
 
-10. Tools. (Settings -> ShortPixel -> Tools)
+10. Tools. (Settings -> ShortPixel AI Alt Text Generator -> Tools)
 
-11. Help Center. (Settings -> ShortPixel -> Help Center)
+11. Help Center. (Settings -> ShortPixel AI Alt Text Generator -> Help Center)
 
 12. Check image optimization status, and restore or reoptimize the image. (Media -> Library)
 
@@ -1026,4 +1026,3 @@ Release date: November 21, 2024
 = 4.22.9 =
 
 * This version contains a fix for the WP Offload Media plugin version 2.6.0 and above. Please ensure you're running the latest WP Offload Media plugin and check that everything works correctly after upgrading.
-

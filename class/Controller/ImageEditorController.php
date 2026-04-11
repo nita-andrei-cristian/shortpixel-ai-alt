@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 /** Class for handling changes done by WP in the Image Edit section. **/
 class ImageEditorController
@@ -32,7 +32,7 @@ class ImageEditorController
 		  $local = array(
 			);
 
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 
 				//		$local['is_restorable'] = ($mediaImage->isRestorable() ) ? 'true' : 'false';
       //      $local['is_optimized'] = ($mediaImage->isOptimized()) ? 'true' : 'false';
@@ -40,7 +40,7 @@ class ImageEditorController
 
 						$local['optimized_text'] = sprintf(__('This image has been optimized by ShortPixel. It is strongly %s recommended %s to restore the image from the backup (if any) before editing it, because after saving the image all optimization data will be lost. If the image is not restored and ShortPixel re-optimizes the new image, this may result in a loss of quality. After you have finished editing, please optimize the image again by clicking "Optimize Now" as this will not happen automatically.', 'shortpixel-image-optimiser'), '<strong>', '</strong>');
 
-            $local['restore_link']  = 'javascript:window.ShortPixelProcessor.screen.RestoreItem(#post_id#)';
+            $local['restore_link']  = 'javascript:window.SPAATGProcessor.screen.RestoreItem(#post_id#)';
 	 			    $local['restore_link_text'] = __('Restore the backup now.', 'shortpixel-image-optimiser');
             $local['restore_link_text_unrestorable'] = __(' (This item is not restorable) ', 'shortpixel-image-optimiser');
 
@@ -55,7 +55,7 @@ class ImageEditorController
 	public function getImageForEditor( $filepath, $attachment_id, $size)
 	{
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$mediaImage = $fs->getImage($attachment_id, 'media');
 
 		// Not an image, let's not get into this.
@@ -88,7 +88,7 @@ class ImageEditorController
 	public function saveImageFile( $null, $filename, $image, $mime_type, $post_id		)
 	{
 			// Check image and if needed, delete backups.
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$mediaImage = $fs->getImage($post_id, 'media');
 
 			if (is_object($mediaImage))

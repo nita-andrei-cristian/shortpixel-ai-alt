@@ -1,8 +1,8 @@
 <?php
 
-namespace ShortPixel\Helper;
+namespace SPAATG\Helper;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if (! defined('ABSPATH')) {
@@ -72,7 +72,7 @@ class UtilHelper
 
   public static function getExifParameter()
   {
-    return (\wpSPIO()->settings()->exif + \wpSPIO()->settings()->exif_ai);
+    return (\wpSPAATG()->settings()->exif + \wpSPAATG()->settings()->exif_ai);
   }
 
   // Copy of private https://developer.wordpress.org/reference/functions/_wp_relative_upload_path/
@@ -127,7 +127,7 @@ class UtilHelper
 
     $args = wp_parse_args($args, $defaults);
 
-    $patterns = \wpSPIO()->settings()->excludePatterns;
+    $patterns = \wpSPAATG()->settings()->excludePatterns;
     $matches = array();
 
     if (false === is_array($patterns)) {
@@ -175,7 +175,7 @@ class UtilHelper
 
   public static function getAiSettings($params = [])
   {
-    $settings = \wpSPIO()->settings(); 
+    $settings = \wpSPAATG()->settings(); 
 
     $defaults = [
     'ai_general_context' => $settings->ai_general_context, 

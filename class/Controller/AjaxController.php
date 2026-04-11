@@ -1,33 +1,33 @@
 <?php
 
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Api\RequestManager;
-use ShortPixel\Controller\View\ListMediaViewController as ListMediaViewController;
-use ShortPixel\Controller\View\OtherMediaViewController as OtherMediaViewController;
-use ShortPixel\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
+use SPAATG\Controller\Api\RequestManager;
+use SPAATG\Controller\View\ListMediaViewController as ListMediaViewController;
+use SPAATG\Controller\View\OtherMediaViewController as OtherMediaViewController;
+use SPAATG\Controller\View\OtherMediaFolderViewController as OtherMediaFolderViewController;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
 
-//use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Helper\UtilHelper;
+//use SPAATG\Controller\BulkController as BulkController;
+use SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\InstallHelper as InstallHelper;
+use SPAATG\Helper\UtilHelper;
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\AccessModel as AccessModel;
 
 // @todo This should probably become settingscontroller, for saving
-use ShortPixel\Controller\View\SettingsViewController as SettingsViewController;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\Queue\QueueItem;
-use ShortPixel\ViewController;
+use SPAATG\Controller\View\SettingsViewController as SettingsViewController;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\AiDataModel;
+use SPAATG\Model\Queue\QueueItem;
+use SPAATG\ViewController;
 
 // Class for containing all Ajax Related Actions.
 class AjaxController
@@ -109,7 +109,7 @@ class AjaxController
 		$result = '';
 
 
-		$item = \wpSPIO()->filesystem()->getImage($id, $type);
+		$item = \wpSPAATG()->filesystem()->getImage($id, $type);
 
 		$this->checkImageAccess($item);
 
@@ -117,7 +117,7 @@ class AjaxController
 			if ($type == 'media') {
 				ob_start();
 				$control = ListMediaViewController::getInstance();
-				$control->doColumn('wp-shortPixel', $id);
+				$control->doColumn('wp-spaatg', $id);
 				$result = ob_get_contents();
 				ob_end_clean();
 			}
@@ -444,7 +444,7 @@ class AjaxController
 		 $view->addData([
 			'previewImage' => $previewImage, 
 			'originalImage' => $originalImage, 
-			'placeholderImage' => \wpSPIO()->plugin_url('res/img/bulk/placeholder.svg'), 
+			'placeholderImage' => \wpSPAATG()->plugin_url('res/img/bulk/placeholder.svg'), 
 			'item_id' => $item_id, 
 			'post_title' => $post->post_title, 
 			'action_name' => $action_name, 
@@ -605,7 +605,7 @@ class AjaxController
 
 	protected function getMediaItem($id, $type)
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		return $fs->getImage($id, $type);
 	}
 
@@ -671,7 +671,7 @@ class AjaxController
 
 		$purge =  isset($_POST['purge']) ? sanitize_text_field($_POST['purge']) : 'cssjs'; 
 
-		$CDNController = new \ShortPixel\Controller\Front\CDNController();
+		$CDNController = new \SPAATG\Controller\Front\CDNController();
 		$result = $CDNController->purgeCDN(['purge' => $purge]);
 
 		$json->settings->results = $result;
@@ -685,7 +685,7 @@ class AjaxController
 	{
 		$action = (isset($_POST['actionType'])) ? sanitize_text_field($_POST['actionType']) : 'export'; 
 		$this->checkActionAccess($action, 'is_admin_user');
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		if ('import' === $action)
 		{
@@ -838,13 +838,13 @@ class AjaxController
 	{
 
 		// Get and remove Meta
-		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media');
+		$mediaItem = \wpSPAATG()->filesystem()->getImage($imageId, 'media');
 
 		$mediaItem->onDelete();
 
 		// Flush and reaquire image to make sure it doesn't stay previous state.
-		\wpSPIO()->filesystem()->flushImage($mediaItem);
-		$mediaItem = \wpSPIO()->filesystem()->getImage($imageId, 'media', false);
+		\wpSPAATG()->filesystem()->flushImage($mediaItem);
+		$mediaItem = \wpSPAATG()->filesystem()->getImage($imageId, 'media', false);
 
 		// Optimize
 		$control = new QueueController();
@@ -1002,7 +1002,7 @@ class AjaxController
 		$bulkControl = BulkController::getInstance();
 
 		if (false !== $bulkControl->getAnyCustomOperation()) {
-			$json->redirect = add_query_arg(['page' => 'wp-shortpixel-settings', 'part' => 'tools'], admin_url('options-general.php'));
+			$json->redirect = add_query_arg(['page' => 'wp-spaatg-settings', 'part' => 'tools'], admin_url('options-general.php'));
 		}
 
 		$bulkControl->finishBulk('media');
@@ -1069,17 +1069,17 @@ class AjaxController
 		// Can be hidden
 		if (isset($_POST['thumbsActive'])) {
 			$doThumbs = filter_var(sanitize_text_field($_POST['thumbsActive']), FILTER_VALIDATE_BOOLEAN);
-			\wpSPIO()->settings()->processThumbnails = $doThumbs;
+			\wpSPAATG()->settings()->processThumbnails = $doThumbs;
 		}
 
-		\wpSPIO()->settings()->createWebp = $doWebp;
-		\wpSPIO()->settings()->createAvif = $doAvif;
-		\wpSPIO()->settings()->doBackgroundProcess = $backgroundProcess;
-		\wpSPIO()->settings()->autoAIBulk = $doAi;
+		\wpSPAATG()->settings()->createWebp = $doWebp;
+		\wpSPAATG()->settings()->createAvif = $doAvif;
+		\wpSPAATG()->settings()->doBackgroundProcess = $backgroundProcess;
+		\wpSPAATG()->settings()->autoAIBulk = $doAi;
 
 		if (false === is_null($aiPreserve))
 		{
-			\wpSPIO()->settings()->aiPreserve = $aiPreserve;
+			\wpSPAATG()->settings()->aiPreserve = $aiPreserve;
 		}
 
 		$bulkControl = BulkController::getInstance();
@@ -1202,7 +1202,7 @@ class AjaxController
 			return false;
 		}
 
-		update_user_option($user_id, 'shortpixel-settings-mode', $new_mode);
+		update_user_option($user_id, 'spaatg-settings-mode', $new_mode);
 	}
 
 	protected function getNewAiImagePreview($data)
@@ -1213,7 +1213,7 @@ class AjaxController
 		if (! is_null($settingsData))
 		{
 			 $json = json_decode(stripslashes($settingsData), true);
-			 $settings = \wpSPIO()->settings(); 
+			 $settings = \wpSPAATG()->settings(); 
 			 //$settingsData = array_map('sanitize_text_field', $json); 
 			 $settingsData = $settings->getSanitizedData($json, false);
 		}
@@ -1227,7 +1227,7 @@ class AjaxController
 			'is_error' => true, 
 		];
 
-		$imageModel = \wpSPIO()->filesystem()->getMediaImage($item_id); 
+		$imageModel = \wpSPAATG()->filesystem()->getMediaImage($item_id); 
 		
 
 		if (false === $imageModel)
@@ -1286,8 +1286,8 @@ class AjaxController
 						 $aiData['item_id'] = $qItem->item_id;
 						 $aiData['time_generated'] = time(); 
 
-						 set_transient('spio_settings_ai_example', $aiData, MONTH_IN_SECONDS);
-						 set_transient('spio_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
+						 set_transient('spaatg_settings_ai_example', $aiData, MONTH_IN_SECONDS);
+						 set_transient('spaatg_settings_ai_example_id', $qItem->item_id, MONTH_IN_SECONDS); 
 						 
 						 $aiData['aiData'] = true; // for the JS check
 						 $this->send((object) $aiData);
@@ -1322,7 +1322,7 @@ class AjaxController
 	protected function getSettingsAiExample($data)
 	{
 		 
-		$id = get_transient('spio_settings_ai_example_id');
+		$id = get_transient('spaatg_settings_ai_example_id');
 
 		if (false === $id || ! is_numeric($id))
 		{
@@ -1335,7 +1335,7 @@ class AjaxController
 			$attach_id = $id; 
 		}
 		
-		$imageModel = \wpSPIO()->fileSystem()->getMediaImage($attach_id);
+		$imageModel = \wpSPAATG()->fileSystem()->getMediaImage($attach_id);
 
         if (is_null($attach_id) || false === $imageModel)
         {
@@ -1350,7 +1350,7 @@ class AjaxController
         }
         else
         {
-		  $transient = get_transient('spio_settings_ai_example'); 
+		  $transient = get_transient('spaatg_settings_ai_example'); 
 		  if (is_array($transient) && $transient['item_id'] == $id)
 		  { 
 			 $generated = $transient; 
@@ -1384,7 +1384,7 @@ class AjaxController
 	protected function setSettingsAiImage($data)
 	{
 		 $id = $data['id']; 
-		 set_transient('spio_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
+		 set_transient('spaatg_settings_ai_example_id', $id, MONTH_IN_SECONDS); 
 
 		 return $this->getSettingsAiExample($data);
 	}
@@ -1406,7 +1406,7 @@ class AjaxController
 		}
 
 		$ret = array();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$imageObj = $fs->getImage($id, $type);
 
 		$this->checkImageAccess($imageObj);
@@ -1530,7 +1530,7 @@ class AjaxController
 	{
 		$relpath = isset($_POST['relpath']) ? sanitize_text_field($_POST['relpath']) : null;
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		$customFolderBase = $fs->getWPFileBase();
 		$basePath = $customFolderBase->getPath();
@@ -1626,7 +1626,7 @@ class AjaxController
 		$this->checkNonce('ajax_request');
 		$this->checkActionAccess($action, 'is_editor');
 
-		$dirObj = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+		$dirObj = \wpSPAATG()->filesystem()->getDirectory(SPAATG_BACKUP_FOLDER);
 
 		$size = $dirObj->getFolderSize();
 		echo UiHelper::formatBytes($size);
@@ -1656,7 +1656,7 @@ class AjaxController
 
 		$quota = $quotaController->getQuota();
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		$sendback = wp_get_referer();
 		// sanitize the referring webpage location
@@ -1678,7 +1678,7 @@ class AjaxController
 	{
 		$logFile = $data['logFile'] . '.log';
 		$type = $data['type'];
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		if (is_null($logFile)) {
 			$json->$type->is_error = true;
@@ -1729,7 +1729,7 @@ class AjaxController
 				// replaces the image id with a link to image.
 				$line['link'] = esc_url(admin_url('post.php?post=' . trim($id) . '&action=edit'));
 			} elseif ($logType === 'custom') {
-				$base = esc_url(admin_url('upload.php?page=wp-short-pixel-custom'));
+				$base = esc_url(admin_url('upload.php?page=wp-spaatg-custom'));
 				$line['link'] = add_query_arg('s', sanitize_text_field($filename), $base);
 			}
 
@@ -1860,11 +1860,11 @@ class AjaxController
 	{
 		if (wp_verify_nonce($_POST['tools-nonce'], 'empty-backup')) {			
 
-			$fs = \wpSPIO()->filesystem(); 
+			$fs = \wpSPAATG()->filesystem(); 
 			
 			$fs->moveLogFiles(); 
 
-			$dir = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+			$dir = \wpSPAATG()->filesystem()->getDirectory(SPAATG_BACKUP_FOLDER);
 			$dir->recursiveDelete(); 
 
 			$fs->moveLogFiles(['to_temp' => false]);

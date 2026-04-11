@@ -1,23 +1,23 @@
 <?php
-namespace ShortPixel\Controller\Queue;
+namespace SPAATG\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\CacheController as CacheController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\ResponseController as ResponseController;
-use ShortPixel\Model\Converter\Converter as Converter;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\CacheController as CacheController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\ResponseController as ResponseController;
+use SPAATG\Model\Converter\Converter as Converter;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
 
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\ShortQ\ShortQ as ShortQ;
+use SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Model\AiDataModel;
+use SPAATG\ShortQ\ShortQ as ShortQ;
 
 abstract class Queue
 {
@@ -26,7 +26,7 @@ abstract class Queue
     protected static $results;
     protected static $isInQueue = [];
 
-    const PLUGIN_SLUG = 'SPIO';
+    const PLUGIN_SLUG = 'SPAATG';
 
     // Result status for Run function
     const RESULT_ITEMS = 1;
@@ -345,8 +345,8 @@ abstract class Queue
         $return = array('items' => 0, 'images' => 0, 'results' => 0,
       'overlimit' => false);
 
-				$settings = \wpSPIO()->settings();
-        $env = \wpSPIO()->env();
+				$settings = \wpSPAATG()->settings();
+        $env = \wpSPAATG()->env();
         $queueOptions = $this->getOptions();
 
           if (count($items) == 0)
@@ -356,7 +356,7 @@ abstract class Queue
               return $return;
           }
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
           $queue = array();
           $imageCount = $webpCount = $avifCount = $baseCount = 0;

@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPAATG\Controller\Api;
 
-use ShortPixel\Helper\UtilHelper;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -66,7 +66,7 @@ abstract class RequestManager
    */
   protected function getRequest($requestBody = [], $requestParameters = [])
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPAATG()->settings();
 
     $requestBody = apply_filters('shortpixel/api/request', $requestBody, $requestBody['item_id']);
 

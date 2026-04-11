@@ -1,17 +1,17 @@
 <?php
 
-namespace ShortPixel\Replacer;
+namespace SPAATG\Replacer;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
 use Helper\Functional;
-use ShortPixel\Replacer\Classes\Finder;
-use ShortPixel\Replacer\Classes\Setup;
-use ShortPixel\Replacer\Classes\Updater;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Replacer\Libraries\Unserialize\Unserialize;
+use SPAATG\Replacer\Classes\Finder;
+use SPAATG\Replacer\Classes\Setup;
+use SPAATG\Replacer\Classes\Updater;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Replacer\Libraries\Unserialize\Unserialize;
 
 /** Module: Replacer.
  *

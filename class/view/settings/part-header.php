@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </a>
     | <a href="mailto:help@shortpixel.com?subject=SPIO Feature Request"><?php _e('Feature Request', 'shortpixel-image-optimiser'); ?>
     </a>
-    | <a href="https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/#new-post" target="_blank">   <?php _e('Rate Us', 'shortpixel-image-optimiser'); ?><img src="<?php echo esc_attr(\wpSPIO()->plugin_url('res/img/stars.png')); ?>" width="80" /></a>
+    | <a href="https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/#new-post" target="_blank">   <?php _e('Rate Us', 'shortpixel-image-optimiser'); ?><img src="<?php echo esc_attr(\wpSPAATG()->plugin_url('res/img/stars.png')); ?>" width="80" /></a>
   </div>
 
 

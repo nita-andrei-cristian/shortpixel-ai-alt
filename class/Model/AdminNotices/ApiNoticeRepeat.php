@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
 
-class ApiNoticeRepeat extends \ShortPixel\Model\AdminNoticeModel
+class ApiNoticeRepeat extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_NO_APIKEY_REPEAT';
 	protected $errorLevel = 'warning';
@@ -23,7 +23,7 @@ class ApiNoticeRepeat extends \ShortPixel\Model\AdminNoticeModel
 			}
 
 			// Is set by general ApiNotice. If not set, don't bother with the repeat.
-			$activationDate = \wpSPIO()->settings()->activationDate;
+			$activationDate = \wpSPAATG()->settings()->activationDate;
 			if (! $activationDate)
 			{
 				 return false;
@@ -51,7 +51,7 @@ class ApiNoticeRepeat extends \ShortPixel\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = __("Action required! Please <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> to activate your ShortPixel plugin.",'shortpixel-image-optimiser');
+		$message = __("Action required! Please <a href='https://shortpixel.com/wp-apikey' target='_blank'>get your API key</a> to activate your ShortPixel AI Alt Text Generator plugin.",'shortpixel-image-optimiser');
 
 		return $message;
 	}

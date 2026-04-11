@@ -1,6 +1,6 @@
 <?php
 
-namespace ShortPixel;
+namespace SPAATG;
 
 if (! defined('ABSPATH')) {
   exit; // Exit if accessed directly.
@@ -32,7 +32,7 @@ if (! defined('ABSPATH')) {
         <i class='documentation dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/ai-image-seo-settings-explained/#0-toc-title?target=iframe"></i>
         <name>
 
-          <?php esc_html_e('Show AI image SEO options throughout ShortPixel Image Optimizer. The generated ALT tag is also very useful for accessibility.', 'shortpixel-image-optimiser'); ?>
+          <?php esc_html_e('Show AI image SEO options throughout ShortPixel AI Alt Text Generator. The generated ALT tag is also very useful for accessibility.', 'shortpixel-image-optimiser'); ?>
 
         </name>
       </content>

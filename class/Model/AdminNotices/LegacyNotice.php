@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class LegacyNotice extends \ShortPixel\Model\AdminNoticeModel
+class LegacyNotice extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_CONVERT_LEGACY';
 
@@ -24,7 +24,7 @@ class LegacyNotice extends \ShortPixel\Model\AdminNoticeModel
 		$message .= '<p><a href="%s" class="button button-primary">%s</a></p>';
 
 		$read_link = esc_url('https://shortpixel.com/knowledge-base/article/spio-5-tells-me-to-convert-legacy-data-what-is-this/');
-		$action_link = esc_url(admin_url('upload.php?page=wp-short-pixel-bulk&panel=bulk-migrate'));
+		$action_link = esc_url(admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-migrate'));
 		$action_name = __('Migrate optimization data', 'shortpixel-image-optimiser');
 
 		$message = sprintf($message, '<br>', '<a href="' . $read_link . '" target="_blank">', '</a>', $action_link, $action_name);

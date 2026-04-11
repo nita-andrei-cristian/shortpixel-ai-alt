@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							 <iframe src="about:blank" width="100%" height="400" style="border:none"></iframe>
 					 </div>
 			 </div>
-			 <script  type="text/javascript" id="spio_help_js">
+			 <script  type="text/javascript" id="spaatg_help_js">
 					 jQuery(document).ready(function($)
 					 {
 

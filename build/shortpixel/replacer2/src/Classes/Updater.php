@@ -1,12 +1,12 @@
 <?php 
-namespace ShortPixel\Replacer\Classes; 
+namespace SPAATG\Replacer\Classes; 
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class Updater

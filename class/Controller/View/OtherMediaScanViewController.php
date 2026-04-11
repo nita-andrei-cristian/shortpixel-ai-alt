@@ -1,16 +1,16 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\InstallHelper as InstallHelper;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
 
-class OtherMediaScanViewController extends \ShortPixel\ViewController
+class OtherMediaScanViewController extends \SPAATG\ViewController
 {
 
   protected $template = 'view-other-media-scan';

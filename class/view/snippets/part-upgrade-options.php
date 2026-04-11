@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div id="shortPixelProposeUpgrade" class="shortpixel-modal shortpixel-hide" style="min-width:650px;margin-left:-305px;">
       <div class="sp-modal-title">
-          <button type="button" class="sp-close-upgrade-button" onclick="ShortPixel.closeProposeUpgrade()">&times;</button>
-           <?php __('Upgrade your ShortPixel account', 'shortpixel-image-optimiser')  ?>
+          <button type="button" class="sp-close-upgrade-button" onclick="SPAATG.closeProposeUpgrade()">&times;</button>
+           <?php __('Upgrade your SPAATG account', 'shortpixel-image-optimiser')  ?>
       </div>
       <div class="sp-modal-body sptw-modal-spinner" style="height:auto;min-height:400px;padding:0;">
       </div>

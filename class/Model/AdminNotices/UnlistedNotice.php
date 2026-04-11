@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class UnlistedNotice extends \ShortPixel\Model\AdminNoticeModel
+class UnlistedNotice extends \SPAATG\Model\AdminNoticeModel
 {
 
 	protected $key = 'MSG_UNLISTED_FOUND';
@@ -18,14 +18,14 @@ class UnlistedNotice extends \ShortPixel\Model\AdminNoticeModel
 // @todo This message is not properly stringF'ed.
 	protected function getMessage()
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		//$unlisted = isset($settings->currentStats['foundUnlistedThumbs']) ? $settings->currentStats['foundUnlistedThumbs'] : null;
 		$unlisted_id = $this->getData('id');
 		$unlisted_name = $this->getData('name');
 		$unlistedFiles = (is_array($this->getData('filelist'))) ? $this->getData('filelist') : array();
 
-		$admin_url = esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=optimisation'));
+		$admin_url = esc_url(admin_url('options-general.php?page=wp-spaatg-settings&part=optimisation'));
 
 
 		$message = __("<p>ShortPixel has found thumbnails that are not registered in the metadata, but are present alongside the other thumbnails. These thumbnails could be created and needed by a plugin or the theme. Should ShortPixel optimize them as well?</p>", 'shortpixel-image-optimiser');

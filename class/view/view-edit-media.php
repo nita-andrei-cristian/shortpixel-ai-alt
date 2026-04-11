@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 ?>
-<div id='shortpixel-data-<?php echo( esc_attr($view->id) );?>' class='column-wp-shortPixel view-edit-media'
+<div id='spaatg-data-<?php echo( esc_attr($view->id) );?>' class='column-wp-spaatg view-edit-media'
   data-imagewidth="<?php echo $view->image['width'] ?>" data-imageheight="<?php echo $view->image['height'] ?>"
   data-extension="<?php echo $view->image['extension']; ?>"
 >
@@ -39,34 +39,17 @@ if (! is_null($view->debugInfo) && is_array($view->debugInfo) && count($view->de
     </div>
   <?php endif; ?>
 
-  <?php if (property_exists($this->view, 'text')): ?>
-  <div class='sp-column-info'>
-		<?php
-			    // burger if needed.F
-			    echo '<p>' . $this->view->list_actions . '</p>'; ?>
-		<p><?php  echo $this->view->text;  ?></p></div>
-
-<?php endif; ?>
-
-
-  <div class='sp-column-stats'>
-    <?php
-    // single actions
-    if (isset($this->view->actions)):
-       $this->loadView('snippets/part-single-actions', false);
-
-    endif;
-
-    ?>
-
-    <?php if (property_exists($view, 'stats') && count($view->stats) > 0): ?>
-    <ul class='edit-media-stats'>
-    <?php foreach($view->stats as $index => $data)
-    { ?>
-       <li><span><?php echo $data[0] ?></span> <span><?php echo $data[1] ?></span></li>
-    <?php } ?>
-    </ul>
-    <?php endif; ?>
+  <div class='sp-column-info generated-alt-box' data-spaatg-generated-alt="<?php echo esc_attr($view->id); ?>">
+    <p class='generated-alt-label'><?php esc_html_e('Alt Text', 'shortpixel-image-optimiser'); ?></p>
+    <p class='shortpixel-generated-alt-content <?php echo $view->hasAltText ? '' : 'is-empty'; ?>'>
+      <?php
+      if ($view->hasAltText) {
+          echo esc_html($view->altText);
+      } else {
+          esc_html_e('No alt text available yet.', 'shortpixel-image-optimiser');
+      }
+      ?>
+    </p>
   </div>
 
 </div>

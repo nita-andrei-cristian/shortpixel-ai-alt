@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Controller\BulkController as BulkController;
+use SPAATG\Controller\StatsController as StatsController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPAATG\Model\AccessModel as AccessModel;
 
 
-class BulkViewController extends \ShortPixel\ViewController
+class BulkViewController extends \SPAATG\ViewController
 {
 
   protected $form_action = 'sp-bulk';
@@ -101,7 +101,7 @@ class BulkViewController extends \ShortPixel\ViewController
       $noticesController = AdminNoticesController::getInstance();
       $offer = $noticesController->getRemoteOffer(); 
 
-          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SHORTPIXEL_PLUGIN_FILE); 
+          $this->view->dashboard_icon = plugins_url('res/images/icon/shortpixel.svg', SPAATG_PLUGIN_FILE); 
           $this->view->dashboard_link = false; 
           $this->view->dashboard_title = false; 
           $this->view->dashboard_message = ''; 
@@ -174,8 +174,8 @@ class BulkViewController extends \ShortPixel\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start the optimization process, you need to validate your API Key in the '
-						. '<a href="options-general.php?page=wp-shortpixel-settings">ShortPixel Settings</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
+		$message = "<p>" . __('In order to start the optimization process, you need to validate your API Key on the '
+						. '<a href="options-general.php?page=wp-spaatg-settings">ShortPixel AI Alt Text Generator</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 		return $message;
@@ -193,7 +193,7 @@ class BulkViewController extends \ShortPixel\ViewController
     $sc = StatsController::getInstance();
     $sc->reset(); // Get a fresh stat.
 
-    $excludeSizes = \wpSPIO()->settings()->excludeSizes;
+    $excludeSizes = \wpSPAATG()->settings()->excludeSizes;
 
 
     $approx->media->items = $sc->find('media', 'itemsTotal') - $sc->find('media', 'items');
@@ -286,8 +286,8 @@ class BulkViewController extends \ShortPixel\ViewController
   {
       $bulkController = BulkController::getInstance();
       $logs = $bulkController->getLogs();
-      $fs = \wpSPIO()->filesystem();
-      $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+      $fs = \wpSPAATG()->filesystem();
+      $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
 
       $view = array();
 

@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Model\File;
+namespace SPAATG\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Model\Image\CustomImageModel;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\Image\CustomImageModel;
 
 /* Model for Directories
 *
@@ -17,7 +17,7 @@ use ShortPixel\Model\Image\CustomImageModel;
 *
 */
 
-class DirectoryModel extends \ShortPixel\Model
+class DirectoryModel extends \SPAATG\Model
 {
   // Directory info
   protected $path;
@@ -43,7 +43,7 @@ class DirectoryModel extends \ShortPixel\Model
   */
   public function __construct($path)
   {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       // Test if path actually has someting, otherwise just bail.
       if (strlen(trim($path ?? '')) == 0)
@@ -183,7 +183,7 @@ class DirectoryModel extends \ShortPixel\Model
 
      $install_dir = get_home_path();
      if($install_dir == '/') {
-       $install_dir = \wpSPIO()->filesystem()->getWPAbsPath();
+       $install_dir = \wpSPAATG()->filesystem()->getWPAbsPath();
      }
 
      $install_dir = trailingslashit($install_dir);
@@ -466,7 +466,7 @@ class DirectoryModel extends \ShortPixel\Model
        if (! $fileInfo->isDot() && $fileInfo->isDir() && $fileInfo->isReadable())
        {
 
-				 if ('ShortPixel\Model\File\DirectoryOtherMediaModel' == get_called_class())
+				 if ('SPAATG\Model\File\DirectoryOtherMediaModel' == get_called_class())
 				 {
 				 	$dir = new DirectoryOtherMediaModel($fileInfo->getRealPath());
 				 }
@@ -504,7 +504,7 @@ class DirectoryModel extends \ShortPixel\Model
   //** Note, use sparingly, recursive function
   public function getFolderSize()
   {
-      //  \wpSPIO()->filesystem()->getFilesRecursive($this)
+      //  \wpSPAATG()->filesystem()->getFilesRecursive($this)
         $size = 0;
         $files = $this->getFiles();
 
@@ -573,7 +573,7 @@ class DirectoryModel extends \ShortPixel\Model
          return false;
 
        // This is a security measure to prevent unintended wipes.
-       $wpdir = \wpSPIO()->filesystem()->getWPUploadBase();
+       $wpdir = \wpSPAATG()->filesystem()->getWPUploadBase();
        if (! $this->isSubFolderOf($wpdir))
         return false;
 

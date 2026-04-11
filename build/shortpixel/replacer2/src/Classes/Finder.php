@@ -1,5 +1,5 @@
 <?php 
-namespace ShortPixel\Replacer\Classes; 
+namespace SPAATG\Replacer\Classes; 
 
 
 if (! defined('ABSPATH')) {

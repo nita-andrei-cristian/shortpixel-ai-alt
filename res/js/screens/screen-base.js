@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreenBase
+class SPAATGScreenBase
 {
 	isCustom = true;
 	isMedia = true;
@@ -21,7 +21,7 @@ class ShortPixelScreenBase
 	constructor(MainScreen, processor)
 	{
 		 this.processor = processor;
-		 this.strings = spio_screenStrings;
+		 this.strings = spaatg_screenStrings;
 	}
 
 	// Function for subclasses to add more init. Seperated because of screens that need to call Process functions when starting.
@@ -130,7 +130,7 @@ class ShortPixelScreenBase
 	// Search for where to insert the notice before ( ala WP system )
 	GetErrorPosition()
 	{
-		var el = document.querySelector('.is-shortpixel-settings-page');
+		var el = document.querySelector('.is-spaatg-settings-page, .is-shortpixel-settings-page');
 		if (el !== null) // we are on settings page .
 		{
 			 return el;

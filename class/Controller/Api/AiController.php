@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Controller\Api;
+namespace SPAATG\Controller\Api;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use \ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
+use \SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ class AiController extends RequestManager
 {
 
     protected $main_url;
-    protected $auth_token = 'spio_ai_jwt_token';
+    protected $auth_token = 'spaatg_ai_jwt_token';
 
     const AI_STATUS_INVALID_URL = 2;
     const AI_STATUS_OVERQUOTA = 3; 
@@ -43,7 +43,7 @@ class AiController extends RequestManager
 
       //$request = $this->getRequest($requestArgs);
       $requestBody = [
-        'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+        'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
         'item_id' => $qItem->item_id,
         'source' => 1, // SPIO
       ];

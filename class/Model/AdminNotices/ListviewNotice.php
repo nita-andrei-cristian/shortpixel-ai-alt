@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-class ListviewNotice extends \ShortPixel\Model\AdminNoticeModel
+class ListviewNotice extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_LISTVIEW_ACTIVE';
 
@@ -30,7 +30,7 @@ class ListviewNotice extends \ShortPixel\Model\AdminNoticeModel
 	protected function checkTrigger()
 	{
 		// Don't check for this, when not on this screen.
-		$screen_id = \wpSPIO()->env()->screen_id;
+		$screen_id = \wpSPAATG()->env()->screen_id;
 		if ($screen_id !== 'upload')
 		{
 			return false;
@@ -87,7 +87,7 @@ class ListviewNotice extends \ShortPixel\Model\AdminNoticeModel
 	protected function getMessage()
 	{
 
-		$message = sprintf(__('Now you can see ShortPixel Image Optimizer\'s actions and optimization data in Grid view too! Click on any image below and you can see the ShortPixel actions and menus in the popup that opens. However, the list view provides a better experience. Click now to %sswitch to the list view%s. ', 'shortpixel-image-optimiser'), '<a href="' . admin_url('upload.php?mode=list') . '">','</a>');
+		$message = sprintf(__('Now you can see ShortPixel AI Alt Text Generator\'s actions and optimization data in Grid view too! Click on any image below and you can see the ShortPixel actions and menus in the popup that opens. However, the list view provides a better experience. Click now to %sswitch to the list view%s. ', 'shortpixel-image-optimiser'), '<a href="' . admin_url('upload.php?mode=list') . '">','</a>');
 
 		return $message;
 

@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel\ShortQ\DataProvider;
-use ShortPixel\ShortQ\Item as Item;
+namespace SPAATG\ShortQ\DataProvider;
+use SPAATG\ShortQ\Item as Item;
 
 
 /* DataProvider handles where the data is stored, and retrieval upon queue request

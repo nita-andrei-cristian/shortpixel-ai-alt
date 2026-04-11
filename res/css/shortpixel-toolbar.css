@@ -1,20 +1,20 @@
 /**
 CSS for features that are displayed on all Admin page, like the bar status icon and some alerts.
  */
-#wpadminbar li.shortpixel-toolbar-processing {
+#wpadminbar li.spaatg-toolbar-processing {
   position: relative;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-hide {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-hide {
   display: none;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div {
   height: 33px;
   width: 33px;
   padding: 0;
   margin-top: -1px;
   padding: 0 3px;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div img {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div img {
   margin-right: 2px;
   margin-top: 6px;
   vertical-align: top;
@@ -23,11 +23,11 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   position: absolute;
   top: 0;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div span.shp-alert {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div span.shp-alert {
   display: none;
   margin-left: -8px;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .stats {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .stats {
   left: -1px;
   top: 3px;
   right: 0;
@@ -46,7 +46,7 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   color: #fff;
   text-align: center;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .controls {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .controls {
   position: absolute;
   top: 0;
   height: 32px;
@@ -59,7 +59,7 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   overflow: hidden;
   cursor: pointer;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .controls .play, #wpadminbar li.shortpixel-toolbar-processing .ab-item > div .controls .pause {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .controls .play, #wpadminbar li.spaatg-toolbar-processing .ab-item > div .controls .pause {
   font-family: dashicons;
   font-size: 32px;
   color: #fff;
@@ -67,10 +67,10 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   width: 100%;
   line-height: 1;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .controls .play.hidden, #wpadminbar li.shortpixel-toolbar-processing .ab-item > div .controls .pause.hidden {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .controls .play.hidden, #wpadminbar li.spaatg-toolbar-processing .ab-item > div .controls .pause.hidden {
   display: none;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .cssload-container {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .cssload-container {
   width: 100%;
   height: 24px;
   text-align: center;
@@ -78,7 +78,7 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   top: 0px;
   left: -1px;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div .cssload-speeding-wheel {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div .cssload-speeding-wheel {
   width: 24px;
   height: 24px;
   opacity: 0.7;
@@ -122,28 +122,28 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
     transform: rotate(360deg);
   }
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div:hover img:hover, #wpadminbar li.shortpixel-toolbar-processing .ab-item > div:hover .stats {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div:hover img:hover, #wpadminbar li.spaatg-toolbar-processing .ab-item > div:hover .stats {
   opacity: 0;
   visibility: hidden;
 }
-#wpadminbar li.shortpixel-toolbar-processing .ab-item > div:hover .controls {
+#wpadminbar li.spaatg-toolbar-processing .ab-item > div:hover .controls {
   visibility: visible;
   opacity: 1;
   z-index: 100;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-paused .ab-item > div .cssload-speeding-wheel {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-paused .ab-item > div .cssload-speeding-wheel {
   animation: none;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-paused .ab-item > div .controls {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-paused .ab-item > div .controls {
   visibility: visible;
   opacity: 1;
   z-index: 100;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-paused .ab-item > div .stats {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-paused .ab-item > div .stats {
   opacity: 0;
   z-index: 0;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-alert .ab-item > div span.shp-alert {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-alert .ab-item > div span.shp-alert {
   display: inline;
   font-size: 26px;
   line-height: 26px;
@@ -151,22 +151,22 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   font-weight: bold;
   vertical-align: middle;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-alert .ab-item > div .controls {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-alert .ab-item > div .controls {
   display: none;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-quota-exceeded .ab-item > div .cssload-container {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-quota-exceeded .ab-item > div .cssload-container {
   display: none;
 }
-#wpadminbar li.shortpixel-toolbar-processing.shortpixel-quota-exceeded .ab-item > div:hover img:hover {
+#wpadminbar li.spaatg-toolbar-processing.shortpixel-quota-exceeded .ab-item > div:hover img:hover {
   opacity: 1;
   visibility: visible;
 }
-#wpadminbar li.shortpixel-toolbar-processing .toolbar-notice-wrapper {
+#wpadminbar li.spaatg-toolbar-processing .toolbar-notice-wrapper {
   position: absolute;
   left: 0px;
   top: 30px;
 }
-#wpadminbar li.shortpixel-toolbar-processing .toolbar-notice-wrapper .toolbar-notice {
+#wpadminbar li.spaatg-toolbar-processing .toolbar-notice-wrapper .toolbar-notice {
   border: 1px solid #1cbfcb;
   background: #fff;
   color: #000;
@@ -178,4 +178,4 @@ CSS for features that are displayed on all Admin page, like the bar status icon 
   min-width: 300px;
 }
 
-/*# sourceMappingURL=shortpixel-toolbar.css.map */
+/*# sourceMappingURL=spaatg-toolbar.css.map */

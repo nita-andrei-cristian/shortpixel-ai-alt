@@ -1,21 +1,21 @@
 <?php
 
-namespace ShortPixel\Model\Image;
+namespace SPAATG\Model\Image;
 
-use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\DownloadHelper as DownloadHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use \ShortPixel\Model\File\FileModel as FileModel;
+use \SPAATG\Model\File\FileModel as FileModel;
 
 // Represent a thumbnail image / limited image in mediaLibrary.
-class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
+class MediaLibraryThumbnailModel extends \SPAATG\Model\Image\ImageModel
 {
 
 	public $name;
@@ -86,7 +86,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 	public function getRetina()
 	{
 		if ($this->is_virtual()) {
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 			$virtualFile = $fs->getFile($filepath);
 
@@ -95,7 +95,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 			$extension = $virtualFile->getExtension();
 
 			// This function needs an hard check on file exists, which might not be wanted.
-			if (false === \wpSPIO()->env()->useVirtualHeavyFunctions()) {
+			if (false === \wpSPAATG()->env()->useVirtualHeavyFunctions()) {
 				return false;
 			}
 		} else {
@@ -184,7 +184,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 
 	public function getURL()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		if ($this->size == 'original' && ! $this->get('is_retina')) {
 			$url = wp_get_original_image_url($this->id);
@@ -293,7 +293,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 	protected function isSizeExcluded()
 	{
 
-		$excludeSizes = \wpSPIO()->settings()->excludeSizes;
+		$excludeSizes = \wpSPAATG()->settings()->excludeSizes;
 
 		if (is_array($excludeSizes) && in_array($this->name, $excludeSizes)) {
 			$this->processable_status = self::P_EXCLUDE_SIZE;
@@ -336,7 +336,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 
 	protected function excludeThumbnails()
 	{
-		return (! \wpSPIO()->settings()->processThumbnails);
+		return (! \wpSPAATG()->settings()->processThumbnails);
 	}
 
 	public function hasBackup($args = array())
@@ -404,7 +404,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 	public function restore()
 	{
 		if ($this->is_virtual()) {
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 
 			$this->setVirtualToReal($filepath);
@@ -484,7 +484,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 	{
 		if ($this->is_virtual()) // download remote file to backup.
 		{
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$filepath = apply_filters('shortpixel/file/virtual/translate', $this->getFullPath(), $this);
 
 			$result = false;
@@ -534,7 +534,7 @@ class MediaLibraryThumbnailModel extends \ShortPixel\Model\Image\ImageModel
 	// @todo This is a breach of pattern to realize checking for changes to the main image path on conversion / duplicates.
 	private function getMainFile()
 	{
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		return $fs->getMediaImage($this->id, true, true);
 	}
 } // class

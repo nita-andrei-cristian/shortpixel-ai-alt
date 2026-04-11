@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel\ShortQ\DataProvider;
-use ShortPixel\ShortQ\Item as Item;
-use ShortPixel\ShortQ\ShortQ as ShortQ;
+namespace SPAATG\ShortQ\DataProvider;
+use SPAATG\ShortQ\Item as Item;
+use SPAATG\ShortQ\ShortQ as ShortQ;
 
 
 /* WP Mysql DataProvider

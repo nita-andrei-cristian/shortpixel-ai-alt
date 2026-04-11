@@ -1,20 +1,20 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
+use SPAATG\Controller\Queue\CustomQueue as CustomQueue;
+use SPAATG\Controller\Queue\Queue as Queue;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 // Class for controlling bulk and reporting.
 class BulkController
 {
    protected static $instance;
-   protected static $logName = 'shortpixel-bulk-logs';
+   protected static $logName = 'spaatg-bulk-logs';
 
    protected $logs;
 
@@ -48,8 +48,8 @@ class BulkController
 
       $queueController = new QueueController(['is_bulk' => true]);
 
-			$fs = \wpSPIO()->filesystem();
-			$backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+			$fs = \wpSPAATG()->filesystem();
+			$backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
 			$current_log = $fs->getFile($backupDir->getPath() . 'current_bulk_' . $type . '.log');
 
 			// When starting new bulk remove any open 'current logs';
@@ -194,10 +194,10 @@ class BulkController
 
 	 public function getLog($logName)
 	 {
-  		 $fs = \wpSPIO()->filesystem();
-			 $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+  		 $fs = \wpSPAATG()->filesystem();
+			 $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
 
-       $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+       $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
        $backupPath = realpath($backupDir->getPath());
    
        // Construct the full path
@@ -264,8 +264,8 @@ class BulkController
         $data['date'] = time();
 
         $logs = $this->getLogs();
-        $fs = \wpSPIO()->filesystem();
-        $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+        $fs = \wpSPAATG()->filesystem();
+        $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
 
         if (count($logs) == 10) // remove logs if more than 10.
         {

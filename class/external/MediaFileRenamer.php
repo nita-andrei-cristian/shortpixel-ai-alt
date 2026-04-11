@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ class MediaFileRenamer
   public function logPath($post, $oldpath, $newpath)
   {
 
-     $fs = \wpSPIO()->filesystem();
+     $fs = \wpSPAATG()->filesystem();
 
      $oldFile = $fs->getFile($oldpath);
 

@@ -43,6 +43,27 @@
       }
     }
 
+    .generated-alt-box {
+      .generated-alt-label {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #50575e;
+      }
+
+      .shortpixel-generated-alt-content {
+        margin: 0;
+        line-height: 1.5;
+
+        &.is-empty {
+          color: #646970;
+          font-style: italic;
+        }
+      }
+    }
+
 } // view-edit-media
 
 .spio-message

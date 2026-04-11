@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Build;
+namespace SPAATG\Build;
 
 class PackageLoader
 {

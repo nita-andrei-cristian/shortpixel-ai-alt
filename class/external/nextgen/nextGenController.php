@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Notices\NoticeController as Notice;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Model\File\DirectoryOtherMediaModel as DirectoryOtherMediaModel;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
 
-use ShortPixel\NextGenViewController as NextGenViewController;
+use SPAATG\NextGenViewController as NextGenViewController;
 
 // @integration NextGen Gallery
 class NextGenController
@@ -83,7 +83,7 @@ class NextGenController
 
   public function optimizeNextGen()
   {
-		 if (true === $this->enableOverride || \wpSPIO()->settings()->includeNextGen == 1)
+		 if (true === $this->enableOverride || \wpSPAATG()->settings()->includeNextGen == 1)
 		 {
 		 	 return true;
 		 }
@@ -226,7 +226,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   public function getGalleries($id = null)
   {
     global $wpdb;
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
     $homepath = $fs->getWPFileBase();
 
 		$sql = "SELECT path FROM {$wpdb->prefix}ngg_gallery";
@@ -254,7 +254,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   * Enabled checks are not an external class issue, so must be done before calling.
   */
    public function addNextGenGalleriesToCustom($silent = true) {
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
       $homepath = $fs->getWPFileBase();
 
       //add the NextGen galleries to custom folders
@@ -300,7 +300,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
       if (count($ngGalleries) > 0)
       {
         // put timestamp to this setting.
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
         $settings->hasCustomFolders = time();
       }
 
@@ -310,7 +310,7 @@ The screen IDS seem to be have changed, trying a more definitive solution
   public function handleImageUpload($image)
   {
     $otherMedia = OtherMediaController::getInstance();
-    //$fs = \wpSPIO()->filesystem();
+    //$fs = \wpSPAATG()->filesystem();
 
     if ($this->optimizeNextGen() === true) {
           $imageFsPath = $this->getImageAbspath($image);

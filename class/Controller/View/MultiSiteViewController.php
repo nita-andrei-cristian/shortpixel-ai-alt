@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Model\MultiSettingsModel as MultiSettingsModel;
+use SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\MultiSettingsModel as MultiSettingsModel;
 
-class MultiSiteViewController extends \ShortPixel\ViewController
+class MultiSiteViewController extends \SPAATG\ViewController
 {
 
       protected $template = 'view-network-settings'; // template name to include when loading.
@@ -45,7 +45,7 @@ class MultiSiteViewController extends \ShortPixel\ViewController
              'picture_method' => 'hooks',
           );
 
-        $delivery = get_site_option('spio_site_delivery');
+        $delivery = get_site_option('spaatg_site_delivery');
 
         $delivery = wp_parse_args($delivery_defaults, $delivery);
 

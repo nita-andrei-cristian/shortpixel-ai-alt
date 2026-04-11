@@ -1,12 +1,12 @@
 <?php
-namespace ShortPixel\Model\File;
+namespace SPAATG\Model\File;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 /* FileModel class.
@@ -19,7 +19,7 @@ use ShortPixel\Helper\UtilHelper as UtilHelper;
 * - Every file can have a backup counterpart.
 *
 */
-class FileModel extends \ShortPixel\Model
+class FileModel extends \SPAATG\Model
 {
 
   // File info
@@ -77,7 +77,7 @@ class FileModel extends \ShortPixel\Model
 
 		$this->checkTrustedMode();
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
     if ($fs->pathIsUrl($path)) // Asap check for URL's to prevent remote wrappers from running.
     {
@@ -549,7 +549,7 @@ class FileModel extends \ShortPixel\Model
         Log::addWarn('Could not establish FileDir ' . $this->fullpath);
         return false;
     }
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
     if (is_null($this->backupDirectory))
     {
@@ -583,7 +583,7 @@ class FileModel extends \ShortPixel\Model
   {
     $original_path = $path;
 
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
     if ($fs->pathIsUrl($path))
     {
@@ -758,13 +758,13 @@ class FileModel extends \ShortPixel\Model
 		 }
 
      $url = str_replace(array('http:', 'https:'), '', $url);
-     $fs = \wpSPIO()->filesystem();
+     $fs = \wpSPAATG()->filesystem();
 
 		 // The site URL domain is included in the URL string
      if (strpos($url, $site_url) !== false)
      {
        // try to replace URL for Path
-       $abspath =  \wpSPIO()->filesystem()->getWPAbsPath();
+       $abspath =  \wpSPAATG()->filesystem()->getWPAbsPath();
        $path = str_replace($site_url, rtrim($abspath->getPath(),'/'), $url);
 
        if (! $fs->pathIsUrl($path)) // test again.
@@ -843,7 +843,7 @@ class FileModel extends \ShortPixel\Model
         return $path;
 
       // Path contains upload basedir. This happens when upload dir is outside of usual WP.
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
       $uploadDir = $fs->getWPUploadBase();
       $abspath = $fs->getWPAbsPath();
 

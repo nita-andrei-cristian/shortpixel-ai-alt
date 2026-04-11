@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
-use ShortPixel\Controller\Front\CDNController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QueueController;
+use SPAATG\Controller\Front\CDNController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\QueueController;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\AiDataModel;
+use SPAATG\Model\File\FileModel as FileModel;
 
 
 // Future contoller for the edit media metabox view.
-class EditMediaViewController extends \ShortPixel\ViewController
+class EditMediaViewController extends \SPAATG\ViewController
 {
       protected $template = 'view-edit-media';
   //    protected $model = 'image';
@@ -44,7 +44,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
         if (! $this->hooked)
           $this->loadHooks();
 
-					$fs = \wpSPIO()->filesystem();
+					$fs = \wpSPAATG()->filesystem();
 					$fs->startTrustedMode();
 
       }
@@ -53,7 +53,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
       {
           add_meta_box(
               'shortpixel_info_box',          // this is HTML id of the box on edit screen
-              __('ShortPixel Info', 'shortpixel-image-optimiser'),    // title of the box
+              __('Alt Text', 'shortpixel-image-optimiser'),    // title of the box
               array( $this, 'doMetaBox'),   // function to be called to display the info
               null,//,        // on which edit screen the box should appear
               'side'//'normal',      // part of page where the box should appear
@@ -73,7 +73,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
           $fields['aibutton'] = [
               'label' => __('ShortPixel AI Data', 'shortpixel-image-optimiser'), 
               'input' => 'html', 
-              'html' => "<a href='javascript:window.ShortPixelProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
+              'html' => "<a href='javascript:window.SPAATGProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
                  <div class='shortpixel-alt-messagebox' id='shortpixel-ai-messagebox-$post_id'>&nbsp;</div>
                ",
           ];
@@ -88,7 +88,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 					$this->view->id = $this->post_id;
 					$this->view->list_actions = '';
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
           $this->imageModel = $fs->getMediaImage($this->post_id);
 
 					// Asking for something non-existing.
@@ -113,6 +113,8 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
           $this->view->actions = UiHelper::getActions($this->imageModel);
           $this->view->stats = $this->getStatistics();
+          $this->view->altText = $this->getAltText();
+          $this->view->hasAltText = (strlen(trim($this->view->altText)) > 0);
 
           if (! $this->userIsAllowed)
           {
@@ -120,12 +122,32 @@ class EditMediaViewController extends \ShortPixel\ViewController
             $this->view->list_actions = '';
           }
 
-          if(true === \wpSPIO()->env()->is_debug )
+          if(true === \wpSPAATG()->env()->is_debug )
           {
             $this->view->debugInfo = $this->getDebugInfo();
           }
 
           $this->loadView();
+      }
+
+      protected function getAltText()
+      {
+          $aiDataModel = AiDataModel::getModelByAttachment($this->post_id, 'media');
+          $currentData = $aiDataModel->getCurrentData();
+          $generatedData = $aiDataModel->getGeneratedData();
+
+          $currentAlt = (is_array($currentData) && isset($currentData['alt'])) ? $currentData['alt'] : '';
+          $generatedAlt = (is_array($generatedData) && isset($generatedData['alt'])) ? $generatedData['alt'] : '';
+
+          if (strlen(trim($currentAlt)) > 0) {
+              return $currentAlt;
+          }
+
+          if (strlen(trim($generatedAlt)) > 0) {
+              return $generatedAlt;
+          }
+
+          return (string) get_post_meta($this->post_id, '_wp_attachment_image_alt', true);
       }
 
       protected function getStatusMessage()
@@ -181,7 +203,7 @@ class EditMediaViewController extends \ShortPixel\ViewController
 				if ($imageObj->isOptimized())
 				{
 					$stats[] = array( sprintf(__('%s %s Read more about theses stats %s ', 'shortpixel-image-optimiser'), '
-					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPIO()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
+					<p><img alt=' . esc_html('Info Icon', 'shortpixel-image-optimiser')  . ' src=' . esc_url( wpSPAATG()->plugin_url('res/img/info-icon.png' )) . ' style="margin-bottom: -4px;"/>', '<a href="https://shortpixel.com/knowledge-base/article/the-stats-from-the-shortpixel-column-in-the-media-library-explained/" target="_blank">', '</a></p>'), '');
 				}
 
         return $stats;
@@ -189,14 +211,14 @@ class EditMediaViewController extends \ShortPixel\ViewController
 
       protected function getDebugInfo()
       {
-          if(! \wpSPIO()->env()->is_debug )
+          if(! \wpSPAATG()->env()->is_debug )
           {
             return [];
           }
 
           $meta = \wp_get_attachment_metadata($this->post_id);
 
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
 					$imageObj = $this->imageModel;
 

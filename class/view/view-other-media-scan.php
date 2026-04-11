@@ -1,11 +1,11 @@
 <?php
 
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
 
 
 if ( ! defined( 'ABSPATH' ) ) {

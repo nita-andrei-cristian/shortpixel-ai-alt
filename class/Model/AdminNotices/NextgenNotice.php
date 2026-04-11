@@ -1,20 +1,20 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
 
-class NextgenNotice extends \ShortPixel\Model\AdminNoticeModel
+class NextgenNotice extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_INTEGRATION_NGGALLERY';
 
 	protected function checkTrigger()
 	{
 
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 		$keyControl = ApiKeyController::getInstance();
 
 		if (false === $keyControl->keyIsVerified())
@@ -22,7 +22,7 @@ class NextgenNotice extends \ShortPixel\Model\AdminNoticeModel
 			return false; // no key, no integrations.
 		}
 
-		if (\wpSPIO()->env()->has_nextgen && ! $settings->includeNextGen)
+		if (\wpSPAATG()->env()->has_nextgen && ! $settings->includeNextGen)
 		{
 			 return true;
 		}
@@ -32,7 +32,7 @@ class NextgenNotice extends \ShortPixel\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$url = esc_url(admin_url('options-general.php?page=wp-shortpixel-settings&part=optimisation'));
+		$url = esc_url(admin_url('options-general.php?page=wp-spaatg-settings&part=optimisation'));
 		$message = sprintf(__('You seem to be using NextGen Gallery. You can optimize your galleries with ShortPixel, but this is not currently enabled. To enable it, %sgo to settings and enable%s it!', 'shortpixel_image_optimiser'), '<a href="' . $url . '">', '</a>');
 
 		return $message;

@@ -1,10 +1,10 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\Notices\NoticeController as NoticeController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\Notices\NoticeController as NoticeController;
+use SPAATG\Controller\StatsController as StatsController;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,14 +15,14 @@ $opt = new QueueController();
 
 $q = $opt->getQueue('media');
 
-$env = \wpSPIO()->env();
-$fs = \wpSPIO()->filesystem();
+$env = \wpSPAATG()->env();
+$fs = \wpSPAATG()->filesystem();
 
 $debugUrl = add_query_arg(array('part' => 'debug', 'noheader' => true), $this->url);
 
 if (Log::isManualDebug())
 {
-  $debugUrl = add_query_arg(['SHORTPIXEL_DEBUG' => sanitize_text_field($_GET['SHORTPIXEL_DEBUG'])], $debugUrl);
+  $debugUrl = add_query_arg(['SPAATG_DEBUG' => sanitize_text_field($_GET['SPAATG_DEBUG'])], $debugUrl);
 }
 ?>
 
@@ -43,11 +43,11 @@ if (Log::isManualDebug())
       <span>Hide Key</span><span><?php var_export($view->key->hide_api_key); ?></span>
       <span>Has Nextgen</span><span><?php var_export($this->has_nextgen); ?></span>
 			<span>Has Offload</span><span><?php
-        $offload = \wpSPIO()->env()->hasOffload();
+        $offload = \wpSPAATG()->env()->hasOffload();
         var_export($offload);
         if (true === $offload)
         {
-            echo ' (' .  \wpSPIO()->env()->getOffloadName() . ') ';
+            echo ' (' .  \wpSPAATG()->env()->getOffloadName() . ') ';
         }
 
 
@@ -61,9 +61,9 @@ if (Log::isManualDebug())
 		</div>
 
 		<div class='flex'>
-				<span>Uploads Base</span><span><?php echo esc_html((defined('SHORTPIXEL_UPLOADS_BASE')) ? SHORTPIXEL_UPLOADS_BASE : 'not defined'); ?></span>
-				<span>Uploads Name</span><span><?php echo esc_html((defined('SHORTPIXEL_UPLOADS_NAME')) ? SHORTPIXEL_UPLOADS_NAME : 'not defined'); ?></span>
-				<span>Backup Folder</span><span><?php echo esc_html((defined('SHORTPIXEL_BACKUP_FOLDER')) ? SHORTPIXEL_BACKUP_FOLDER : 'not defined'); ?></span>
+				<span>Uploads Base</span><span><?php echo esc_html((defined('SPAATG_UPLOADS_BASE')) ? SPAATG_UPLOADS_BASE : 'not defined'); ?></span>
+				<span>Uploads Name</span><span><?php echo esc_html((defined('SPAATG_UPLOADS_NAME')) ? SPAATG_UPLOADS_NAME : 'not defined'); ?></span>
+				<span>Backup Folder</span><span><?php echo esc_html((defined('SPAATG_BACKUP_FOLDER')) ? SPAATG_BACKUP_FOLDER : 'not defined'); ?></span>
 			
 
         <span>

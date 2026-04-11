@@ -1,15 +1,15 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\StatsController as StatsController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\QuotaController as QuotaController;
 
-class QuotaNoticeMonth extends \ShortPixel\Model\AdminNoticeModel
+class QuotaNoticeMonth extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_UPGRADE_MONTH';
 
@@ -55,7 +55,7 @@ class QuotaNoticeMonth extends \ShortPixel\Model\AdminNoticeModel
 		$message = '<p>' . sprintf(__("You add an average of %s %d images and thumbnails %s to your Media Library every month and you have <strong>a plan of %d images/month (and %d one-time images)</strong>.%s"
 					. " You may need to upgrade your plan to have all your images optimized.", 'shortpixel-image-optimiser'), '<strong>', $average, '</strong>', $month_total, $onetime_remaining, '<br>') . '</p>';
 
-		$message .= '  <button class="button button-primary" id="shortpixel-upgrade-advice" onclick="ShortPixel.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>';
+		$message .= '  <button class="button button-primary" id="spaatg-upgrade-advice" onclick="SPAATG.proposeUpgrade()" style="margin-right:10px;"><strong>' .  __('Show me the best available options', 'shortpixel-image-optimiser') . '</strong></button>';
 
 		return $message;
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ class QueryMonitor
 
       $this->hooks();
 
-		/*	if (false === \wpSPIO()->env()->is_debug)
+		/*	if (false === \wpSPAATG()->env()->is_debug)
 				return;
         */
 

@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 // @todo Clean up unused lines in this file. (cloudflare)
 class CloudFlareAPI {
@@ -29,9 +29,9 @@ class CloudFlareAPI {
     public function setup()
     {
 
-        $this->zone_id =  (defined('SHORTPIXEL_CFZONE') ) ? SHORTPIXEL_CFZONE : \wpSPIO()->settings()->cloudflareZoneID;
+        $this->zone_id =  (defined('SPAATG_CFZONE') ) ? SPAATG_CFZONE : \wpSPAATG()->settings()->cloudflareZoneID;
 
-        $this->token = (defined('SHORTPIXEL_CFTOKEN') ) ? SHORTPIXEL_CFTOKEN : \wpSPIO()->settings()->cloudflareToken;
+        $this->token = (defined('SPAATG_CFTOKEN') ) ? SPAATG_CFTOKEN : \wpSPAATG()->settings()->cloudflareToken;
 
         if (! empty($this->token) && ! empty($this->zone_id))
         {
@@ -82,7 +82,7 @@ class CloudFlareAPI {
 
             */
 
-						$fs = \wpSPIO()->filesystem();
+						$fs = \wpSPAATG()->filesystem();
 
 						$image_paths[] = $imageItem->getURL();
 						if ($imageItem->getWebp() !== false)

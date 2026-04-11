@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
 
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\QuotaController as QuotaController;
 
-class ApiKeyModel extends \ShortPixel\Model
+class ApiKeyModel extends \SPAATG\Model
 {
 
   // variables
@@ -31,13 +31,13 @@ class ApiKeyModel extends \ShortPixel\Model
 
   protected $legacy_model = array(
        'apiKey' => array('s' => 'string',
-                          'key' => 'wp-short-pixel-apiKey',
+                          'key' => 'wp-spaatg-apiKey',
                         ),
        'apiKeyTried' => array('s' => 'string',
-                           'key' => 'wp-short-pixel-apiKeyTried'
+                           'key' => 'wp-spaatg-apiKeyTried'
        ),
        'verifiedKey' => array('s' => 'boolean',
-                          'key' => 'wp-short-pixel-verifiedKey',
+                          'key' => 'wp-spaatg-verifiedKey',
                        ),
 
   );
@@ -51,13 +51,13 @@ class ApiKeyModel extends \ShortPixel\Model
        ),
   );
 
-	private $option_name =  'spio_key';
+	private $option_name =  'spaatg_key';
 
   /** Constructor. Check for constants, load the key */
   public function __construct()
   {
-    $this->key_is_constant = (defined("SHORTPIXEL_API_KEY")) ? true : false;
-    $this->key_is_hidden = (defined("SHORTPIXEL_HIDE_API_KEY")) ? (bool) SHORTPIXEL_HIDE_API_KEY : false;
+    $this->key_is_constant = (defined("SPAATG_API_KEY")) ? true : false;
+    $this->key_is_hidden = (defined("SPAATG_HIDE_API_KEY")) ? (bool) SPAATG_HIDE_API_KEY : false;
 
   }
 
@@ -93,7 +93,7 @@ class ApiKeyModel extends \ShortPixel\Model
 
     if ($this->key_is_constant)
     {
-        $key = SHORTPIXEL_API_KEY;
+        $key = SPAATG_API_KEY;
         if (isset($apikeySettings['apiKey']))
         {
             $this->apiKey = '';
@@ -283,9 +283,9 @@ class ApiKeyModel extends \ShortPixel\Model
         $notice = array("status" => "warn", "msg" => __("API Key is valid but your site is not accessible from our servers. Please make sure that your server is accessible from the Internet before using the API or otherwise we won't be able to optimize them.",'shortpixel-image-optimiser'));
         Notice::addWarning($notice);
     } else {
-        if ( function_exists("is_multisite") && is_multisite() && !defined("SHORTPIXEL_API_KEY"))
+        if ( function_exists("is_multisite") && is_multisite() && !defined("SPAATG_API_KEY"))
             $notice = __("Great, your API Key is valid! <br>You seem to be running a multisite, please note that API Key can also be configured in wp-config.php like this:",'shortpixel-image-optimiser')
-                . "<BR> <b>define('SHORTPIXEL_API_KEY', '". $this->apiKey ."');</b>";
+                . "<BR> <b>define('SPAATG_API_KEY', '". $this->apiKey ."');</b>";
         else
             $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before starting to optimize your images.','shortpixel-image-optimiser');
 
@@ -293,9 +293,9 @@ class ApiKeyModel extends \ShortPixel\Model
     }
 
     //test that the "uploads"  have the right rights and also we can create the backup dir for ShortPixel
-    if ( \wpSPIO()->filesystem()->checkBackupFolder() === false)
+    if ( \wpSPAATG()->filesystem()->checkBackupFolder() === false)
     {
-        $notice = sprintf(__("There is something preventing us to create a new folder for backing up your original files.<BR>Please make sure that folder <b>%s</b> has the necessary write and read rights.",'shortpixel-image-optimiser'), WP_CONTENT_DIR . '/' . SHORTPIXEL_UPLOADS_NAME );
+        $notice = sprintf(__("There is something preventing us to create a new folder for backing up your original files.<BR>Please make sure that folder <b>%s</b> has the necessary write and read rights.",'shortpixel-image-optimiser'), WP_CONTENT_DIR . '/' . SPAATG_UPLOADS_NAME );
        Notice::addError($notice);
     }
 
@@ -333,19 +333,19 @@ class ApiKeyModel extends \ShortPixel\Model
 
   protected function checkRedirect()
   {
-    $redirectedSettings =  \wpSPIO()->settings()->redirectedSettings;
-    if(! \wpSPIO()->env()->is_ajaxcall && !$redirectedSettings && !$this->verifiedKey && (!function_exists("is_multisite") || ! is_multisite())) {
+    $redirectedSettings =  \wpSPAATG()->settings()->redirectedSettings;
+    if(! \wpSPAATG()->env()->is_ajaxcall && !$redirectedSettings && !$this->verifiedKey && (!function_exists("is_multisite") || ! is_multisite())) {
       
-      \wpSPIO()->settings()->redirectedSettings = 1;
+      \wpSPAATG()->settings()->redirectedSettings = 1;
 
-      if (isset($_GET['page']) && 'wp-shortpixel-settings' === $_GET['page'])
+      if (isset($_GET['page']) && 'wp-spaatg-settings' === $_GET['page'])
       {
          Log::addError('Panic! RedirectSettings failed setting!');
          return false; 
       }
 
   //    $this->update();
-      wp_safe_redirect(admin_url("options-general.php?page=wp-shortpixel-settings"));
+      wp_safe_redirect(admin_url("options-general.php?page=wp-spaatg-settings"));
       exit();
     }
 

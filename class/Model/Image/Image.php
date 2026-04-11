@@ -1,15 +1,15 @@
 <?php 
-namespace ShortPixel\Model\Image;
+namespace SPAATG\Model\Image;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 /** Class for loading Image into memory as resource. Used for conversion like PNG . 
  * 
- * @package ShortPixel\Model\Image
+ * @package SPAATG\Model\Image
  */
  
-Class Image extends \ShortPixel\Model\File\FileModel
+Class Image extends \SPAATG\Model\File\FileModel
 {
 
         protected $image; // The image resource
@@ -31,7 +31,7 @@ Class Image extends \ShortPixel\Model\File\FileModel
 
         protected function checkLibrary()
         {
-            $env = \wpSPIO()->env(); 
+            $env = \wpSPAATG()->env(); 
             if ($env->is_imagick_installed)
             {
                 $this->useLib = 'imagick'; 

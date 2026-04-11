@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 class BuildAutoLoader
 {
@@ -30,7 +30,7 @@ class BuildAutoLoader
     $main = array(
       // 'shortpixel_api.php',
       // 'class/wp-short-pixel.php',
-       'class/wp-shortpixel-settings.php',
+       'class/wp-spaatg-settings.php',
       // 'class/view/shortpixel_view.php',
        'class/front/img-to-picture-webp.php',
     );

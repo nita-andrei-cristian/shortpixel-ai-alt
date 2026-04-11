@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-class SettingsModel extends \ShortPixel\Model
+class SettingsModel extends \SPAATG\Model
 {
 		private static $instance;
 
-		private $option_name = 'spio_settings';
+		private $option_name = 'spaatg_settings';
 
 		private $updated = false;
 

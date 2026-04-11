@@ -1,15 +1,15 @@
 <?php
 
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class FrontController extends \ShortPixel\Controller
+class FrontController extends \SPAATG\Controller
 {
 
 	private static $instance;
@@ -18,7 +18,7 @@ class FrontController extends \ShortPixel\Controller
 	public function __construct()
 	{
 
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPAATG()->settings();
 
 			if (true === $settings->useCDN) {
 				$this->controller = new Front\CDNController();

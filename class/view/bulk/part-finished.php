@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\Helper\UiHelper as UiHelper;
+namespace SPAATG;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -33,15 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
       </div>
     <h3 class="heading">
-       <?php esc_html_e('The ShortPixel Bulk Processing is finished' ,'shortpixel-image-optimiser'); ?>
+       <?php esc_html_e('The ShortPixel AI Alt Text Generator bulk process is finished' ,'shortpixel-image-optimiser'); ?>
     </h3>
-
-      <div class='dashboard-text'>
-         <a class='button' type='button' href="https://wordpress.org/support/plugin/shortpixel-image-optimiser/reviews/#new-post" target="_blank">
-            <span class='icon'><?php echo UIHelper::getIcon('res/images/icon/heart.svg', ['width' => '16']); ?></span> 
-            <span><?php _e('Rate ShortPixel', 'shortpixel-image-optimiser'); ?></span>
-         </a>
-      </div>
 		<span class='hidden' data-check-media-total data-stats-media="total">0</span>
 
     <span class='hidden' data-check-total-customOperation data-stats-total="isCustomOperation">-1</span>
@@ -107,7 +100,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- ****** CUSTOM ********  --->
 		<span class='hidden' data-check-custom-total data-stats-custom="total">0</span>
 
-    <div class='bulk-summary' data-check-visibility data-control="data-check-custom-total">
+    <div class='bulk-summary hidden' data-check-visibility data-control="data-check-custom-total">
       <div class='heading'>
         <span><i class='dashicons dashicons-open-folder'>&nbsp;</i> <?php esc_html_e('Custom Media','shortpixel-image-optimiser'); ?>
           <?php if (false !== $this->view->customOperationCustom) {

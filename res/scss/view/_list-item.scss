@@ -115,7 +115,7 @@
 } // sp-column-info
 
 // The whole column
-.column-wp-shortPixel
+.column-wp-spaatg
 {
 
   .message
@@ -146,6 +146,19 @@
     }
 
     > div { padding-left: 8px; padding-bottom: 8px; }
+
+    &.shortpixel-generated-alt-panel {
+      .shortpixel-generated-alt-content {
+        line-height: 1.5;
+        white-space: normal;
+      }
+
+      &.is-empty .shortpixel-generated-alt-content,
+      .shortpixel-generated-alt-content.is-empty {
+        color: #646970;
+        font-style: italic;
+      }
+    }
 
     @at-root .media-sidebar & {
       padding-top: 20px;

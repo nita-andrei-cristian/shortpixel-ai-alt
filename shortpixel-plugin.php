@@ -1,31 +1,31 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\AjaxController as AjaxController;
-use ShortPixel\Controller\AdminController as AdminController;
-use ShortPixel\Controller\ImageEditorController as ImageEditorController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\FileSystemController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\NextGenController as NextGenController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\AjaxController as AjaxController;
+use SPAATG\Controller\AdminController as AdminController;
+use SPAATG\Controller\ImageEditorController as ImageEditorController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\FileSystemController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\NextGenController as NextGenController;
 
-use ShortPixel\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
+use SPAATG\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
+use SPAATG\Controller\Queue\CustomQueue as CustomQueue;
 
-use ShortPixel\Helper\InstallHelper as InstallHelper;
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\InstallHelper as InstallHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Model\SettingsModel as SettingsModel;
+use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Model\SettingsModel as SettingsModel;
 
 /** Plugin class
  * This class is meant for: WP Hooks, init of runtime and Controller Routing.
@@ -53,8 +53,8 @@ class ShortPixelPlugin {
 	/** LowInit after all Plugins are loaded. Core WP function can still be missing. This should mostly add hooks */
 	public function lowInit() {
 
-		$this->plugin_path = plugin_dir_path( SHORTPIXEL_PLUGIN_FILE );
-		$this->plugin_url  = plugin_dir_url( SHORTPIXEL_PLUGIN_FILE );
+		$this->plugin_path = plugin_dir_path( SPAATG_PLUGIN_FILE );
+		$this->plugin_url  = plugin_dir_url( SPAATG_PLUGIN_FILE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 		if ( isset( $_REQUEST['noheader'] ) ) {
@@ -99,7 +99,7 @@ class ShortPixelPlugin {
 			// toolbar notifications
 
 			// deactivate conflicting plugins if found
-			add_action( 'admin_post_shortpixel_deactivate_conflict_plugin', array( '\ShortPixel\Helper\InstallHelper', 'deactivateConflictingPlugin' ) );
+			add_action( 'admin_post_spaatg_deactivate_conflict_plugin', array( '\SPAATG\Helper\InstallHelper', 'deactivateConflictingPlugin' ) );
 
 			// only if the key is not yet valid or the user hasn't bought any credits.
 			// @todo This should not be done here.
@@ -111,7 +111,7 @@ class ShortPixelPlugin {
 
 			if ( true || false === $keyControl->keyIsVerified() || $totalCredits < 4000 ) {
 				require_once 'class/view/shortpixel-feedback.php';
-				new ShortPixelFeedback( SHORTPIXEL_PLUGIN_FILE, 'shortpixel-image-optimiser' );
+				new ShortPixelFeedback( SPAATG_PLUGIN_FILE, 'shortpixel-image-optimiser' );
 			}
 		}
 		
@@ -128,7 +128,7 @@ class ShortPixelPlugin {
 			$quotaController = QuotaController::getInstance();
 			$quotaController->getQuota();
 
-			/* load_plugin_textdomain( 'shortpixel-image-optimiser', false, plugin_basename( dirname( SHORTPIXEL_PLUGIN_FILE ) ) . '/lang' ); */
+			/* load_plugin_textdomain( 'shortpixel-image-optimiser', false, plugin_basename( dirname( SPAATG_PLUGIN_FILE ) ) . '/lang' ); */
 	}
 
 	/** Function to get plugin settings
@@ -205,6 +205,8 @@ class ShortPixelPlugin {
 
 		// Placeholder function for heic and such, return placeholder URL in image to help w/ database replacements after conversion.
 		add_filter('wp_get_attachment_url', array($admin, 'checkPlaceHolder'), 10, 2);
+		add_filter('media_row_actions', array($admin, 'filterMediaRowActions'), 999, 2);
+		add_filter('manage_media_columns', array($admin, 'filterMediaColumns'), 999, 1);
 
 		add_filter('rest_post_dispatch', [$admin, 'checkRestMedia'],10, 3);
 
@@ -237,7 +239,7 @@ class ShortPixelPlugin {
 
 		$this->env()->setDefaultViewModeList();// set default mode as list. only @ first run
 
-		add_filter( 'plugin_action_links_' . plugin_basename( SHORTPIXEL_PLUGIN_FILE ), array( $admin, 'generatePluginLinks' ) );// for plugin settings page
+		add_filter( 'plugin_action_links_' . plugin_basename( SPAATG_PLUGIN_FILE ), array( $admin, 'generatePluginLinks' ) );// for plugin settings page
 
 		// for cleaning up the WebP images when an attachment is deleted . Loading this early because it's possible other plugins delete files in the uploads, but we need those to remove backups.
 		add_action( 'delete_attachment', array( $admin, 'onDeleteAttachment' ), 5 );
@@ -247,7 +249,7 @@ class ShortPixelPlugin {
 		//add_action( 'wplr_update_media', array( AjaxController::getInstance(), 'onWpLrUpdateMedia' ), 10, 2 );
 		add_action( 'wplr_sync_media', array( AjaxController::getInstance(), 'onWpLrSyncMedia' ), 10, 2 );
 
-		add_action( 'admin_bar_menu', array( $admin, 'toolbar_shortpixel_processing' ), 999 );
+		add_action( 'admin_bar_menu', array( $admin, 'toolbar_spaatg_processing' ), 999 );
 
 		// Image Editor Actions
 		add_filter('load_image_to_edit_path', array($imageEditor, 'getImageForEditor'), 10, 3);
@@ -270,18 +272,18 @@ class ShortPixelPlugin {
 	protected function ajaxHooks() {
 
 		// Ajax hooks. Should always be prepended with ajax_ and *must* check on nonce in function
-		add_action( 'wp_ajax_shortpixel_image_processing', array( AjaxController::getInstance(), 'ajax_processQueue' ) );
+		add_action( 'wp_ajax_spaatg_image_processing', array( AjaxController::getInstance(), 'ajax_processQueue' ) );
 
 		// Custom Media
 
-		//add_action( 'wp_ajax_shortpixel_get_backup_size', array( AjaxController::getInstance(), 'ajax_getBackupFolderSize' ) );
+		//add_action( 'wp_ajax_spaatg_get_backup_size', array( AjaxController::getInstance(), 'ajax_getBackupFolderSize' ) );
 
-		add_action( 'wp_ajax_shortpixel_propose_upgrade', array( AjaxController::getInstance(), 'ajax_proposeQuotaUpgrade' ) );
-		add_action( 'wp_ajax_shortpixel_check_quota', array( AjaxController::getInstance(), 'ajax_checkquota' ) );
+		add_action( 'wp_ajax_spaatg_propose_upgrade', array( AjaxController::getInstance(), 'ajax_proposeQuotaUpgrade' ) );
+		add_action( 'wp_ajax_spaatg_check_quota', array( AjaxController::getInstance(), 'ajax_checkquota' ) );
 
 
-		add_action( 'wp_ajax_shortpixel_ajaxRequest', array( AjaxController::getInstance(), 'ajaxRequest' ) );
-		add_action( 'wp_ajax_shortpixel_settingsRequest', array( AjaxController::getInstance(), 'settingsRequest'));
+		add_action( 'wp_ajax_spaatg_ajaxRequest', array( AjaxController::getInstance(), 'ajaxRequest' ) );
+		add_action( 'wp_ajax_spaatg_settingsRequest', array( AjaxController::getInstance(), 'settingsRequest'));
 
 	}
 
@@ -289,22 +291,17 @@ class ShortPixelPlugin {
 	public function admin_pages() {
 		$admin_pages = array();
 		// settings page
-		$admin_pages[] = add_options_page( __( 'ShortPixel Settings', 'shortpixel-image-optimiser' ), 'ShortPixel', 'manage_options', 'wp-shortpixel-settings', array( $this, 'route' ) );
+		$admin_pages[] = add_options_page( __( 'ShortPixel AI Alt Text Generator', 'shortpixel-image-optimiser' ), __( 'ShortPixel AI Alt Text Generator', 'shortpixel-image-optimiser' ), 'manage_options', 'wp-spaatg-settings', array( $this, 'route' ) );
 
-		$otherMediaController = OtherMediaController::getInstance();
-		if ( $otherMediaController->showMenuItem() ) {
-			/*translators: title and menu name for the Other media page*/
-			$admin_pages[] = add_media_page( __( 'Custom Media Optimized by ShortPixel', 'shortpixel-image-optimiser' ), __( 'Custom Media', 'shortpixel-image-optimiser' ), 'edit_others_posts', 'wp-short-pixel-custom', array( $this, 'route' ) );
-		}
 		/*translators: title and menu name for the Bulk Processing page*/
-		$admin_pages[] = add_media_page( __( 'ShortPixel Bulk Process', 'shortpixel-image-optimiser' ), __( 'Bulk ShortPixel', 'shortpixel-image-optimiser' ), 'edit_others_posts', 'wp-short-pixel-bulk', array( $this, 'route' ) );
+		$admin_pages[] = add_media_page( __( 'ShortPixel AI Alt Text Generator Bulk Process', 'shortpixel-image-optimiser' ), __( 'Bulk AI Alt Text', 'shortpixel-image-optimiser' ), 'edit_others_posts', 'wp-spaatg-bulk', array( $this, 'route' ) );
 
 		$this->admin_pages = $admin_pages;
 	}
 
 	public function admin_network_pages()
 	{
-	//	  	add_menu_page(__('Shortpixel MU', 'shortpixel-image-optimiser'), __('Shortpixel', 'shortpixel_image_optimiser'), 'manage_sites', 'shortpixel-network-settings', [$this, 'route'], $this->plugin_url('res/img/shortpixel.png') );
+	//	  	add_menu_page(__('Shortpixel MU', 'shortpixel-image-optimiser'), __('Shortpixel', 'shortpixel_image_optimiser'), 'manage_sites', 'spaatg-network-settings', [$this, 'route'], $this->plugin_url('res/img/shortpixel.png') );
 	}
 
 	/** All scripts should be registed, not enqueued here (unless global wp-admin is needed )
@@ -313,16 +310,16 @@ class ShortPixelPlugin {
      */
 	public function admin_scripts( $hook_suffix ) {
 
-		$settings       = \wpSPIO()->settings();
-		$env = \wpSPIO()->env();
+		$settings       = \wpSPAATG()->settings();
+		$env = \wpSPAATG()->env();
 		$ajaxController = AjaxController::getInstance();
 
 		$secretKey = $ajaxController->getProcessorKey();
 
-		$keyControl = \ShortPixel\Controller\ApiKeyController::getInstance();
+		$keyControl = \SPAATG\Controller\ApiKeyController::getInstance();
 		$apikey     = $keyControl->getKeyForDisplay();
 
-		$is_bulk_page = \wpSPIO()->env()->is_bulk_page;
+		$is_bulk_page = \wpSPAATG()->env()->is_bulk_page;
 
 		$queueController = new QueueController(['is_bulk' =>  $is_bulk_page ]);
 		$quotaController = QuotaController::getInstance();
@@ -331,24 +328,24 @@ class ShortPixelPlugin {
 
 		$args_footer_async = ['strategy' => 'async', 'in_footer' => true];
 
-	 wp_register_script('shortpixel-folderbrowser', plugins_url('/res/js/shortpixel-folderbrowser.js', SHORTPIXEL_PLUGIN_FILE), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+	 wp_register_script('spaatg-folderbrowser', plugins_url('/res/js/shortpixel-folderbrowser.js', SPAATG_PLUGIN_FILE), array(), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-	 wp_localize_script('shortpixel-folderbrowser', 'spio_folderbrowser', array(
+	 wp_localize_script('spaatg-folderbrowser', 'spaatg_folderbrowser', array(
 		 		'strings' => array(
 						'loading' => __('Loading', 'shortpixel-image-optimiser'),
 						'empty_result' => __('No Directories found that can be added to Custom Folders', 'shortpixel-image-optimiser'),
 				),
 				'icons' => array(
-						'folder_closed' => plugins_url('res/img/filebrowser/folder-closed.svg', SHORTPIXEL_PLUGIN_FILE),
-						'folder_open' => plugins_url('res/img/filebrowser/folder-closed.svg', SHORTPIXEL_PLUGIN_FILE),
+						'folder_closed' => plugins_url('res/img/filebrowser/folder-closed.svg', SPAATG_PLUGIN_FILE),
+						'folder_open' => plugins_url('res/img/filebrowser/folder-closed.svg', SPAATG_PLUGIN_FILE),
 				),
 	 ));
 
-		wp_register_script( 'jquery.knob.min.js', plugins_url( '/res/js/jquery.knob.min.js', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-jquery-knob', plugins_url( '/res/js/jquery.knob.min.js', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script( 'shortpixel-debug', plugins_url( '/res/js/debug.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'jquery-ui-draggable' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-debug', plugins_url( '/res/js/debug.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'jquery-ui-draggable' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script( 'shortpixel-tooltip', plugins_url( '/res/js/shortpixel-tooltip.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-tooltip', plugins_url( '/res/js/shortpixel-tooltip.js', SPAATG_PLUGIN_FILE ), array( 'jquery' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 		$tooltip_localize = array(
 			'processing' => __('Processing... ','shortpixel-image-optimiser'),
@@ -358,24 +355,24 @@ class ShortPixelPlugin {
 			'items' => __('items in queue', 'shortpixel-image-optimiser'),
 		);
 
-		wp_localize_script( 'shortpixel-tooltip', 'spio_tooltipStrings', $tooltip_localize);
+		wp_localize_script( 'spaatg-tooltip', 'spaatg_tooltipStrings', $tooltip_localize);
 
-		wp_register_script( 'shortpixel-settings', plugins_url( 'res/js/shortpixel-settings.js', SHORTPIXEL_PLUGIN_FILE ), array('shortpixel-shiftselect', 'shortpixel-inline-help'), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-settings', plugins_url( 'res/js/shortpixel-settings.js', SPAATG_PLUGIN_FILE ), array('spaatg-shiftselect', 'spaatg-inline-help'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script('shortpixel-shiftselect', plugins_url('res/js/shift-select.js', SHORTPIXEL_PLUGIN_FILE), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true);
+		wp_register_script('spaatg-shiftselect', plugins_url('res/js/shift-select.js', SPAATG_PLUGIN_FILE), array(), SPAATG_IMAGE_OPTIMISER_VERSION, true);
 
-		wp_localize_script('shortpixel-settings', 'settings_strings', UiHelper::getSettingsStrings(false));
+		wp_localize_script('spaatg-settings', 'settings_strings', UiHelper::getSettingsStrings(false));
 
 
-		wp_register_script( 'shortpixel-onboarding', plugins_url( 'res/js/shortpixel-onboarding.js', SHORTPIXEL_PLUGIN_FILE ), array('shortpixel-settings'), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-onboarding', plugins_url( 'res/js/shortpixel-onboarding.js', SPAATG_PLUGIN_FILE ), array('spaatg-settings'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script('shortpixel-media', plugins_url('res/js/shortpixel-media.js',  SHORTPIXEL_PLUGIN_FILE), array('jquery'), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true);
+		wp_register_script('spaatg-media', plugins_url('res/js/shortpixel-media.js',  SPAATG_PLUGIN_FILE), array('jquery'), SPAATG_IMAGE_OPTIMISER_VERSION, true);
 
-		wp_register_script('shortpixel-inline-help', plugins_url('res/js/shortpixel-inline-help.js',  SHORTPIXEL_PLUGIN_FILE), [], SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true);
-		wp_register_script('shortpixel-chatbot', 
-			apply_filters('shortpixel/plugin/nohelp', 'https://spcdn.shortpixel.ai/assets/js/ext/ai-chat-agent.js'), [], SHORTPIXEL_IMAGE_OPTIMISER_VERSION, $args_footer_async);
+		wp_register_script('spaatg-inline-help', plugins_url('res/js/shortpixel-inline-help.js',  SPAATG_PLUGIN_FILE), [], SPAATG_IMAGE_OPTIMISER_VERSION, true);
+		wp_register_script('spaatg-chatbot', 
+			apply_filters('shortpixel/plugin/nohelp', 'https://spcdn.shortpixel.ai/assets/js/ext/ai-chat-agent.js'), [], SPAATG_IMAGE_OPTIMISER_VERSION, $args_footer_async);
 
-		// This filter is from ListMediaViewController for the media library grid display, executive script in shortpixel-media.js.
+		// This filter is from ListMediaViewController for the media library grid display, executive script in spaatg-media.js.
 
 		$filters = array('optimized' => array(
 					'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
@@ -386,9 +383,9 @@ class ShortPixelPlugin {
 
 		$editor_localize = ImageEditorController::localizeScript();
 		$editor_localize['mediafilters'] = $filters;
-		wp_localize_script('shortpixel-media', 'spio_media', $editor_localize);
+		wp_localize_script('spaatg-media', 'spaatg_media', $editor_localize);
 
-		wp_register_script( 'shortpixel-processor', plugins_url( '/res/js/shortpixel-processor.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-tooltip' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-processor', plugins_url( '/res/js/shortpixel-processor.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-tooltip' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 		 // How often JS processor asks for next tick on server. Low for fastestness and high loads, high number for surviving servers.
 		$interval = apply_filters( 'shortpixel/processor/interval', 3000 );
@@ -397,39 +394,39 @@ class ShortPixelPlugin {
 		$deferInterval = apply_filters( 'shortpixel/process/deferInterval', 60000 );
 
 		wp_localize_script(
-            'shortpixel-processor',
-            'ShortPixelProcessorData',
+            'spaatg-processor',
+            'SPAATGProcessorData',
             array(
 				'bulkSecret'        => $secretKey,
 				'isBulkPage'        => (bool) $is_bulk_page,
-				'workerURL'         => plugins_url( 'res/js/shortpixel-worker.js', SHORTPIXEL_PLUGIN_FILE ),
+				'workerURL'         => plugins_url( 'res/js/shortpixel-worker.js', SPAATG_PLUGIN_FILE ),
 				'nonce_process'     => wp_create_nonce( 'processing' ),
 				'nonce_exit'        => wp_create_nonce( 'exit_process' ),
 				'nonce_ajaxrequest' => wp_create_nonce( 'ajax_request' ),
 				'nonce_settingsrequest' => wp_create_nonce('settings_request'),
-				'startData'         => ( \wpSPIO()->env()->is_screen_to_use ) ? $queueController->getStartupData() : false,
+				'startData'         => ( \wpSPAATG()->env()->is_screen_to_use ) ? $queueController->getStartupData() : false,
 				'interval'          => $interval,
 				'deferInterval'     => $deferInterval,
-				'debugIsActive' 		=> (\wpSPIO()->env()->is_debug) ? 'true' : 'false',
+				'debugIsActive' 		=> (\wpSPAATG()->env()->is_debug) ? 'true' : 'false',
 				'autoMediaLibrary'  => ($settings->autoMediaLibrary) ? 'true' : 'false',
 				'disable_processor' => apply_filters('shortpixel/processorjs/disable', false),
             )
         );
 
 		//https://github.com/thedatepicker/thedatepicker
-		wp_register_script('shortpixel-datepicker', plugins_url('res/js/the-datepicker.min.js', SHORTPIXEL_PLUGIN_FILE),  ['wp-components', 'wp-i18n', 'wp-element', 'wp-hooks'], SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true);
+		wp_register_script('spaatg-datepicker', plugins_url('res/js/the-datepicker.min.js', SPAATG_PLUGIN_FILE),  ['wp-components', 'wp-i18n', 'wp-element', 'wp-hooks'], SPAATG_IMAGE_OPTIMISER_VERSION, true);
 		
 
 		/*** SCREENS */
-		wp_register_script('shortpixel-screen-base', plugins_url( '/res/js/screens/screen-base.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script('spaatg-screen-base', plugins_url( '/res/js/screens/screen-base.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script('shortpixel-screen-item-base', plugins_url( '/res/js/screens/screen-item-base.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor', 'shortpixel-screen-base'), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script('spaatg-screen-item-base', plugins_url( '/res/js/screens/screen-item-base.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor', 'spaatg-screen-base'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script( 'shortpixel-screen-media', plugins_url( '/res/js/screens/screen-media.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor', 'shortpixel-screen-base', 'shortpixel-screen-item-base' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-screen-media', plugins_url( '/res/js/screens/screen-media.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor', 'spaatg-screen-base', 'spaatg-screen-item-base' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script( 'shortpixel-screen-custom', plugins_url( '/res/js/screens/screen-custom.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor', 'shortpixel-screen-base', 'shortpixel-screen-item-base' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-screen-custom', plugins_url( '/res/js/screens/screen-custom.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor', 'spaatg-screen-base', 'spaatg-screen-item-base' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
-		wp_register_script( 'shortpixel-screen-nolist', plugins_url( '/res/js/screens/screen-nolist.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor', 'shortpixel-screen-base' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-screen-nolist', plugins_url( '/res/js/screens/screen-nolist.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor', 'spaatg-screen-base' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 	  $screen_localize = array(  // Item Base
 			'startAction' => __('Processing... ','shortpixel-image-optimiser'),
@@ -448,42 +445,45 @@ class ShortPixelPlugin {
 
 	 $screen_localize_media = [ 
 			'hide_ai' => ! $OptimizeAiController->isAiEnabled(),  // turn around negative setting
-			'hide_spio_in_popups' => apply_filters('shortpixel/js/media/hide_in_popups', false), 
-			'modalcss' => plugins_url('res/css/shortpixel-media-modal.css', SHORTPIXEL_PLUGIN_FILE), 
+			'hide_spaatg_in_popups' => apply_filters('shortpixel/js/media/hide_in_popups', false), 
+			'modalcss' => plugins_url('res/css/shortpixel-media-modal.css', SPAATG_PLUGIN_FILE), 
 			'remove_background_title' => __('AI Background Removal', 'shortpixel-image-optimiser'),
 			'scale_title' => __('AI Image Upscale', 'shortpixel-image-optimiser'),
+			'alt_text_label' => __('Alt Text', 'shortpixel-image-optimiser'),
+			'alt_text_empty' => __('No alt text available yet.', 'shortpixel-image-optimiser'),
+			'alt_text_loading' => __('Loading alt text...', 'shortpixel-image-optimiser'),
 			'upscale_max_width' => 1200, // Scale X and max width pin Pixels.
 			'popup_load_preview' => true, // Upon opening, load Preview or not.
 			'too_big_for_scale_title'  => __('Image too big for scaling', 'shortpixel-image-optimiser'), 
 			'wp_screen_id' => $env->screen_id, 
 	 ];
 
-		wp_localize_script('shortpixel-screen-media', 'spio_mediascreen_settings', $screen_localize_media); 
+		wp_localize_script('spaatg-screen-media', 'spaatg_mediascreen_settings', $screen_localize_media); 
 
-		wp_localize_script( 'shortpixel-screen-base', 'spio_screenStrings', array_merge($screen_localize, $screen_localize_custom));
+		wp_localize_script( 'spaatg-screen-base', 'spaatg_screenStrings', array_merge($screen_localize, $screen_localize_custom));
 
-		wp_register_script( 'shortpixel-screen-bulk', plugins_url( '/res/js/screens/screen-bulk.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'shortpixel-processor', 'shortpixel-screen-base'), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-screen-bulk', plugins_url( '/res/js/screens/screen-bulk.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-processor', 'spaatg-screen-base'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 		$panel = isset( $_GET['panel'] ) ? sanitize_text_field( wp_unslash($_GET['panel']) ) : false;
 
 		$bulkLocalize = [
 			'endBulk'   => __( 'This will stop the bulk processing and take you back to the start. Are you sure you want to do this?', 'shortpixel-image-optimiser' ),
-			'reloadURL' => admin_url( 'upload.php?page=wp-short-pixel-bulk'),
+			'reloadURL' => admin_url( 'upload.php?page=wp-spaatg-bulk'),
 		];
 		if ( $panel ) {
 			$bulkLocalize['panel'] = $panel;
         }
 
 		// screen translations. Can all be loaded on the same var, since only one screen can be active.
-		wp_localize_script( 'shortpixel-screen-bulk', 'shortPixelScreen', $bulkLocalize );
+		wp_localize_script( 'spaatg-screen-bulk', 'spaatgScreen', $bulkLocalize );
 
-		wp_register_script( 'shortpixel', plugins_url( '/res/js/shortpixel.js', SHORTPIXEL_PLUGIN_FILE ), array( 'jquery', 'jquery.knob.min.js' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg', plugins_url( '/res/js/shortpixel.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-jquery-knob' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 		// Using an Array within another Array to protect the primitive values from being cast to strings
-		$ShortPixelConstants = array(
+		$SPAATGConstants = array(
 			array(
-				'WP_PLUGIN_URL'     => plugins_url( '', SHORTPIXEL_PLUGIN_FILE ),
+				'WP_PLUGIN_URL'     => plugins_url( '', SPAATG_PLUGIN_FILE ),
 				'WP_ADMIN_URL'      => admin_url(),
 				'API_IS_ACTIVE'     => $keyControl->keyIsVerified(),
 				'AJAX_URL'          => admin_url( 'admin-ajax.php' ),
@@ -497,11 +497,11 @@ class ShortPixelPlugin {
 		if ( Log::isManualDebug() ) {
 			Log::addInfo( 'Ajax Manual Debug Mode' );
 			$logLevel                           = Log::getLogLevel();
-			$ShortPixelConstants[0]['AJAX_URL'] = admin_url( 'admin-ajax.php?SHORTPIXEL_DEBUG=' . $logLevel );
+			$SPAATGConstants[0]['AJAX_URL'] = admin_url( 'admin-ajax.php?SPAATG_DEBUG=' . $logLevel );
 		}
 
 		$jsTranslation = array(
-			'optimizeWithSP'              => __( 'ShortPixel', 'shortpixel-image-optimiser' ),
+			'optimizeWithSP'              => __( 'ShortPixel AI Alt Text Generator', 'shortpixel-image-optimiser' ),
 			'optimize'              => __( 'Optimize', 'shortpixel-image-optimiser' ),
 			'redoLossy'                   => __( 'Re-optimize Lossy', 'shortpixel-image-optimiser' ),
 			'redoGlossy'                  => __( 'Re-optimize Glossy', 'shortpixel-image-optimiser' ),
@@ -524,38 +524,38 @@ class ShortPixelPlugin {
 
 		);
 
-		wp_localize_script( 'shortpixel', '_spTr', $jsTranslation );
-		wp_localize_script( 'shortpixel', 'ShortPixelConstants', $ShortPixelConstants );
+		wp_localize_script( 'spaatg', 'spaatgTr', $jsTranslation );
+		wp_localize_script( 'spaatg', 'SPAATGConstants', $SPAATGConstants );
 
 	}
 
 	public function admin_styles() {
 
-		wp_register_style( 'shortpixel-folderbrowser', plugins_url( '/res/css/shortpixel-folderbrowser.css', SHORTPIXEL_PLUGIN_FILE ),[], SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-folderbrowser', plugins_url( '/res/css/shortpixel-folderbrowser.css', SPAATG_PLUGIN_FILE ),[], SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		//wp_register_style( 'shortpixel', plugins_url( '/res/css/short-pixel.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		//wp_register_style( 'shortpixel', plugins_url( '/res/css/short-pixel.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
 		// notices. additional styles for SPIO.
-		wp_register_style( 'shortpixel-notices', plugins_url( '/res/css/shortpixel-notices.css', SHORTPIXEL_PLUGIN_FILE ), array( 'shortpixel-admin' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-notices', plugins_url( '/res/css/shortpixel-notices.css', SPAATG_PLUGIN_FILE ), array( 'spaatg-admin' ), SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		wp_register_style('notices-module', plugins_url('/build/shortpixel/notices/src/css/notices.css', SHORTPIXEL_PLUGIN_FILE), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION);
+		wp_register_style('spaatg-notices-module', plugins_url('/build/shortpixel/notices/src/css/notices.css', SPAATG_PLUGIN_FILE), array(), SPAATG_IMAGE_OPTIMISER_VERSION);
 
 		// other media screen
-		wp_register_style( 'shortpixel-othermedia', plugins_url( '/res/css/shortpixel-othermedia.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-othermedia', plugins_url( '/res/css/shortpixel-othermedia.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
 		// load everywhere, because we are inconsistent.
-		wp_register_style( 'shortpixel-toolbar', plugins_url( '/res/css/shortpixel-toolbar.css', SHORTPIXEL_PLUGIN_FILE ), array( 'dashicons' ), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-toolbar', plugins_url( '/res/css/shortpixel-toolbar.css', SPAATG_PLUGIN_FILE ), array( 'dashicons' ), SPAATG_IMAGE_OPTIMISER_VERSION );
 
 		// @todo Might need to be removed later on
-		wp_register_style( 'shortpixel-admin', plugins_url( '/res/css/shortpixel-admin.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-admin', plugins_url( '/res/css/shortpixel-admin.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		wp_register_style( 'shortpixel-bulk', plugins_url( '/res/css/shortpixel-bulk.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-bulk', plugins_url( '/res/css/shortpixel-bulk.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		wp_register_style( 'shortpixel-nextgen', plugins_url( '/res/css/shortpixel-nextgen.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-nextgen', plugins_url( '/res/css/shortpixel-nextgen.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		wp_register_style( 'shortpixel-settings', plugins_url( '/res/css/shortpixel-settings.css', SHORTPIXEL_PLUGIN_FILE ), array(), SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style( 'spaatg-settings', plugins_url( '/res/css/shortpixel-settings.css', SPAATG_PLUGIN_FILE ), array(), SPAATG_IMAGE_OPTIMISER_VERSION );
 
-		wp_register_style('shortpixel-datepicker', plugins_url('res/css/the-datepicker.css', SHORTPIXEL_PLUGIN_FILE), [], SHORTPIXEL_IMAGE_OPTIMISER_VERSION );
+		wp_register_style('spaatg-datepicker', plugins_url('res/css/the-datepicker.css', SPAATG_PLUGIN_FILE), [], SPAATG_IMAGE_OPTIMISER_VERSION );
 	}
 
 
@@ -596,80 +596,80 @@ class ShortPixelPlugin {
 		global $plugin_page;
 		$screen_id = $this->env()->screen_id;
 
-		$load_processor = array( 'shortpixel', 'shortpixel-processor' );  // a whole suit needed for processing, not more. Always needs a screen as well!
+		$load_processor = array( 'spaatg', 'spaatg-processor' );  // a whole suit needed for processing, not more. Always needs a screen as well!
 		$load_bulk      = array();  // the whole suit needed for bulking.
-		if ( \wpSPIO()->env()->is_screen_to_use ) {
+		if ( \wpSPAATG()->env()->is_screen_to_use ) {
 			$this->load_script( $load_processor );
-			$this->load_style( 'shortpixel-toolbar' );
-			$this->load_style('shortpixel-notices');
-			$this->load_style('notices-module');
+			$this->load_style( 'spaatg-toolbar' );
+			$this->load_style('spaatg-notices');
+			$this->load_style('spaatg-notices-module');
 		}
 
-		if ( $plugin_page == 'wp-shortpixel-settings' || $plugin_page == 'shortpixel-network-settings' ) {
+		if ( $plugin_page == 'wp-spaatg-settings' || $plugin_page == 'spaatg-network-settings' ) {
 
-			$this->load_script( 'shortpixel-screen-nolist' ); // screen
-			$this->load_script( 'shortpixel-settings' );
-			$this->load_script('shortpixel-chatbot');
+			$this->load_script( 'spaatg-screen-nolist' ); // screen
+			$this->load_script( 'spaatg-settings' );
+			$this->load_script('spaatg-chatbot');
 
 			// @todo Load onboarding only when no api key / onboarding required
-			$this->load_script('shortpixel-onboarding');
+			$this->load_script('spaatg-onboarding');
 
-			$this->load_style( 'shortpixel-admin' );
+			$this->load_style( 'spaatg-admin' );
 
-			$this->load_style( 'shortpixel-settings' );
+			$this->load_style( 'spaatg-settings' );
 
-		} elseif ( $plugin_page == 'wp-short-pixel-bulk' ) {
-			$this->load_script( 'shortpixel-screen-bulk' );
-			$this->load_script('shortpixel-chatbot');
-			$this->load_script('shortpixel-datepicker');
+		} elseif ( $plugin_page == 'wp-spaatg-bulk' ) {
+			$this->load_script( 'spaatg-screen-bulk' );
+			$this->load_script('spaatg-chatbot');
+			$this->load_script('spaatg-datepicker');
 
-			$this->load_style('shortpixel-datepicker');
-			$this->load_style( 'shortpixel-admin' );
-			$this->load_style( 'shortpixel-bulk' );
+			$this->load_style('spaatg-datepicker');
+			$this->load_style( 'spaatg-admin' );
+			$this->load_style( 'spaatg-bulk' );
 		} elseif ( $screen_id == 'upload' || $screen_id == 'attachment' ) {
 
-			$this->load_script( 'shortpixel-screen-media' ); // screen
-			$this->load_script( 'shortpixel-media' );
+			$this->load_script( 'spaatg-screen-media' ); // screen
+			$this->load_script( 'spaatg-media' );
 
-			$this->load_style( 'shortpixel-admin' );
-			$this->load_style( 'notices-module');
+			$this->load_style( 'spaatg-admin' );
+			$this->load_style( 'spaatg-notices-module');
 		//	$this->load_style( 'shortpixel' );
 
 			if ( $this->env()->is_debug ) {
-				$this->load_script( 'shortpixel-debug' );
+				$this->load_script( 'spaatg-debug' );
 			}
 
-		} elseif ( $plugin_page == 'wp-short-pixel-custom' ) { // custom media
+		} elseif ( $plugin_page == 'wp-spaatg-custom' ) { // custom media
 		//	$this->load_style( 'shortpixel' );
 
-			$this->load_script( 'shortpixel-folderbrowser' );
-			$this->load_script('shortpixel-chatbot');
+			$this->load_script( 'spaatg-folderbrowser' );
+			$this->load_script('spaatg-chatbot');
 
-			$this->load_style( 'shortpixel-admin' );
-			$this->load_style( 'shortpixel-folderbrowser' );
-			$this->load_style( 'shortpixel-othermedia' );
-			$this->load_script( 'shortpixel-screen-custom' ); // screen
+			$this->load_style( 'spaatg-admin' );
+			$this->load_style( 'spaatg-folderbrowser' );
+			$this->load_style( 'spaatg-othermedia' );
+			$this->load_script( 'spaatg-screen-custom' ); // screen
 
 		} elseif ( NextGenController::getInstance()->isNextGenScreen() ) {
 
-			$this->load_script( 'shortpixel-screen-custom' ); // screen
-			$this->load_style( 'shortpixel-admin' );
+			$this->load_script( 'spaatg-screen-custom' ); // screen
+			$this->load_style( 'spaatg-admin' );
 
 		//	$this->load_style( 'shortpixel' );
-			$this->load_style( 'shortpixel-nextgen' );
+			$this->load_style( 'spaatg-nextgen' );
 		}
 		elseif (true === $this->env()->is_gutenberg_editor || true === $this->env()->is_classic_editor)
 		{
 			$this->load_script( $load_processor );
-			$this->load_script( 'shortpixel-screen-media' ); // screen
-			$this->load_script( 'shortpixel-media' );
+			$this->load_script( 'spaatg-screen-media' ); // screen
+			$this->load_script( 'spaatg-media' );
 
-			$this->load_style( 'shortpixel-admin' );
+			$this->load_style( 'spaatg-admin' );
 		}
-		elseif (true === \wpSPIO()->env()->is_screen_to_use  )
+		elseif (true === \wpSPAATG()->env()->is_screen_to_use  )
 		{
 			// If our screen, but we don't have a specific handler for it, do the no-list screen.
-			$this->load_script( 'shortpixel-screen-nolist' ); // screen
+			$this->load_script( 'spaatg-screen-nolist' ); // screen
 		}
 
 	}
@@ -690,41 +690,41 @@ class ShortPixelPlugin {
 		$controller = false;
 
 		$url       = menu_page_url( $plugin_page, false );
-		$screen_id = \wpSPIO()->env()->screen_id;
+		$screen_id = \wpSPAATG()->env()->screen_id;
 
         switch ( $plugin_page ) {
-            case 'wp-shortpixel-settings': // settings
-						$controller = 'ShortPixel\Controller\View\SettingsViewController';
+            case 'wp-spaatg-settings': // settings
+						$controller = 'SPAATG\Controller\View\SettingsViewController';
 						wp_enqueue_media();
         	break;
-			case 'shortpixel-network-settings':
-					 	$controller = 'ShortPixel\Controller\View\MultiSiteViewController';
+			case 'spaatg-network-settings':
+					 	$controller = 'SPAATG\Controller\View\MultiSiteViewController';
 			break;
-          case 'wp-short-pixel-custom': // other media
+          case 'wp-spaatg-custom': // other media
 						if ('folders'  === $template_part )
 						{
-							$controller = 'ShortPixel\Controller\View\OtherMediaFolderViewController';
+							$controller = 'SPAATG\Controller\View\OtherMediaFolderViewController';
 						}
 						elseif('scan' === $template_part)
 						{
-							$controller = 'ShortPixel\Controller\View\OtherMediaScanViewController';
+							$controller = 'SPAATG\Controller\View\OtherMediaScanViewController';
 						}
 						else {
-							$controller = 'ShortPixel\Controller\View\OtherMediaViewController';
+							$controller = 'SPAATG\Controller\View\OtherMediaViewController';
 						}
 
         	break;
-        	case 'wp-short-pixel-bulk':
-						$controller = '\ShortPixel\Controller\View\BulkViewController';
+        	case 'wp-spaatg-bulk':
+						$controller = '\SPAATG\Controller\View\BulkViewController';
            break;
            case null:
             default:
                 switch ( $screen_id ) {
 					case 'upload':
-                  $controller = '\ShortPixel\Controller\View\ListMediaViewController';
+                  $controller = '\SPAATG\Controller\View\ListMediaViewController';
                         break;
 					case 'attachment': // edit-media
-                   $controller = '\ShortPixel\Controller\View\EditMediaViewController';
+                   $controller = '\SPAATG\Controller\View\EditMediaViewController';
                      break;
                 }
                 break;
@@ -771,7 +771,7 @@ class ShortPixelPlugin {
 	}
 
 	protected function check_plugin_version() {
-      $version     = SHORTPIXEL_IMAGE_OPTIMISER_VERSION;
+      $version     = SPAATG_IMAGE_OPTIMISER_VERSION;
 			$db_version = $this->settings()->currentVersion;
 
 		if ( $version !== $db_version ) {

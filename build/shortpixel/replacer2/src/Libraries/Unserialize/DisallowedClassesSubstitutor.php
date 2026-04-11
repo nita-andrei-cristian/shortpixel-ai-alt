@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\Replacer\Libraries\Unserialize;
+namespace SPAATG\Replacer\Libraries\Unserialize;
 
 
 /**

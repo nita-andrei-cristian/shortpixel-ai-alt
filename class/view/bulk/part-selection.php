@@ -1,8 +1,8 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Helper\UiHelper;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Helper\UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -22,7 +22,7 @@ $approx = $this->view->approx;
 
       <div class='load wrapper' >
          <div class='loading'>
-             <span><img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></span>
+             <span><img src="<?php echo esc_url(\wpSPAATG()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></span>
              <span>
              <p><?php esc_html_e('Please wait, ShortPixel is checking the images to be processed...','shortpixel-image-optimiser'); ?><br>
                <span class="number" data-stats-total="total">x</span> <?php esc_html_e('items found', 'shortpixel-image-optimiser'); ?></p>
@@ -50,10 +50,10 @@ $approx = $this->view->approx;
        <div class="interface wrapper">
 
 	   <h3 class="heading">
-        <?php esc_html_e('ShortPixel Bulk Optimization - Select Images', 'shortpixel-image-optimiser'); ?>
+        <?php esc_html_e('ShortPixel Bulk Alt Text Generation - Select Images', 'shortpixel-image-optimiser'); ?>
       </h3>
 
-      <p class='description'><?php esc_html_e('Select the type of images that ShortPixel should optimize for you.','shortpixel-image-optimiser'); ?></p>
+      <p class='description'><?php esc_html_e('Select the type of images for which ShortPixel should generate alt text and SEO data.','shortpixel-image-optimiser'); ?></p>
 				 <div class="option-block">
 
 					<!-- <h2><?php esc_html_e('Optimize:','shortpixel-image-optimiser'); ?> </h2> -->
@@ -64,34 +64,17 @@ $approx = $this->view->approx;
 					 <?php endif; ?>
 				 -->
 
-	         <div class="media-library optiongroup">
-	            <div class='switch_button'>
-	              <label>
-	                <input type="checkbox" class="switch" id="media_checkbox" checked>
-	                <div class="the_switch">&nbsp; </div>
-	              </label>
-	            </div>
+		         <div class="media-library optiongroup hidden">
+		            <input type="checkbox" class="switch" id="media_checkbox" checked>
+		            <span class="hidden" data-check-approx-total><?php echo esc_html($approx->total->images) ?></span>
+		         </div>
 
 
-	            <h4><label for="media_checkbox"><?php esc_html_e('Media Library','shortpixel-image-optimiser'); ?></label></h4>
-	            <div class='option'>
-	              <label><?php esc_html_e('Images (estimate)', 'shortpixel-image-optimiser'); ?></label>
-	              <span class="number" ><?php echo esc_html($approx->media->items) ?></span>
-	            </div>
-
-							<?php if (\wpSPIO()->settings()->processThumbnails == 1): ?>
-		            <div class='option'>
-		              <label><?php esc_html_e('Thumbnails (estimate)','shortpixel-image-optimiser'); ?></label> <span class="number" ><?php echo esc_html($approx->media->thumbs) ?> </span>
-		            </div>
-							<?php endif; ?>
-	         </div>
-
-
-					<?php if (! \wpSPIO()->settings()->processThumbnails): ?>
+					<?php if (! \wpSPAATG()->settings()->processThumbnails): ?>
 					<div class='thumbnails optiongroup'>
 						<div class='switch_button'>
 							<label>
-								<input type="checkbox" class="switch" id="thumbnails_checkbox" <?php checked(\wpSPIO()->settings()->processThumbnails); ?>>
+								<input type="checkbox" class="switch" id="thumbnails_checkbox" <?php checked(\wpSPAATG()->settings()->processThumbnails); ?>>
 								<div class="the_switch">&nbsp; </div>
 							</label>
 						</div>
@@ -101,7 +84,7 @@ $approx = $this->view->approx;
 							 <span class="number" ><?php echo esc_html($approx->media->total) ?> </span>
 						</div>
 
-						<p><?php esc_html_e('It is recommended to process the WordPress thumbnails. These are the small images that are most often used in posts and pages.This option changes the global ShortPixel settings of your site.','shortpixel-image-optimiser'); ?></p>
+						<p><?php esc_html_e('It is recommended to process the WordPress thumbnails. These are the small images that are most often used in posts and pages. This option changes the global ShortPixel AI Alt Text Generator settings of your site.','shortpixel-image-optimiser'); ?></p>
 
 					</div>
 				<?php endif; ?>
@@ -113,12 +96,11 @@ $approx = $this->view->approx;
 				<div class='switch_button'>
 				<label>
 		               <input type="checkbox" class="switch" id="autoai_checkbox" name="autoai_checkbox"
-		                <?php checked(\wpSPIO()->settings()->autoAIBulk); ?>  />
+		                <?php checked(\wpSPAATG()->settings()->autoAIBulk); ?>  />
 		               <div class="the_switch">&nbsp; </div>
 	             </label>
 				 <h4><label for="autoai_checkbox">
-					<?php printf(esc_html__('Use ShortPixel AI to generate image SEO data for all Media Library images, according to the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-shortpixel-settings&part=ai">', '</a>' ); ?>
-              				<span class='new'><?php _e('New!', 'shortpixel-image-optimiser'); ?></span>
+					<?php printf(esc_html__('Use ShortPixel AI to generate image SEO data for all Media Library images, according to the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-spaatg-settings&part=ai">', '</a>' ); ?>
 				 </label></h4>
 
 				</div>	
@@ -126,12 +108,11 @@ $approx = $this->view->approx;
 				<div class='switch_button indent'>
 				<label>
 		               <input type="checkbox" class="switch" id="aipreserve_checkbox" name="aipreserve_checkbox"
-		                <?php checked(\wpSPIO()->settings()->aiPreserve); ?>  />
+		                <?php checked(\wpSPAATG()->settings()->aiPreserve); ?>  />
 		               <div class="the_switch">&nbsp; </div>
 	             </label>
 				 <h4><label for="aipreserve_checkbox">
-					<?php printf(esc_html__('Prevent overriding any of the existing data with the one generated by AI', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-shortpixel-settings&part=ai">', '</a>' ); ?>
-              				<span class='new'><?php _e('New!', 'shortpixel-image-optimiser'); ?></span>
+					<?php printf(esc_html__('Prevent overriding any of the existing data with the one generated by AI', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-spaatg-settings&part=ai">', '</a>' ); ?>
 				 </label></h4>
 
 				</div>	
@@ -140,10 +121,10 @@ $approx = $this->view->approx;
 
 			<?php endif ?>
 			
-	         <div class="custom-images optiongroup"  data-check-visibility data-control="data-check-custom-hascustom" >
+	         <div class="custom-images optiongroup hidden"  data-check-visibility data-control="data-check-custom-hascustom" >
 	           <div class='switch_button'>
 	             <label>
-	               <input type="checkbox" class="switch" id="custom_checkbox" checked>
+	               <input type="checkbox" class="switch" id="custom_checkbox" disabled>
 	               <div class="the_switch">&nbsp; </div>
 	             </label>
 	           </div>
@@ -173,121 +154,12 @@ $approx = $this->view->approx;
 
 				</div> <!-- // option top block -->
 
-				<div class='wrap-collap'>
-
-				<input type="checkbox" id="advanced-settings" class='collap-checkbox'>       
-
-				<label for="advanced-settings" class='advanced-label'>     
-					<span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span> 
-					<span class='title'><?php esc_html_e('Advanced Settings', 'shortpixel_image_optimizer'); ?></span>
-					<hr>
-				</label>
-
-				<div class='collap-content'>
-
-				<div class="option-block selection-settings">
-					 <h2><?php esc_html_e('Options','shortpixel-image-optimiser') ?>: </h2>
-						 <p><?php esc_html_e('Enable these options if you also want to create WebP/AVIF files. These options change the global ShortPixel settings of your site.','shortpixel-image-optimiser'); ?></p>
-		         <div class='optiongroup'  >
-		           <div class='switch_button'>
-
-		             <label>
-		               <input type="checkbox" class="switch" id="webp_checkbox" name="webp_checkbox"
-		                <?php checked(\wpSPIO()->settings()->createWebp); ?>  />
-		               <div class="the_switch">&nbsp; </div>
-		             </label>
-
-		           </div>
-			   <h4><label for="webp_checkbox">
-					 <?php printf(esc_html__('Also create WebP versions of the images' ,'shortpixel-image-optimiser') ); ?>
-				 </label></h4>
-				<div class="option"><?php esc_html_e('The total number of WebP images will be calculated in the next step.','shortpixel-image-optimiser'); ?></div>
-		       </div>
-
-
-					 <?php
-					 $avifEnabled = $this->access()->isFeatureAvailable('avif');
-					 $createAvifChecked = (\wpSPIO()->settings()->createAvif == 1 && $avifEnabled === true) ? true : false;
-					 $disabled = ($avifEnabled === false) ? 'disabled' : '';
-					 ?>
-
-
-		       <div class='optiongroup'>
-		         <div class='switch_button'>
-
-		           <label>
-		             <input type="checkbox" class="switch" id="avif_checkbox" name="avif_checkbox" <?php echo $disabled ?>
-		              <?php checked($createAvifChecked); ?>  />
-		             <div class="the_switch">&nbsp; </div>
-		           </label>
-
-		         </div>
-		         <h4><label for="avif_checkbox"><?php esc_html_e('Also create AVIF versions of the images','shortpixel-image-optimiser'); ?></label></h4>
-				<?php if ($avifEnabled == true): ?>
-				<div class="option"><?php esc_html_e('The total number of AVIF images will be calculated in the next step.','shortpixel-image-optimiser'); ?></div>
-		     </div>
-			<?php else : ?>
-				<div class="option warning"><?php printf(esc_html__('The creation of AVIF files is not possible with this license type. %s Read more %s ','shortpixel-image-optimiser'), '<a href="https://shortpixel.com/knowledge-base/article/how-does-the-unlimited-plan-work/" target="_blank">', '</a>'); ?>
-				</div>
-			<?php endif;  ?>
-
-        <div class='optiongroup'>
-          <div class='switch_button'>
-
-            <label>
-              <input type="checkbox" class="switch" id="background_checkbox" name="background_checkbox"
-               <?php checked(\wpSPIO()->settings()->doBackgroundProcess); ?>  data-action="ChangeBackgroundProcessSettingEvent" data-event="change"/>
-              <div class="the_switch">&nbsp; </div>
-            </label>
-
-          </div>
-          <h4><label for="background_checkbox">
-
-            <?php printf(esc_html__('Background Mode' ,'shortpixel-image-optimiser') ); ?>
-          </label></h4>
-            <?php $link = 'https://shortpixel.com/knowledge-base/article/background-processing-using-cron-jobs-in-shortpixel-image-optimizer/'; ?>
-         <div class="option"><?php printf(esc_html__('Utilize this feature to optimize images without the need to keep a browser window open. Please be aware that on websites with low traffic or shared hosting, this method of optimization might be considerably slower. If you observe a significant increase in server resource usage or processing time, consider switching to browser-based optimization. %sRead more%s.','shortpixel-image-optimiser'), '<strong><a href="' . esc_attr($link) . '" target="_blank">', '</a></strong>'); ?>
-         </div>
-         <div class='option warning
-         <?php echo (\wpSPIO()->settings()->doBackgroundProcess) ? '' : 'hidden' ?>'>
-         <p><?php _e('I understand that background optimization may pause if there are no visitors on the website.', 'shortpixel-image-optimiser'); ?></p></div>
-
-       </div>
-
-	  <!-- <h2><?php _e('Limit bulk', 'shortpixel-image-optimiser'); ?></h2> -->
-
-<div class='bulk-date-picker optiongroup'>
-	<?php printf(esc_html__('%sOptional: Optimize items between %s  %s and %s ', 'shortpixel-image-optimiser'), 
-	'<h4>', 
-	'</h4>',
-	'<span class="date-picker-container">
-		
-	<label><input type="text" name="start-date" id="bulk-start-date" value="" placeholder="' . __('Start date' ,'shortpixel-image-optimiser') . '" /></label></span>', 
-	'<span class="date-picker-container">
-	
-	<label><input type="text" name="end-date" id="bulk-end-date" value="" placeholder="' . __('End date' ,'shortpixel-image-optimiser') . '" /></label></span>'
-	); ?>
-</div>
-		</div> <!-- option block -->
-
-
-
-				</div> <!-- COLLAP CONTENT --> 
-				</div> <!--- WRAP COLLAP --> 
-
-				
-
-
  	 	 <div class="option-block all-round">
        <div class='optiongroup' data-check-visibility="false" data-control="data-check-approx-total">
           <h3><?php esc_html_e('No images found', 'shortpixel-image-optimiser'); ?></h3>
-          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any optimizable images.','shortpixel-image-optimiser'); ?></p>
+          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any images that need alt text generation.','shortpixel-image-optimiser'); ?></p>
        </div>
 
-       <h4 class='approx'><?php esc_html_e('An estimate of unoptimized images in this installation', 'shortpixel-image-optimiser'); ?> :
-			<span data-check-approx-total><?php echo esc_html($approx->total->images) ?></span> </h4>
-
-       <div><p><?php printf(__('In the next step, the plugin will calculate the total number of images to be optimized, and your bulk process will be prepared. The processing %s will not start yet %s, but a summary of the images to be optimized will be displayed.', 'shortpixel-image-optimiser'),'<b>','</b>'); ?></p></div>
 		 </div>
 
       <nav>

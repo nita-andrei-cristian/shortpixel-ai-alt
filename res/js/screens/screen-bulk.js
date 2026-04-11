@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelScreen extends ShortPixelScreenBase
+class SPAATGScreen extends SPAATGScreenBase
 {
 
   isCustom = true;
@@ -23,13 +23,13 @@ class ShortPixelScreen extends ShortPixelScreenBase
 			this.LoadActions();
       this.LoadDatePicker(); 
 
-			window.addEventListener('shortpixel.processor.paused', this.TogglePauseNotice.bind(this));
-			window.addEventListener('shortpixel.processor.responseHandled', this.CheckPanelData.bind(this));
-			window.addEventListener('shortpixel.bulk.onUpdatePanelStatus', this.EventPanelStatusUpdated.bind(this));
-			window.addEventListener('shortpixel.bulk.onSwitchPanel', this.EventPanelSwitched.bind(this));
-			window.addEventListener('shortpixel.reloadscreen', this.ReloadScreen.bind(this));
+			window.addEventListener('spaatg.processor.paused', this.TogglePauseNotice.bind(this));
+			window.addEventListener('spaatg.processor.responseHandled', this.CheckPanelData.bind(this));
+			window.addEventListener('spaatg.bulk.onUpdatePanelStatus', this.EventPanelStatusUpdated.bind(this));
+			window.addEventListener('spaatg.bulk.onSwitchPanel', this.EventPanelSwitched.bind(this));
+			window.addEventListener('spaatg.reloadscreen', this.ReloadScreen.bind(this));
 
-			var processData = ShortPixelProcessorData.startData;
+			var processData = SPAATGProcessorData.startData;
 			var initMedia = processData.media.stats;
 			var initCustom = processData.custom.stats;
 			var initTotal = processData.total.stats;
@@ -87,13 +87,13 @@ class ShortPixelScreen extends ShortPixelScreenBase
 
 			if (this.processor.isManualPaused)
 			{
-					var event = new CustomEvent('shortpixel.processor.paused', { detail : {paused: 	this.processor.isManualPaused }});
+					var event = new CustomEvent('spaatg.processor.paused', { detail : {paused: 	this.processor.isManualPaused }});
 			}
 
 			// This var is defined in admin_scripts, localize.
-			if ( typeof shortPixelScreen.panel !== 'undefined')
+			if ( typeof spaatgScreen.panel !== 'undefined')
 			{
-				 this.SwitchPanel(shortPixelScreen.panel);
+				 this.SwitchPanel(spaatgScreen.panel);
 			}
 
 	}
@@ -201,7 +201,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 				 panel.setAttribute('data-status', status);
 			 }, 1000);
 
-      var event = new CustomEvent('shortpixel.bulk.onUpdatePanelStatus', { detail : {status: status, oldStatus: currentStatus, panelName: panelName}});
+      var event = new CustomEvent('spaatg.bulk.onUpdatePanelStatus', { detail : {status: status, oldStatus: currentStatus, panelName: panelName}});
       window.dispatchEvent(event);
   }
 
@@ -273,19 +273,19 @@ class ShortPixelScreen extends ShortPixelScreenBase
            this[panel.getAttribute('data-loadPanel')].call(this);
        }
 
-       var event = new CustomEvent('shortpixel.bulk.onSwitchPanel', { detail : {panelLoad: targetName, panelUnload: oldCurrentPanel}});
+       var event = new CustomEvent('spaatg.bulk.onSwitchPanel', { detail : {panelLoad: targetName, panelUnload: oldCurrentPanel}});
        window.dispatchEvent(event);
 
   }
   CreateBulk()
   {
      console.log('Start Bulk');
-     var data = {screen_action: 'createBulk', callback: 'shortpixel.PrepareBulk'}; //
+     var data = {screen_action: 'createBulk', callback: 'spaatg.PrepareBulk'}; //
 
      data.mediaActive = (document.getElementById('media_checkbox').checked) ? true : false;
      data.customActive = (document.getElementById('custom_checkbox').checked) ? true : false;
-     data.webpActive = (document.getElementById('webp_checkbox').checked) ? true : false;
-     data.avifActive = (document.getElementById('avif_checkbox').checked) ? true : false;
+     data.webpActive = (document.getElementById('webp_checkbox') !== null && document.getElementById('webp_checkbox').checked) ? true : false;
+     data.avifActive = (document.getElementById('avif_checkbox') !== null && document.getElementById('avif_checkbox').checked) ? true : false;
      
      if (null !== document.getElementById('autoai_checkbox'))
      {
@@ -297,7 +297,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
        data.aiActive = false; 
      //  data.aiPreserve = false; 
      }
-     data.backgroundProcess = (document.getElementById('background_checkbox').checked) ? true : false;
+     data.backgroundProcess = (document.getElementById('background_checkbox') !== null && document.getElementById('background_checkbox').checked) ? true : false;
 
 
 		 if (document.getElementById('thumbnails_checkbox') !== null)
@@ -325,7 +325,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
      this.UpdatePanelStatus('loading', 'selection');
 
      // Prepare should happen after selecting what the optimize.
-     window.addEventListener('shortpixel.PrepareBulk', this.PrepareBulk.bind(this), {'once': true} );
+     window.addEventListener('spaatg.PrepareBulk', this.PrepareBulk.bind(this), {'once': true} );
      this.processor.AjaxRequest(data);
   }
   PrepareBulk(event)
@@ -815,15 +815,15 @@ class ShortPixelScreen extends ShortPixelScreenBase
   StartBulk() // Open panel action
   {
       console.log('Starting to Bulk!');
-      var data = {screen_action: 'startBulk', callback: 'shortpixel.bulk.started'}; //
+      var data = {screen_action: 'startBulk', callback: 'spaatg.bulk.started'}; //
 
       // Prepare should happen after selecting what the optimize.
-      //window.addEventListener('shortpixel.prepareBulk', this.PrepareBulk.bind(this), {'once': true} );
+      //window.addEventListener('spaatg.prepareBulk', this.PrepareBulk.bind(this), {'once': true} );
       this.processor.AjaxRequest(data);
 
       // process stops after preparing.
 			// ResumeProcess, not RunProcess because that hits the pauseToggles.
-			window.addEventListener('shortpixel.bulk.started', function() {
+			window.addEventListener('spaatg.bulk.started', function() {
 					this.processor.ResumeProcess();
 				}.bind(this), {'once': true} );
       //this.processor.ResumeProcess();
@@ -842,13 +842,13 @@ class ShortPixelScreen extends ShortPixelScreenBase
   }
   StopBulk(event)
   {
-      if (confirm(shortPixelScreen.endBulk))
+      if (confirm(spaatgScreen.endBulk))
          this.FinishBulk(event);
   }
   FinishBulk(event)
   {
 		// Screen needs reloading after doing all to reset all / load the logs.
-    var data = {screen_action: 'finishBulk', callback: 'shortpixel.reloadscreen'}; //
+    var data = {screen_action: 'finishBulk', callback: 'spaatg.reloadscreen'}; //
     this.processor.AjaxRequest(data);
   }
 	SkipPreparing()
@@ -870,7 +870,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
          var url = data.redirect;
       }
       else {
-          var url = shortPixelScreen.reloadURL;
+          var url = spaatgScreen.reloadURL;
       }
 
 			location.href = url;
@@ -1081,65 +1081,65 @@ class ShortPixelScreen extends ShortPixelScreenBase
 			if (custom.checked == true)
 				queues.push('custom');
 		}
-    var data = {screen_action: 'startRestoreAll', callback: 'shortpixel.startRestoreAll', queues: queues}; //
+    var data = {screen_action: 'startRestoreAll', callback: 'spaatg.startRestoreAll', queues: queues}; //
 
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spaatgScreen.panel);
 
     this.UpdatePanelStatus('loading', 'selection');
     this.SwitchPanel('selection');
 
 
     // Prepare should happen after selecting what the optimize.
-    window.addEventListener('shortpixel.startRestoreAll', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('shortpixel.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
+    window.addEventListener('spaatg.startRestoreAll', this.PrepareBulk.bind(this), {'once': true} );
+    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
     this.processor.AjaxRequest(data);
   }
   BulkUndoAI(event)
   {
-    var data = {screen_action: 'startBulkUndoAI', callback: 'shortpixel.startUndoAI'}; //
+    var data = {screen_action: 'startBulkUndoAI', callback: 'spaatg.startUndoAI'}; //
 
 		this.UpdatePanelStatus('loading', 'selection');
 		this.SwitchPanel('selection');
 
   	//this.SwitchPanel('process');
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spaatgScreen.panel);
 
     // Prepare should happen after selecting what the optimize.
-    window.addEventListener('shortpixel.startUndoAI', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('shortpixel.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
+    window.addEventListener('spaatg.startUndoAI', this.PrepareBulk.bind(this), {'once': true} );
+    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
     this.processor.AjaxRequest(data);    
   }
 
   BulkMigrateAll(event)
   {
-    var data = {screen_action: 'startMigrateAll', callback: 'shortpixel.startMigrateAll'}; //
+    var data = {screen_action: 'startMigrateAll', callback: 'spaatg.startMigrateAll'}; //
 
 		this.UpdatePanelStatus('loading', 'selection');
 		this.SwitchPanel('selection');
 
   	//this.SwitchPanel('process');
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spaatgScreen.panel);
 
 
     // Prepare should happen after selecting what the optimize.
-    window.addEventListener('shortpixel.startMigrateAll', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('shortpixel.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
+    window.addEventListener('spaatg.startMigrateAll', this.PrepareBulk.bind(this), {'once': true} );
+    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
     this.processor.AjaxRequest(data);
   }
 	BulkRemoveLegacy(event)
   {
 
-    var data = {screen_action: 'startRemoveLegacy', callback: 'shortpixel.startRemoveLegacy'}; //
+    var data = {screen_action: 'startRemoveLegacy', callback: 'spaatg.startRemoveLegacy'}; //
 
     this.SwitchPanel('selection');
     this.UpdatePanelStatus('loading', 'selection');
 
 
-    this.RemovePanelFromURL(shortPixelScreen.panel);
+    this.RemovePanelFromURL(spaatgScreen.panel);
 
     // Prepare should happen after selecting what the optimize.
-    window.addEventListener('shortpixel.startRemoveLegacy', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('shortpixel.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
+    window.addEventListener('spaatg.startRemoveLegacy', this.PrepareBulk.bind(this), {'once': true} );
+    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
     this.processor.AjaxRequest(data);
   }
 
@@ -1176,7 +1176,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 	{
 		 event.preventDefault();
 
-    var data = {screen_action: 'loadLogFile', callback: 'shortpixel.showLogModal'};
+    var data = {screen_action: 'loadLogFile', callback: 'spaatg.showLogModal'};
 		data['loadFile'] = event.target.getAttribute('data-file');
 		data['type'] = 'log'; // for the answer.
 
@@ -1197,7 +1197,7 @@ class ShortPixelScreen extends ShortPixelScreenBase
 		if (! content.classList.contains('sptw-modal-spinner'))
 			content.classList.add('sptw-modal-spinner');
 
-    window.addEventListener('shortpixel.showLogModal', this.ShowLogModal.bind(this), {'once': true});
+    window.addEventListener('spaatg.showLogModal', this.ShowLogModal.bind(this), {'once': true});
     this.processor.AjaxRequest(data);
 	}
 

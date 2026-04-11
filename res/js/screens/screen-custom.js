@@ -1,6 +1,6 @@
 'use strict';
 // MainScreen as an option for delegate functions
-class ShortPixelScreen extends ShortPixelScreenItemBase
+class SPAATGScreen extends SPAATGScreenItemBase
 {
     isCustom = true;
     isMedia = true;
@@ -25,7 +25,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
         if (data.custom)
         {
             var id = data.custom.id;
-            var element = document.getElementById('shortpixel-data-' + id);
+            var element = document.getElementById('spaatg-data-' + id);
             element.outerHTML = data.custom.itemView;
 
             var isOptimizable = data.custom.is_optimizable;
@@ -69,9 +69,9 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
         data.id = id;
         data.type = 'folder';
         data.screen_action = 'refreshFolder';
-        data.callback = 'shortpixel.folder.HandleFolderResult';
+        data.callback = 'spaatg.folder.HandleFolderResult';
 
-        window.addEventListener('shortpixel.folder.HandleFolderResult', this.HandleFolderResult.bind(this), {'once':true});
+        window.addEventListener('spaatg.folder.HandleFolderResult', this.HandleFolderResult.bind(this), {'once':true});
 
         // AjaxRequest should return result, which will go through Handleresponse, then LoaditemView.
         this.processor.AjaxRequest(data);
@@ -86,9 +86,9 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
          data.id = id;
          data.type = 'folder';
          data.screen_action = 'removeCustomFolder';
-         data.callback = 'shortpixel.folder.HandleFolderResult';
+         data.callback = 'spaatg.folder.HandleFolderResult';
 
-         window.addEventListener('shortpixel.folder.HandleFolderResult', this.HandleFolderResult.bind(this), {'once':true});
+         window.addEventListener('spaatg.folder.HandleFolderResult', this.HandleFolderResult.bind(this), {'once':true});
          this.processor.AjaxRequest(data);
        }
     }
@@ -292,8 +292,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
 
       if (null === this.folderTree)
       {
-        this.folderTree = new ShortPixelFolderTree(picker, this.processor);
-        picker.addEventListener('shortpixel-folder.selected', this.HandleFolderSelectedEvent.bind(this));
+        this.folderTree = new SPAATGFolderTree(picker, this.processor);
+        picker.addEventListener('spaatg-folder.selected', this.HandleFolderSelectedEvent.bind(this));
       }
 
       this.Show(picker);
@@ -344,7 +344,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
       data.relpath = this.currentSelectedPath;
       data.type = 'folder';
       data.screen_action = 'addCustomFolder';
-      data.callback = 'shortpixel.folder.AddNewDirectory';
+      data.callback = 'spaatg.folder.AddNewDirectory';
 
       // @todo this message logic should prob. become part of the folder selector js proper.
       var messageEl = document.querySelector('.modal-folder-picker .folder-message');
@@ -359,7 +359,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
       }
 
 
-      window.addEventListener('shortpixel.folder.AddNewDirectory', this.UpdateFolderViewEvent.bind(this), {'once':true});
+      window.addEventListener('spaatg.folder.AddNewDirectory', this.UpdateFolderViewEvent.bind(this), {'once':true});
 
       this.processor.AjaxRequest(data);
 
@@ -444,9 +444,9 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
 				var data = {};
 				data.type = 'folder';
 				data.screen_action = 'resetScanFolderChecked';
-				data.callback = 'shortpixel.folder.ScanFolder';
+				data.callback = 'spaatg.folder.ScanFolder';
 
-				window.addEventListener('shortpixel.folder.ScanFolder', this.ScanFolder.bind(this, args), {'once':true});
+				window.addEventListener('spaatg.folder.ScanFolder', this.ScanFolder.bind(this, args), {'once':true});
 				this.processor.AjaxRequest(data);
 
 			}
@@ -465,14 +465,14 @@ class ShortPixelScreen extends ShortPixelScreenItemBase
 			var data = {};
 			data.type = 'folder';
 			data.screen_action = 'scanNextFolder';
-			data.callback = 'shortpixel.folder.ScannedDirectoryEvent';
+			data.callback = 'spaatg.folder.ScannedDirectoryEvent';
 
 			if (true === args.force)
 			{
 				 data.force = args.force;
 			}
 
-			window.addEventListener('shortpixel.folder.ScannedDirectoryEvent', this.ScannedDirectoryEvent.bind(this, args), {'once':true});
+			window.addEventListener('spaatg.folder.ScannedDirectoryEvent', this.ScannedDirectoryEvent.bind(this, args), {'once':true});
 			this.processor.AjaxRequest(data);
 		}
 

@@ -1,6 +1,6 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -9,17 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div class="wrap is-shortpixel-settings-page multi-site-settings">
+<div class="wrap is-spaatg-settings-page is-shortpixel-settings-page multi-site-settings">
 <h1>
-    <img src="<?php echo esc_url(\wpSPIO()->plugin_url('res/img/svg/sp-logo-regular.svg')) ?>" width="50" />
+    <img src="<?php echo esc_url(\wpSPAATG()->plugin_url('res/img/svg/sp-logo-regular.svg')) ?>" width="50" />
     <?php esc_html_e('ShortPixel Network Settings','shortpixel-image-optimiser');?>
 </h1>
 
 <hr class='wp-header-end'>
 
-<article id="shortpixel-settings-tabs" class="sp-tabs">
+<article id="spaatg-settings-tabs" class="sp-tabs">
   <div class='section-wrapper'>
-    <form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options'>
+    <form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options' class='wp-spaatg-options wp-shortpixel-options'>
       <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
       <section id="multi-site" class="clearfix sel-tab">
         <h2>&nbsp;</h2>

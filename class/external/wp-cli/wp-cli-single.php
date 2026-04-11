@@ -1,22 +1,22 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-//use ShortPixel\Controller\OptimizeController as OptimizeController;
-use ShortPixel\Controller\BulkController as BulkController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+//use SPAATG\Controller\OptimizeController as OptimizeController;
+use SPAATG\Controller\BulkController as BulkController;
 
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPAATG\Controller\Queue\Queue as Queue;
+use SPAATG\Controller\ResponseController as ResponseController;
 
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
 
 /**
-* Actions and operations for the ShortPixel Image Optimizer plugin
+* Actions and operations for the ShortPixel AI Alt Text Generator plugin
 */
 class SpioSingle extends SpioCommandBase
 {
@@ -48,7 +48,7 @@ class SpioSingle extends SpioCommandBase
   public function restore($args, $assoc_args)
   {
       //$controller = new QueueController();
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 
       if (! isset($args[0]))
       {
@@ -120,7 +120,7 @@ class SpioSingle extends SpioCommandBase
 	public function requestAlt($args, $assoc)
 	{
 		$queueController = $this->getQueueController();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		if (! isset($args[0])) {
 			\WP_CLI::Error(__('Specify an Media Library Item ID', 'shortpixel-image-optimiser'));

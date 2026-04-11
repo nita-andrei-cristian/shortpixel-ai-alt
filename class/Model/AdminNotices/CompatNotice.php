@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Model\AdminNotices;
+namespace SPAATG\Model\AdminNotices;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-class CompatNotice extends \ShortPixel\Model\AdminNoticeModel
+class CompatNotice extends \SPAATG\Model\AdminNoticeModel
 {
 	protected $key = 'MSG_COMPAT';
 	protected $errorLevel = 'warning';
@@ -36,7 +36,7 @@ class CompatNotice extends \ShortPixel\Model\AdminNoticeModel
 				//ShortPixelVDD($plugin);
 				$action = $plugin['action'];
 				$link = ( $action == 'Deactivate' )
-						? wp_nonce_url( admin_url( 'admin-post.php?action=shortpixel_deactivate_conflict_plugin&plugin=' . urlencode( $plugin['path'] ) ), 'sp_deactivate_plugin_nonce' )
+						? wp_nonce_url( admin_url( 'admin-post.php?action=spaatg_deactivate_conflict_plugin&plugin=' . urlencode( $plugin['path'] ) ), 'sp_deactivate_plugin_nonce' )
 						: $plugin['href'];
 				$message .= '<li class="sp-conflict-plugins-list"><strong>' . $plugin['name'] . '</strong>';
 				$message .= '<a href="' . $link . '" class="button button-primary">' . $action . '</a>';
@@ -60,7 +60,7 @@ class CompatNotice extends \ShortPixel\Model\AdminNoticeModel
   }
 
 	protected function getConflictingPlugins() {
-			$settings = \wpSPIO()->settings();
+			$settings = \wpSPAATG()->settings();
 
 			$conflictPlugins = array(
 					'WP Smush - Image Optimization'

@@ -15,10 +15,10 @@
 	&.onboarding
 	{
 		 menu { display: none } // remove the menu
-		 .shortpixel-settings section.wrapper { margin: 0 auto; } // center the wrapper.
+		 .spaatg-settings section.wrapper { margin: 0 auto; } // center the wrapper.
 	}
 
-.shortpixel-settings // main article wrapper. Items for settings minus header.
+.spaatg-settings // main article wrapper. Items for settings minus header.
 {
 
 	  width: 95%;
@@ -55,6 +55,10 @@
 					//	border: 1px solid #ccc;
 						margin: 6px 0;
 						text-align: left;
+
+						&.is-hidden-visual {
+							display: none;
+						}
 
 							a {
 								padding: 6px 4px;
@@ -97,6 +101,10 @@
 				font-weight: bold;
 				border-bottom: 2px solid;
 				border-color: $blue_light;
+
+				&.is-hidden-visual {
+					display: none;
+				}
 			}
 		}
 		section.wrapper // wrapper of the settings tab.
@@ -231,12 +239,12 @@
 			 }
 
 		}
-} // shortpixel-settings
+} // spaatg-settings
 
 // Responsive
 @include breakpoint(0, 1200px)
 {
-		.shortpixel-settings {
+		.spaatg-settings {
 			 width: 100%;
 			 menu
 			 {
@@ -284,7 +292,7 @@
 		.wp-header-end {
 			 margin-top: 65px;
 		}
-		.shortpixel-settings
+		.spaatg-settings
 		{
 			 .mobile-menu {
 					display: block;

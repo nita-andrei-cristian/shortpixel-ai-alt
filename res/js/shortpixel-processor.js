@@ -1,5 +1,5 @@
 
-/*** ShortPixel Image Processor ***
+/*** SPAATG Image Processor ***
 * The processor sends via a browser worker tasks in form of Ajax Request to the browser
 * Ajax returns from browser are processed and then delegated to the screens
 * Every function starts via capitals and camelcased i.e. LoadWorker
@@ -15,7 +15,7 @@
 */
 'use strict';
 
-window.ShortPixelProcessor =
+window.SPAATGProcessor =
 {
   //  spp: {},
     isActive: false, // Is the processor active in this window - at all - . Transient
@@ -77,48 +77,48 @@ window.ShortPixelProcessor =
 
 			window.addEventListener('error', this.ScriptError.bind(this));
 
-        this.isBulkPage = Boolean(ShortPixelProcessorData.isBulkPage);
-        this.localSecret = localStorage.getItem('bulkSecret');
+        this.isBulkPage = Boolean(SPAATGProcessorData.isBulkPage);
+        this.localSecret = localStorage.getItem('spaatgBulkSecret');
 
-        this.remoteSecret = ShortPixelProcessorData.bulkSecret;
-				this.debugIsActive = ShortPixelProcessorData.debugIsActive;
-        this.is_disabled = Boolean(ShortPixelProcessorData.disable_processor); 
+        this.remoteSecret = SPAATGProcessorData.bulkSecret;
+				this.debugIsActive = SPAATGProcessorData.debugIsActive;
+        this.is_disabled = Boolean(SPAATGProcessorData.disable_processor); 
 
-        this.nonce['process'] = ShortPixelProcessorData.nonce_process;
-        this.nonce['exit'] = ShortPixelProcessorData.nonce_exit;
-        this.nonce['ajaxRequest'] = ShortPixelProcessorData.nonce_ajaxrequest;
-				this.nonce['settingsRequest'] = ShortPixelProcessorData.nonce_settingsrequest;
+        this.nonce['process'] = SPAATGProcessorData.nonce_process;
+        this.nonce['exit'] = SPAATGProcessorData.nonce_exit;
+        this.nonce['ajaxRequest'] = SPAATGProcessorData.nonce_ajaxrequest;
+				this.nonce['settingsRequest'] = SPAATGProcessorData.nonce_settingsrequest;
 
-				this.autoMediaLibrary = (ShortPixelProcessorData.autoMediaLibrary == 'true') ? true : false;
+				this.autoMediaLibrary = (SPAATGProcessorData.autoMediaLibrary == 'true') ? true : false;
 
         this.AddBroadCastListener();
 
 				if (hasQuota == 1)
 					this.hasStartQuota = true;
 
-				if (ShortPixelProcessorData.interval && ShortPixelProcessorData.interval > 100)
-				this.interval = ShortPixelProcessorData.interval;
+				if (SPAATGProcessorData.interval && SPAATGProcessorData.interval > 100)
+				this.interval = SPAATGProcessorData.interval;
 
-				if (ShortPixelProcessorData.interval && ShortPixelProcessorData.interval > 100)
-				this.deferInterval = ShortPixelProcessorData.deferInterval;
+				if (SPAATGProcessorData.interval && SPAATGProcessorData.interval > 100)
+				this.deferInterval = SPAATGProcessorData.deferInterval;
 
-        console.log('Start Data from Server', ShortPixelProcessorData.startData, this.interval, this.deferInterval);
+        console.log('Start Data from Server', SPAATGProcessorData.startData, this.interval, this.deferInterval);
         console.log('remoteSecret ' + this.remoteSecret + ', localsecret: ' + this.localSecret);
 
 
-        this.tooltip = new ShortPixelToolTip({}, this);
+        this.tooltip = new SPAATGToolTip({}, this);
 
-        if (typeof ShortPixelScreen == 'undefined')
+        if (typeof SPAATGScreen == 'undefined')
         {
            console.error('Missing Screen!');
            return;
         }
         else
 				{
-          this.screen = new ShortPixelScreen({}, this);
+          this.screen = new SPAATGScreen({}, this);
 					this.screen.Init();
 
-          var event = new CustomEvent('shortpixel.screen.loaded', { detail : this});
+          var event = new CustomEvent('spaatg.screen.loaded', { detail : this});
           window.dispatchEvent(event);
       
 				}
@@ -140,7 +140,7 @@ window.ShortPixelProcessor =
     {
         var self = this; 
         var window_origin = window.location.origin; 
-        this.broadcaster = new BroadcastChannel('spio_processor');
+        this.broadcaster = new BroadcastChannel('spaatg_processor');
         this.broadcaster.onmessage = function (event) {
 
         if (window_origin !== event.origin)
@@ -149,7 +149,7 @@ window.ShortPixelProcessor =
            return false; 
         }
        /*   This is mozilla only, not standard , shan't be used!
-        if (! event.originalTarget || event.originalTarget.name !== 'spio_processor')
+        if (! event.originalTarget || event.originalTarget.name !== 'spaatg_processor')
         {
           console.log('Broadcast = Wrong target');
           return false; 
@@ -184,7 +184,7 @@ window.ShortPixelProcessor =
          else
          {
            this.localSecret = Math.random().toString(36).substring(7);
-           localStorage.setItem('bulkSecret',this.localSecret);
+           localStorage.setItem('spaatgBulkSecret',this.localSecret);
 					 // tell worker to use correct key.
 					 this.worker.postMessage({'action' : 'updateLocalSecret',
 					 'key': this.localSecret });
@@ -229,10 +229,10 @@ window.ShortPixelProcessor =
     {
         var data = {
           'screen_action': 'recheckActive',
-          'callback': 'shortpixel.recheckActive',
+          'callback': 'spaatg.recheckActive',
         };
 
-        window.addEventListener('shortpixel.recheckActive', this.RecheckedActiveEvent.bind(this), {'once': true});
+        window.addEventListener('spaatg.recheckActive', this.RecheckedActiveEvent.bind(this), {'once': true});
         this.AjaxRequest(data);
 
     },
@@ -273,11 +273,11 @@ window.ShortPixelProcessor =
     {
         if (window.Worker)
         {
-            var ajaxURL = ShortPixel.AJAX_URL;
+            var ajaxURL = SPAATG.AJAX_URL;
             var nonce = '';
             console.log('Starting Worker');
 
-            this.worker = new Worker(ShortPixelProcessorData.workerURL);
+            this.worker = new Worker(SPAATGProcessorData.workerURL);
 
             var isBulk = false;
             if (this.isBulkPage)
@@ -302,7 +302,7 @@ window.ShortPixelProcessor =
         this.worker.postMessage({'action' : 'shutdown', 'nonce': this.nonce['exit'] });
         this.worker = null;
         window.removeEventListener('beforeunload', this.ShutDownWorker.bind(this));
-        window.removeEventListener('shortpixel.loadItemView', this.LoadItemView.bind(this));
+        window.removeEventListener('spaatg.loadItemView', this.LoadItemView.bind(this));
     },
     Process: function()
     {
@@ -349,7 +349,7 @@ window.ShortPixelProcessor =
     PauseProcess: function() // This is a manual intervention.
     {
       this.isManualPaused = true;
-      var event = new CustomEvent('shortpixel.processor.paused', { detail : {paused: this.isManualPaused }});
+      var event = new CustomEvent('spaatg.processor.paused', { detail : {paused: this.isManualPaused }});
       window.dispatchEvent(event);
       console.log('Processor: Process Paused');
       window.clearTimeout(this.timer);
@@ -364,7 +364,7 @@ window.ShortPixelProcessor =
         if (this.isManualPaused == true) /// processor ends on status paused.
         {
             this.isManualPaused = false;
-            var event = new CustomEvent('shortpixel.processor.paused', { detail : {paused: this.isManualPaused}});
+            var event = new CustomEvent('spaatg.processor.paused', { detail : {paused: this.isManualPaused}});
             window.dispatchEvent(event);
         }
         window.clearTimeout(this.timer);
@@ -393,9 +393,9 @@ window.ShortPixelProcessor =
     {
       this.isManualPaused = false;
       this.waitingForAction = false;
-			localStorage.setItem('tooltipPause','false'); // also remove the cookie so it doesn't keep hanging on page refresh.
+			localStorage.setItem('spaatgTooltipPause','false'); // also remove the cookie so it doesn't keep hanging on page refresh.
 
-      var event = new CustomEvent('shortpixel.processor.paused', { detail : {paused: this.isManualPaused}});
+      var event = new CustomEvent('spaatg.processor.paused', { detail : {paused: this.isManualPaused}});
       window.dispatchEvent(event);
 
       this.Process(); // don't wait the interval to go on resume.
@@ -528,7 +528,7 @@ window.ShortPixelProcessor =
       }
 
 			// Binded to bulk-screen js for checking data.
-      var event = new CustomEvent('shortpixel.processor.responseHandled', { detail : {paused: this.isManualPaused}});
+      var event = new CustomEvent('spaatg.processor.responseHandled', { detail : {paused: this.isManualPaused}});
       window.dispatchEvent(event);
     },
     HandleResponse: function(response, type)
@@ -719,7 +719,7 @@ window.ShortPixelProcessor =
 			{
         if (typeof data.callback === 'undefined')
         {
-           data.callback = 'shortpixel.RenderItemView';
+           data.callback = 'spaatg.RenderItemView';
         }
 				this.worker.postMessage({action: 'ajaxRequest', 'nonce' : this.nonce['ajaxRequest'], 'data': { 'id' : data.id, 'type' : data.type, 'callback' : data.callback, 'screen_action' : 'getItemView' }});
 			}
@@ -748,7 +748,7 @@ window.ShortPixelProcessor =
 
 		GetPluginUrl: function()
 		{
-			 return ShortPixelConstants[0].WP_PLUGIN_URL;
+			 return SPAATGConstants[0].WP_PLUGIN_URL;
 		},
     GetScreen: function()
     {

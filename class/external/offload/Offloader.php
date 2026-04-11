@@ -1,8 +1,8 @@
 <?php
 
-namespace ShortPixel\External\Offload;
+namespace SPAATG\External\Offload;
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.

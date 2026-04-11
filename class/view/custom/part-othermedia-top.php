@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php if (property_exists($view, 'show_search') && true === $view->show_search):  ?>
       <div class="searchbox">
             <form method="get">
-                <input type="hidden" name="page" value="wp-short-pixel-custom" />
+                <input type="hidden" name="page" value="wp-spaatg-custom" />
                 <input type='hidden' name='order' value="<?php echo esc_attr($this->order) ?>" />
                 <input type="hidden" name="orderby" value="<?php echo esc_attr($this->orderby) ?>" />
 

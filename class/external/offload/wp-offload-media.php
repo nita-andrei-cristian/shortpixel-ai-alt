@@ -1,18 +1,18 @@
 <?php
 
-namespace ShortPixel\External\Offload;
+namespace SPAATG\External\Offload;
 
-use ShortPixel\Model\File\FileModel as FileModel;
+use SPAATG\Model\File\FileModel as FileModel;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notice;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notice;
 
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\ResponseController as ResponseController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\ResponseController as ResponseController;
 
 // @integration WP Offload Media Lite
 class wpOffload
@@ -150,7 +150,7 @@ class wpOffload
 	 */
 	public function image_restore($mediaItem, $id, $clean)
 	{
-		$settings = \wpSPIO()->settings();
+		$settings = \wpSPAATG()->settings();
 
 		// Only medialibrary offloading supported.
 		if ('media' !== $mediaItem->get('type')) {
@@ -380,7 +380,7 @@ class wpOffload
 			$original_path = str_replace(wp_basename($original_path), wp_basename($url), $original_path);
 		}
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$base = $fs->getWPUploadBase();
 
 		$file  = $base . $original_path;
@@ -394,7 +394,7 @@ class wpOffload
 	 */
 	public function image_converted($mediaItem)
 	{
-		$fs = \wpSPIO()->fileSystem();
+		$fs = \wpSPAATG()->fileSystem();
 
 		$id = $mediaItem->get('id');
 		//$this->remove_remote($id);
@@ -450,8 +450,8 @@ class wpOffload
 	public function preventInitialUploadHandler($bool, $as3cf_item, $options)
 	{
 
-		$fs = \wpSPIO()->filesystem();
-		$settings = \WPSPIO()->settings();
+		$fs = \wpSPAATG()->filesystem();
+		$settings = \wpSPAATG()->settings();
 
 		$post_id = $as3cf_item->source_id();
 
@@ -519,7 +519,7 @@ class wpOffload
 	private function getWebpPaths($paths, $check_exists = true)
 	{
 		$newPaths = array();
-		$fs = \wpSPIO()->fileSystem();
+		$fs = \wpSPAATG()->fileSystem();
 
 		foreach ($paths as $size => $path) {
 			$file = $fs->getFile($path);
@@ -620,7 +620,7 @@ class wpOffload
 	public function fixWebpRemotePath($bool, $fileObj, $url, $imagebaseDir)
 	{
 		$extension = $fileObj->getExtension();
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 
 		$webpUrl = $fileObj->getFullPath();
 		$main_is_loaded = $this->sourceCache($url); // main image, check if loaded.

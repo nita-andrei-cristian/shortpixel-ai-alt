@@ -1,27 +1,27 @@
 <?php
-namespace ShortPixel\Controller\View;
+namespace SPAATG\Controller\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\Controller\QuotaController as QuotaController;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Model\AiDataModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Model\AiDataModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
 // Controller for the MediaLibraryView
-class ListMediaViewController extends \ShortPixel\ViewController
+class ListMediaViewController extends \SPAATG\ViewController
 {
 
 	protected static $instance;
@@ -31,7 +31,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function load()
   {
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$fs->startTrustedMode();
 
       $this->loadHooks();
@@ -54,7 +54,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function headerColumns($defaults)
   {
-    $defaults['wp-shortPixel'] = __('ShortPixel Compression', 'shortpixel-image-optimiser');
+    $defaults['wp-spaatg'] = __('ShortPixel AI Status', 'shortpixel-image-optimiser');
 
 
     return $defaults;
@@ -62,7 +62,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   public function doColumn($column_name, $id)
   {
-     if($column_name == 'wp-shortPixel')
+     if($column_name == 'wp-spaatg')
      {
        $this->view = new \stdClass; // reset every row
        $this->view->id = $id;
@@ -77,7 +77,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 
   protected function loadItem($id)
   {
-     $fs = \wpSPIO()->filesystem();
+     $fs = \wpSPAATG()->filesystem();
      $mediaItem = $fs->getMediaImage($id);
 
 		 // Asking for something non-existing.
@@ -137,7 +137,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 				$checkBoxActions[] = 'is-restorable';
 		}
 
-    if (array_key_exists('shortpixel-generateai', $allActions))
+    if (array_key_exists('spaatg-generateai', $allActions))
     {
        $checkBoxActions[] = 'ai-action'; 
     }
@@ -149,7 +149,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 				$compressionType = $mediaItem->getMeta('compressionType');
 		}
 		else {
-				$compressionType = \wpSPIO()->settings()->compressionType;
+				$compressionType = \wpSPAATG()->settings()->compressionType;
 		}
 
 
@@ -208,7 +208,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
       $scr = get_current_screen();
       if ( $scr->base !== 'upload' ) return;
 
-      $status   = filter_input(INPUT_GET, 'shortpixel_status', FILTER_UNSAFE_RAW );
+      $status   = filter_input(INPUT_GET, 'spaatg_status', FILTER_UNSAFE_RAW );
 
       $options = array(
           'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
@@ -217,7 +217,7 @@ class ListMediaViewController extends \ShortPixel\ViewController
 					'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
       );
 
-      echo  "<select name='shortpixel_status' id='shortpixel_status'>\n";
+      echo  "<select name='spaatg_status' id='spaatg_status'>\n";
       foreach($options as $optname => $optval)
       {
           $selected = ($status == $optname) ? esc_attr('selected') : '';

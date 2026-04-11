@@ -1,21 +1,22 @@
 <?php
 
-namespace ShortPixel\Helper;
+namespace SPAATG\Helper;
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Controller\QueueController as QueueController;
-use ShortPixel\Controller\CronController as CronController;
-use ShortPixel\Controller\BulkController as BulkController;
-use ShortPixel\Controller\FileSystemController as FileSystemController;
-use ShortPixel\Controller\AdminNoticesController as AdminNoticesController;
-use ShortPixel\Controller\StatsController as StatsController;
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Controller\QueueController as QueueController;
+use SPAATG\Controller\CronController as CronController;
+use SPAATG\Controller\BulkController as BulkController;
+use SPAATG\Controller\FileSystemController as FileSystemController;
+use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
+use SPAATG\Controller\StatsController as StatsController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Notices\NoticeController as Notices;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\SettingsModel as SettingsModel;
 
 
 class InstallHelper
@@ -23,54 +24,55 @@ class InstallHelper
 
 	public static function activatePlugin()
 	{
-		self::deactivatePlugin();
+		self::resetActivationState();
 
-		$env = wpSPIO()->env();
-
-		if (\WPShortPixelSettings::getOpt('deliverWebp') == 3 && ! $env->is_nginx) {
+		if (\WPSPAATGSettings::getOpt('deliverWebp') == 3 && ! self::isNginxServer()) {
 			UtilHelper::alterHtaccess(true, true); //add the htaccess lines. Both are true because even if one option is now off in the past both fileformats could have been generated.
 		}
 
 		self::checkTables();
 
 		AdminNoticesController::resetOldNotices();
-		\WPShortPixelSettings::onActivate();
+		\WPSPAATGSettings::onActivate();
 
-		$queueController = new QueueController();
-		$q = $queueController->getQueue('media');
-		$q->getShortQ()->install(); // create table.
+		try {
+			$queueController = new QueueController();
+			$q = $queueController->getQueue('media');
+			$q->getShortQ()->install(); // create table.
+		} catch (\Throwable $e) {
+			Log::addWarn('ShortQ install failed during activation. Setup will retry on next admin load.', $e->getMessage());
+		}
 
-		$settings = \wpSPIO()->settings();
-		$settings->currentVersion = SHORTPIXEL_IMAGE_OPTIMISER_VERSION;
+		$settings = SettingsModel::getInstance();
+		$settings->currentVersion = SPAATG_IMAGE_OPTIMISER_VERSION;
 
 		wp_cache_flush();
 	}
 
 	public static function deactivatePlugin()
 	{
-		$settings = new \WPShortPixelSettings(); // \wpSPIO()->settings();
+		$settings = new \WPSPAATGSettings(); // \wpSPAATG()->settings();
 		$settings::onDeactivate();
 
-		$env = wpSPIO()->env();
-
-		if (! $env->is_nginx) {
+		if (! self::isNginxServer()) {
 			UtilHelper::alterHtaccess(false, false);
 		}
 
-		// save remove.
-		$fs = new FileSystemController();
-		$log = $fs->getFile(SHORTPIXEL_BACKUP_FOLDER . "/shortpixel_log");
-
-		if ($log->exists())
-			$log->delete();
-
-		global $wpdb;
-		$sql = "delete from " . $wpdb->options . " where option_name like '%_transient_shortpixel%' or option_name like '%_transient_timeout_shortpixel%'";
-		$wpdb->query($sql); // remove transients.
+		self::removeLegacyLog();
+		self::clearLegacyTransients();
 
 		// saved in settings object, reset all stats.
-		StatsController::getInstance()->reset();
-		CronController::getInstance()->onDeactivate();
+		try {
+			StatsController::getInstance()->reset();
+		} catch (\Throwable $e) {
+			Log::addWarn('Stats reset failed during deactivation', $e->getMessage());
+		}
+
+		try {
+			CronController::getInstance()->onDeactivate();
+		} catch (\Throwable $e) {
+			Log::addWarn('Cron cleanup failed during deactivation', $e->getMessage());
+		}
 	}
 
 	public static function uninstallPlugin()
@@ -87,8 +89,8 @@ class InstallHelper
 	// Removes everything  of SPIO 5.x .  Not recommended.
 	public static function hardUninstall()
 	{
-		$env = \wpSPIO()->env();
-		$settings = new \WPShortPixelSettings();
+		$env = \wpSPAATG()->env();
+		$settings = new \WPSPAATGSettings();
 
 		$nonce = (isset($_POST['tools-nonce'])) ? sanitize_key($_POST['tools-nonce']) : null;
 		if (! wp_verify_nonce($nonce, 'remove-all')) {
@@ -104,7 +106,7 @@ class InstallHelper
 		$settings::resetOptions();
 
 		// new settings
-		delete_option('spio_settings');
+		delete_option('spaatg_settings');
 
 		if (! $env->is_nginx) {
 			insert_with_markers(get_home_path() . '.htaccess', 'ShortPixelWebp', '');
@@ -113,10 +115,10 @@ class InstallHelper
 		self::removeTables();
 
 		// Remove Backups
-		$dir = \wpSPIO()->filesystem()->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+		$dir = \wpSPAATG()->filesystem()->getDirectory(SPAATG_BACKUP_FOLDER);
 		$dir->recursiveDelete();
 
-		$plugin = basename(SHORTPIXEL_PLUGIN_DIR) . '/' . basename(SHORTPIXEL_PLUGIN_FILE);
+		$plugin = basename(SPAATG_PLUGIN_DIR) . '/' . basename(SPAATG_PLUGIN_FILE);
 		deactivate_plugins($plugin);
 	}
 
@@ -136,6 +138,42 @@ class InstallHelper
 
 		wp_safe_redirect($url);
 		die();
+	}
+
+	private static function isNginxServer()
+	{
+		if (! isset($_SERVER['SERVER_SOFTWARE'])) {
+			return false;
+		}
+
+		return strpos(strtolower(wp_unslash($_SERVER['SERVER_SOFTWARE'])), 'nginx') !== false;
+	}
+
+	private static function resetActivationState()
+	{
+		\WPSPAATGSettings::onDeactivate();
+		self::removeLegacyLog();
+		self::clearLegacyTransients();
+	}
+
+	private static function removeLegacyLog()
+	{
+		$log_file = SPAATG_BACKUP_FOLDER . '/shortpixel_log';
+		if (file_exists($log_file)) {
+			@unlink($log_file);
+		}
+	}
+
+	private static function clearLegacyTransients()
+	{
+		global $wpdb;
+
+		if (! isset($wpdb) || ! isset($wpdb->options)) {
+			return;
+		}
+
+		$sql = "delete from " . $wpdb->options . " where option_name like '%_transient_shortpixel%' or option_name like '%_transient_timeout_shortpixel%'";
+		$wpdb->query($sql); // remove transients.
 	}
 
 	/**

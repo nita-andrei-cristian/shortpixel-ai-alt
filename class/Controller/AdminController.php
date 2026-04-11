@@ -1,30 +1,30 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Controller\Optimizer\OptimizeAiController;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\Controller\Queue\Queue as Queue;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
+use SPAATG\Controller\Queue\Queue as Queue;
 
-use ShortPixel\Model\Converter\Converter as Converter;
-use ShortPixel\Model\Converter\ApiConverter as ApiConverter;
+use SPAATG\Model\Converter\Converter as Converter;
+use SPAATG\Model\Converter\ApiConverter as ApiConverter;
 
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
-use ShortPixel\Model\AccessModel as AccessModel;
-use ShortPixel\Helper\UtilHelper as UtilHelper;
+use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 /* AdminController is meant for handling events, hooks, filters in WordPress where there is *NO* specific or more precise  ShortPixel Page active.
 *
 * This should be a delegation class connection global hooks and such to the best shortpixel handler.
 */
-class AdminController extends \ShortPixel\Controller
+class AdminController extends \SPAATG\Controller
 {
     protected static $instance;
 
@@ -40,7 +40,7 @@ class AdminController extends \ShortPixel\Controller
 
     public function addAttachmentHook($post_id)
     {
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
           // If attachment doesn't come back as an valid image
           $mediaItem = $fs->getImage($post_id, 'media');
@@ -57,6 +57,26 @@ class AdminController extends \ShortPixel\Controller
             }
     }
 
+		public function filterMediaRowActions($actions, $post)
+		{
+				if (isset($actions['remove_background']))
+				{
+						unset($actions['remove_background']);
+				}
+
+				return $actions;
+		}
+
+		public function filterMediaColumns($columns)
+		{
+				if (isset($columns['wp-spaatg']))
+				{
+						unset($columns['wp-spaatg']);
+				}
+
+				return $columns;
+		}
+
 
     /** Handling upload actions
     * @hook wp_generate_attachment_metadata
@@ -71,7 +91,7 @@ class AdminController extends \ShortPixel\Controller
 				}
 
         // todo add check here for mediaitem
-			  $fs = \wpSPIO()->filesystem();
+			  $fs = \wpSPAATG()->filesystem();
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
 
@@ -83,7 +103,7 @@ class AdminController extends \ShortPixel\Controller
 
 				if ($mediaItem->getExtension()  == 'pdf')
 				{
-					$settings = \wpSPIO()->settings();
+					$settings = \wpSPAATG()->settings();
 					if (! $settings->optimizePdfs)
 					{
 						 Log::addDebug('Image Upload Hook detected PDF, which is turned off - not optimizing');
@@ -155,7 +175,7 @@ class AdminController extends \ShortPixel\Controller
 					 return $meta;
 				}
 
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPAATG()->filesystem();
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
 
@@ -195,7 +215,7 @@ class AdminController extends \ShortPixel\Controller
 				 return $url;
 			}
 
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 			$mediaImage = $fs->getImage($post_id, 'media');
 
 			if (false === $mediaImage)
@@ -263,7 +283,7 @@ class AdminController extends \ShortPixel\Controller
 
 
 			  $control = new QueueController($queueArgs);
-        $env = \wpSPIO()->env();
+        $env = \wpSPAATG()->env();
 
 			 	if ($args['run_once'] === true)
 				{
@@ -361,7 +381,7 @@ class AdminController extends \ShortPixel\Controller
 
       $attach_id = $data['id'];
        
-      $fs = \wpSPIO()->filesystem();
+      $fs = \wpSPAATG()->filesystem();
 			$mediaImage = $fs->getImage($attach_id, 'media');
 
       if (false === $mediaImage)
@@ -438,7 +458,7 @@ class AdminController extends \ShortPixel\Controller
         return $query;
       }
 
-      $filter = $this->selected_filter_value( 'shortpixel_status', 'all' );
+      $filter = $this->selected_filter_value( 'spaatg_status', 'all' );
 
       // No filter
       if ($filter == 'all')
@@ -456,7 +476,7 @@ class AdminController extends \ShortPixel\Controller
     public function filter_add_where ($where, $query)
     {
         global $wpdb;
-        $filter = $this->selected_filter_value( 'shortpixel_status', 'all' );
+        $filter = $this->selected_filter_value( 'spaatg_status', 'all' );
         $tableName = UtilHelper::getPostMetaTable();
 
         switch($filter)
@@ -479,7 +499,7 @@ class AdminController extends \ShortPixel\Controller
 
                 $sql .= sprintf(' AND %s.ID not in ( SELECT attach_id FROM %s WHERE parent = 0 and status = %s)', $wpdb->posts, $tableName, ImageModel::FILE_STATUS_MARKED_DONE);
 
-                $where = $wpdb->prepare($sql, '_shortpixel_prevent_optimize');
+                $where = $wpdb->prepare($sql, '_spaatg_prevent_optimize');
             break;
         }
 
@@ -525,7 +545,7 @@ class AdminController extends \ShortPixel\Controller
       if(isset($params['post_id'])) { //integration with EnableMediaReplace - that's an upload for replacing an existing ID
 
           $post_id = intval($params['post_id']);
-          $fs = \wpSPIO()->filesystem();
+          $fs = \wpSPAATG()->filesystem();
 
           $imageObj = $fs->getImage($post_id, 'media');
           // In case entry is corrupted data, this might fail.
@@ -549,7 +569,7 @@ class AdminController extends \ShortPixel\Controller
 		}
 
     public function generatePluginLinks($links) {
-        $in = '<a href="options-general.php?page=wp-shortpixel-settings">Settings</a>';
+        $in = '<a href="options-general.php?page=wp-spaatg-settings">Settings</a>';
         array_unshift($links, $in);
         return $links;
     }
@@ -559,7 +579,7 @@ class AdminController extends \ShortPixel\Controller
     */
     public function addMimes($mimes)
     {
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
         if ($settings->createWebp)
         {
             if (! isset($mimes['webp']))
@@ -589,7 +609,7 @@ class AdminController extends \ShortPixel\Controller
 		{
       return;
 				// Prevent this thing running on edit media screen. The media library grid is before the screen is set, so just check if we are not on the attachment window.
-				$screen_id = \wpSPIO()->env()->screen_id;
+				$screen_id = \wpSPAATG()->env()->screen_id;
 				if ($screen_id == 'attachment')
 				{
 					return $fields;
@@ -598,7 +618,7 @@ class AdminController extends \ShortPixel\Controller
 				$fields["shortpixel-image-optimiser"] = array(
 							"label" => esc_html__("ShortPixel", "shortpixel-image-optimiser"),
 							"input" => "html",
-							"html" => '<div id="shortpixel-data-' . $post->ID . '">--</div>',
+							"html" => '<div id="spaatg-data-' . $post->ID . '">--</div>',
 						);
 
 				return $fields;
@@ -607,13 +627,13 @@ class AdminController extends \ShortPixel\Controller
 		public function printComparer()
 		{
 
-				$screen_id = \wpSPIO()->env()->screen_id;
+				$screen_id = \wpSPAATG()->env()->screen_id;
 				if ($screen_id !== 'upload')
 				{
 					return false;
 				}
 
-				$view = \ShortPixel\Controller\View\ListMediaViewController::getInstance();
+				$view = \SPAATG\Controller\View\ListMediaViewController::getInstance();
 				$view->loadComparer();
 		}
 
@@ -625,7 +645,7 @@ class AdminController extends \ShortPixel\Controller
     public function onDeleteAttachment($post_id) {
         Log::addDebug('onDeleteImage - Image Removal Detected ' . $post_id);
         $result = null;
-        $fs = \wpSPIO()->filesystem();
+        $fs = \wpSPAATG()->filesystem();
 
         try
         {
@@ -647,35 +667,35 @@ class AdminController extends \ShortPixel\Controller
     *   hook - admin_bar_menu
     *  @param Obj $wp_admin_bar
     */
-    public function toolbar_shortpixel_processing( $wp_admin_bar ) {
+    public function toolbar_spaatg_processing( $wp_admin_bar ) {
 
-        if (! \wpSPIO()->env()->is_screen_to_use )
+        if (! \wpSPAATG()->env()->is_screen_to_use )
           return; // not ours, don't load JS and such.
 
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
         $access = AccessModel::getInstance();
 				$quotaController = QuotaController::getInstance();
 
         $extraClasses = " shortpixel-hide";
         /*translators: toolbar icon tooltip*/
-        $id = 'short-pixel-notice-toolbar';
-        $tooltip = __('ShortPixel optimizing...','shortpixel-image-optimiser');
+        $id = 'spaatg-notice-toolbar';
+        $tooltip = __('ShortPixel AI Alt Text Generator processing...','shortpixel-image-optimiser');
         $icon = "shortpixel.png";
-        $successLink = $link = admin_url(current_user_can( 'edit_others_posts')? 'upload.php?page=wp-short-pixel-bulk' : 'upload.php');
+        $successLink = $link = admin_url(current_user_can( 'edit_others_posts')? 'upload.php?page=wp-spaatg-bulk' : 'upload.php');
         $blank = "";
 
         if($quotaController->hasQuota() === false)
 				{
             $extraClasses = " shortpixel-alert shortpixel-quota-exceeded";
             /*translators: toolbar icon tooltip*/
-            $id = 'short-pixel-notice-exceed';
+            $id = 'spaatg-notice-exceed';
             $tooltip = '';
 
             if ($access->userIsAllowed('quota-warning'))
             {
               $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
               //$link = "http://shortpixel.com/login/" . $this->_settings->apiKey;
-              $link = "options-general.php?page=wp-shortpixel-settings";
+              $link = "options-general.php?page=wp-spaatg-settings";
             }
             else {
               $exceedTooltip = __('ShortPixel quota exceeded. Click for details.','shortpixel-image-optimiser');
@@ -685,9 +705,9 @@ class AdminController extends \ShortPixel\Controller
         }
 
         $args = array(
-                'id'    => 'shortpixel_processing',
+                'id'    => 'spaatg_processing',
                 'title' => '<div id="' . $id . '" title="' . $tooltip . '"><span class="stats hidden">0</span><img alt="' . __('ShortPixel icon','shortpixel-image-optimiser') . '" src="'
-                         . plugins_url( 'res/img/'.$icon, SHORTPIXEL_PLUGIN_FILE ) . '" success-url="' . $successLink . '"><span class="shp-alert">!</span>'
+                         . plugins_url( 'res/img/'.$icon, SPAATG_PLUGIN_FILE ) . '" success-url="' . $successLink . '"><span class="shp-alert">!</span>'
                          . '<div class="controls">
                               <span class="dashicons dashicons-controls-pause pause" title="' . __('Pause', 'shortpixel-image-optimiser') . '">&nbsp;</span>
                               <span class="dashicons dashicons-controls-play play" title="' . __('Resume', 'shortpixel-image-optimiser') . '">&nbsp;</span>
@@ -695,15 +715,15 @@ class AdminController extends \ShortPixel\Controller
 
                          .'<div class="cssload-container"><div class="cssload-speeding-wheel"></div></div></div>',
     //            'href'  => 'javascript:void(0)', // $link,
-                'meta'  => array('target'=> $blank, 'class' => 'shortpixel-toolbar-processing' . $extraClasses)
+                'meta'  => array('target'=> $blank, 'class' => 'spaatg-toolbar-processing' . $extraClasses)
         );
         $wp_admin_bar->add_node( $args );
 
         if($quotaController->hasQuota() === false)
 				{
             $wp_admin_bar->add_node( array(
-                'id'    => 'shortpixel_processing-title',
-                'parent' => 'shortpixel_processing',
+                'id'    => 'spaatg_processing-title',
+                'parent' => 'spaatg_processing',
                 'title' => $exceedTooltip,
                 'href'  => $link
             ));

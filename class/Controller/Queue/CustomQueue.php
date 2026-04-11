@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel\Controller\Queue;
+namespace SPAATG\Controller\Queue;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortQ\ShortQ as ShortQ;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\ShortQ\ShortQ as ShortQ;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
 class CustomQueue extends Queue
 {

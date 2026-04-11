@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 class Woocommerce
 {
@@ -20,7 +20,7 @@ class Woocommerce
 
 		public function hooks()
 		{
-			if (\wpSPIO()->env()->plugin_active('woocommerce'))
+			if (\wpSPAATG()->env()->plugin_active('woocommerce'))
 			{
 				 add_filter('woocommerce_regenerate_images_intermediate_image_sizes', array($this, 'signalWC'));
 
@@ -52,7 +52,7 @@ class Woocommerce
 					 self::$SIGNAL = false;
 					 return $new_sizes;
 				}
-				$fs = \wpSPIO()->filesystem();
+				$fs = \wpSPAATG()->filesystem();
 
 				$mediaImage = $fs->getMediaImage($attach_id);
 				$changes = false;
@@ -87,13 +87,13 @@ class Woocommerce
 
 		public function addWarning($tools)
 		{
-			 if (isset($tools['regenerate_thumbnails']) && \wpSPIO()->env()->is_autoprocess)
+			 if (isset($tools['regenerate_thumbnails']) && \wpSPAATG()->env()->is_autoprocess)
 			 {
 				  $text = $tools['regenerate_thumbnails']['desc'];
 					$text .= sprintf(
 					'<br><br><strong class="red">%1$s</strong> %2$s',
-					__( 'ShortPixel Image Optimizer Note:', 'shortpixel-image-optimiser' ),
-					__( 'The ShortPixel Image Optimizer plugin is set to automatically optimize images on upload. When running the thumbnails tools, each image that is not optimized will be added to the queue. It is recommend to disable this option while running these tools', 'shortpixel-image-optimiser')
+					__( 'ShortPixel AI Alt Text Generator Note:', 'shortpixel-image-optimiser' ),
+					__( 'The ShortPixel AI Alt Text Generator plugin is set to automatically optimize images on upload. When running the thumbnails tools, each image that is not optimized will be added to the queue. It is recommend to disable this option while running these tools', 'shortpixel-image-optimiser')
 				);
 				$tools['regenerate_thumbnails']['desc'] = $text;
 			 }

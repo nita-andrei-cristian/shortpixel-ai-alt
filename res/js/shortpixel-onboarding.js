@@ -1,6 +1,6 @@
 'use strict';
 
-class ShortPixelOnboarding
+class SPAATGOnboarding
 {
 
     root;
@@ -358,6 +358,6 @@ class ShortPixelOnboarding
 
 }
 
-document.addEventListener('shortpixel.settings.loaded', function (event) {
-  var s = new ShortPixelOnboarding(event.detail);
+document.addEventListener('spaatg.settings.loaded', function (event) {
+  var s = new SPAATGOnboarding(event.detail);
 });

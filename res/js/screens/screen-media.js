@@ -1,7 +1,7 @@
 'use strict';
 
 // MainScreen as an option for delegate functions
-class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen, processor)
+class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, processor)
 {
 	isCustom = true;
 	isMedia = true;
@@ -19,7 +19,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 	Init() {
 		super.Init();
 		
-		let settings = spio_mediascreen_settings;
+		let settings = spaatg_mediascreen_settings;
 		this.settings = settings;
 
 		this.ListenGallery();
@@ -42,17 +42,6 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			var postInput = document.getElementById('post_ID');
 			let item_id = postInput.value; 
 			this.FetchAltView(undefined, item_id);
-			let imageDataEl = document.getElementById('shortpixel-data-' + item_id); 
-			let editorArgs = {}; 
-			if (null !== imageDataEl && imageDataEl.dataset.imagewidth)
-			{
-				 editorArgs.image_width= imageDataEl.dataset.imagewidth;
-			}
-			if (null !== imageDataEl && imageDataEl.dataset.extension)
-			{
-				 editorArgs.image_ext = imageDataEl.dataset.extension;
-			}
-			this.InitEditorActions(postInput.value, 'edit', editorArgs); 
 		}
 	}
 
@@ -142,21 +131,21 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		event.preventDefault(); 
 		
 		let backgroundShade = document.createElement('div');
-		backgroundShade.id = 'shortpixel-media-modal-shade';
-		backgroundShade.classList.add('shortpixel-media-modal-shade');
+		backgroundShade.id = 'spaatg-media-modal-shade';
+		backgroundShade.classList.add('spaatg-media-modal-shade');
 		
 		let modal = document.createElement('div'); 
-		modal.id = 'shortpixel-media-modal'; 
-		modal.classList.add('shortpixel-media-modal', 'modal');
+		modal.id = 'spaatg-media-modal'; 
+		modal.classList.add('spaatg-media-modal', 'modal');
 		modal.dataset.opener = opener; 
 		modal.dataset.action_name = action_name; 
 		modal.dataset.item_id = item_id; 
 
-		if (null === document.getElementById('shortpixel-media-modal-css'))
+		if (null === document.getElementById('spaatg-media-modal-css'))
 		{
 			var head  = document.getElementsByTagName('head')[0];
 			var link  = document.createElement('link');
-			link.id   = 'shortpixel-media-modal-css';
+			link.id   = 'spaatg-media-modal-css';
 			link.rel  = 'stylesheet';
 			link.type = 'text/css';
 			link.href = this.settings.modalcss;
@@ -165,7 +154,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		}
 
 		// CloseEvent to close the modal + background
-		var closeEvent = new CustomEvent('shortpixel-media-modal-close', { detail : 
+		var closeEvent = new CustomEvent('spaatg-media-modal-close', { detail : 
 			 {
 				 modal: modal,
 				 shade: backgroundShade,
@@ -173,15 +162,15 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			 }
 		} ); 
 
-		var buttonEventUnblock = new CustomEvent('shortpixel-media-modal-buttons-unblock', { detail: {toggle : 'on'}});
-		var buttonEventBlock = new CustomEvent('shortpixel-media-modal-buttons-block', { detail: {toggle : 'off'}});
+		var buttonEventUnblock = new CustomEvent('spaatg-media-modal-buttons-unblock', { detail: {toggle : 'on'}});
+		var buttonEventBlock = new CustomEvent('spaatg-media-modal-buttons-block', { detail: {toggle : 'off'}});
 		
 
 		modal.closeEvent = closeEvent;  // if works, quite dirty.
 		modal.toggleButtonBlock = buttonEventBlock; 
 		modal.toggleButtonUnblock = buttonEventUnblock; 
 
-		//modal.addEventListener('shortpixel-media-modal-buttons-unblock, shortpixel-media-modal-buttons-block',
+		//modal.addEventListener('spaatg-media-modal-buttons-unblock, spaatg-media-modal-buttons-block',
 		var buttonEvent = (event) => {
 			var toggle = event.detail.toggle; 
 			console.log('toggle buttons');
@@ -199,10 +188,10 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				}
 			}
 		}; 
-		modal.addEventListener('shortpixel-media-modal-buttons-unblock', buttonEvent);
-		modal.addEventListener('shortpixel-media-modal-buttons-block', buttonEvent);
+		modal.addEventListener('spaatg-media-modal-buttons-unblock', buttonEvent);
+		modal.addEventListener('spaatg-media-modal-buttons-block', buttonEvent);
 
-		document.addEventListener('shortpixel-media-modal-close', (event) => {
+		document.addEventListener('spaatg-media-modal-close', (event) => {
 				let detail = event.detail; 
 				detail.modal.remove();
 				detail.shade.remove(); 
@@ -233,7 +222,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		document.body.append(backgroundShade);
 		document.body.append(modal);
 
-		window.addEventListener('shortpixel.openEditorPopup', function (event) {
+		window.addEventListener('spaatg.openEditorPopup', function (event) {
 			let previewData = event.detail; 
 
 			let actionName = event.detail.action_name; 
@@ -310,7 +299,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			screen_action: 'media/getEditorPopup',
 			action_name : action_name, 
 		}
-		data.callback = 'shortpixel.openEditorPopup';
+		data.callback = 'spaatg.openEditorPopup';
 		this.processor.AjaxRequest(data);
 
 
@@ -385,10 +374,10 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			request.attached_post_id = data.attached_post_id;
 		}
 
-		request.callback = 'shortpixel.mediaEditorPreviewLoaded';
+		request.callback = 'spaatg.mediaEditorPreviewLoaded';
 		this.processor.AjaxRequest(request);
 
-		window.addEventListener('shortpixel.mediaEditorPreviewLoaded',  function (event) {
+		window.addEventListener('spaatg.mediaEditorPreviewLoaded',  function (event) {
 				this.MediaEditorPreviewEvent(event, modal);
 		}.bind(this), {once:true});
 	}
@@ -553,10 +542,10 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				type: 'media',
 				screen_action: 'ai/getAltData',
 			}
-			data.callback = 'shortpixel.AttachAiInterface';
+			data.callback = 'spaatg.AttachAiInterface';
 			this.processor.AjaxRequest(data);
 
-			window.addEventListener('shortpixel.AttachAiInterface', this.AttachAiInterface.bind(this), {once: true});
+			window.addEventListener('spaatg.AttachAiInterface', this.AttachAiInterface.bind(this), {once: true});
 		}
 	}
 
@@ -579,7 +568,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		if (data.media) {
 			var id = data.media.id;
 
-			var element = document.getElementById('shortpixel-data-' + id);
+			var element = document.getElementById('spaatg-data-' + id);
 			if (element !== null) // Could be other page / not visible / whatever.
 				element.outerHTML = data.media.itemView;
 			else {
@@ -601,13 +590,13 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		var actionValue = actionSelect.value;
 
 		// Check if we have a shortpixel event
-		if (actionValue.includes('shortpixel')) {
+		if (actionValue.includes('spaatg')) {
 			event.preventDefault();
 			var items = document.querySelectorAll('input[name="media[]"]:checked');
 
 			for (var i = 0; i < items.length; i++) {
 				var media_id = items[i].value;
-				var column = document.getElementById('shortpixel-data-' + media_id);
+				var column = document.getElementById('spaatg-data-' + media_id);
 				var optimizable = column.classList.contains('is-optimizable');
 				var restorable = column.classList.contains('is-restorable');
 				var aiAction = column.classList.contains('ai-action');
@@ -615,31 +604,31 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				var compressionType = column.dataset.compression;
 
 				switch (actionValue) {
-					case 'shortpixel-optimize':
+					case 'spaatg-optimize':
 						if (optimizable) {
 							this.Optimize(media_id);
 						}
 						break;
-					case 'shortpixel-glossy':
-					case 'shortpixel-lossy':
-					case 'shortpixel-lossless':
-					case 'shortpixel-smartcrop':
-					case 'shortpixel-smartcropless':
+					case 'spaatg-glossy':
+					case 'spaatg-lossy':
+					case 'spaatg-lossless':
+					case 'spaatg-smartcrop':
+					case 'spaatg-smartcropless':
 
 						switch (actionValue) {
-							case 'shortpixel-glossy':
+							case 'spaatg-glossy':
 								var compression = this.imageConstants.COMPRESSION_GLOSSY;
 								break;
-							case 'shortpixel-lossless':
+							case 'spaatg-lossless':
 								var compression = this.imageConstants.COMPRESSION_LOSSLESS;
 								break;
-							case 'shortpixel-lossy':
+							case 'spaatg-lossy':
 								var compression = this.imageConstants.COMPRESSION_LOSSY;
 								break;
-							case 'shortpixel-smartcrop':
+							case 'spaatg-smartcrop':
 								var action = this.imageConstants.ACTION_SMARTCROP;
 								break;
-							case 'shortpixel-smartcropless':
+							case 'spaatg-smartcropless':
 								var action = this.imageConstants.ACTION_SMARTCROPLESS;
 								break;
 						}
@@ -657,17 +646,17 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 						}
 
 						break;
-					case 'shortpixel-restore':
+					case 'spaatg-restore':
 						if (restorable) {
 							this.RestoreItem(media_id);
 						}
 						break;
-					case 'shortpixel-mark-completed':
+					case 'spaatg-mark-completed':
 							if (optimizable) {
 								this.MarkCompleted(media_id);
 							}
 					break; 
-					case 'shortpixel-generateai':
+					case 'spaatg-generateai':
 						if (aiAction)
 						{
 							 this.RequestAlt(media_id);
@@ -691,7 +680,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 
 		// If image editor is active and file is being restored because of this reason ( or otherwise ), remove the warning if this one exists.
 		if (fileStatus == 'FILE_RESTORED') {
-			var warning = document.getElementById('shortpixel-edit-image-warning');
+			var warning = document.getElementById('spaatg-edit-image-warning');
 			if (warning !== null) {
 				warning.remove();
 			}
@@ -709,9 +698,9 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			type: 'media',
 			screen_action: 'redoLegacy',
 		}
-		data.callback = 'shortpixel.LoadItemView';
+		data.callback = 'spaatg.LoadItemView';
 
-		window.addEventListener('shortpixel.LoadItemView', function (e) {
+		window.addEventListener('spaatg.LoadItemView', function (e) {
 			var itemData = { id: e.detail.media.id, type: 'media' };
 			this.processor.timesEmpty = 0; // reset the defer on this.
 			this.processor.LoadItemView(itemData);
@@ -728,7 +717,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 		var self = this;
 		var next_item_run_process = false; 
 
-		if (this.settings.hide_spio_in_popups)
+		if (this.settings.hide_spaatg_in_popups)
 		{
 			return;
 		}
@@ -761,8 +750,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 					{
 						if (true === next_item_run_process )
 						{
-							window.ShortPixelProcessor.SetInterval(-1);
-							window.ShortPixelProcessor.RunProcess();
+							window.SPAATGProcessor.SetInterval(-1);
+							window.SPAATGProcessor.RunProcess();
 							next_item_run_process = false; 
 						}
 						else
@@ -789,13 +778,13 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 				var data = {};
 				data.id = id;
 				data.type = self.type;
-				data.callback = 'shortpixel.MediaRenderView';
+				data.callback = 'spaatg.MediaRenderView';
 
 				if (typeof this.spioBusy !== 'undefined' && this.spioBusy === true) {
 					return;
 				}
 
-				window.addEventListener('shortpixel.MediaRenderView', this.renderSPIOView.bind(this), { 'once': true });
+				window.addEventListener('spaatg.MediaRenderView', this.renderSPIOView.bind(this), { 'once': true });
 				self.processor.LoadItemView(data);
 			},
 
@@ -819,28 +808,17 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 					setTimeout(function () { this.renderSPIOView(e, timed) }.bind(this), 1000);
 				}
 
-				let editorArgs = {}; 
-				if (e.detail.media.image && e.detail.media.image.width) // dottadot
-				{
-					editorArgs.image_width = e.detail.media.image.width; 
-				}
-				if (e.detail.media.image && e.detail.media.image.extension) // dottadot
-				{
-					editorArgs.image_ext = e.detail.media.image.extension; 
-				}
-
-				var html = this.doSPIORow(e.detail.media.itemView);
+				var html = this.doSPIORow(item_id, e.detail.media.itemView);
 				$spSpace.after(html);
-
-				self.InitEditorActions(item_id, opener, editorArgs);
+				self.UpdateGeneratedAltPanels(item_id, self.GetAttachmentAltValue(item_id));
 				self.FetchAltView(undefined, item_id); 
 
 			},
-			doSPIORow: function (dataHtml) {
+			doSPIORow: function (item_id) {
 				var html = '';
-				html += '<div class="shortpixel-popup-info">';
-				html += '<label class="name">ShortPixel</label>';
-				html += dataHtml;
+				html += '<div class="shortpixel-popup-info shortpixel-generated-alt-panel" data-spaatg-generated-alt="' + item_id + '">';
+				html += '<label class="name">' + self.settings.alt_text_label + '</label>';
+				html += '<div class="shortpixel-generated-alt-content is-empty">' + self.settings.alt_text_loading + '</div>';
 				html += '</div>';
 				return html;
 			},
@@ -879,27 +857,78 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			return false; 
 		}
 
-		var wrapper = document.getElementById('shortpixel-ai-wrapper-' + item_id);
+			element.dataset.shortpixelAlt = data.item_id;		
+			this.UpdateGeneratedAltPanels(data.item_id, this.ResolveAltText(data));
 
-		if (null !== wrapper) // remove previous controls
+		if (data.generated && typeof data.generated.alt !== 'undefined')
+			element.value = data.generated.alt;
+
+	}
+
+	GetAttachmentAltValue(item_id)
+	{
+		var attachmentAlt = this.GetPageAttachmentAlt();
+		if (attachmentAlt === null)
 		{
-			wrapper.remove();
+			return '';
 		}
 
-		// This will not work because the wrapper doesn't exist and is recreated each time on fly. Need some place to store item_id on item load
-		var wrapper = document.createElement('div');
-		wrapper.id = 'shortpixel-ai-wrapper-' + item_id;
-		wrapper.classList.add('shortpixel-ai-interface',element.getAttribute('id'));
-		
-		wrapper.innerHTML = data.snippet;	
+		if (attachmentAlt.dataset.shortpixelAlt && attachmentAlt.dataset.shortpixelAlt != item_id)
+		{
+			return '';
+		}
 
+		return (typeof attachmentAlt.value !== 'undefined') ? attachmentAlt.value : '';
+	}
 
-		element.after(wrapper);
+	ResolveAltText(data)
+	{
+		if (data && data.generated && typeof data.generated.alt !== 'undefined' && data.generated.alt.length > 0)
+		{
+			return data.generated.alt;
+		}
 
-		element.dataset.shortpixelAlt = data.item_id;		
-		if (data.result_alt && data.has_data)
-			element.value = data.result_alt;
+		if (data && data.current && typeof data.current.alt !== 'undefined' && data.current.alt.length > 0)
+		{
+			return data.current.alt;
+		}
 
+		if (data && typeof data.alt !== 'undefined' && data.alt.length > 0)
+		{
+			return data.alt;
+		}
+
+		return '';
+	}
+
+	UpdateGeneratedAltPanels(item_id, altText)
+	{
+		var panels = document.querySelectorAll('[data-spaatg-generated-alt="' + item_id + '"]');
+		if (panels.length === 0)
+		{
+			return;
+		}
+
+		panels.forEach(function (panel) {
+			var content = panel.querySelector('.shortpixel-generated-alt-content');
+			if (content === null)
+			{
+				return;
+			}
+
+			if (typeof altText === 'string' && altText.length > 0)
+			{
+				content.textContent = altText;
+				content.classList.remove('is-empty');
+				panel.classList.remove('is-empty');
+			}
+			else
+			{
+				content.textContent = this.settings.alt_text_empty;
+				content.classList.add('is-empty');
+				panel.classList.add('is-empty');
+			}
+		}.bind(this));
 	}
 
 	AjaxOptimizeWarningFromUnderscore(id) {
@@ -928,20 +957,20 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 
 	ShowOptimizeWarning(image_post_id, is_restorable, is_optimized) {
 		var div = document.createElement('div');
-		div.id = 'shortpixel-edit-image-warning';
+		div.id = 'spaatg-edit-image-warning';
 		div.classList.add('shortpixel', 'shortpixel-notice', 'notice-warning');
 
 
 		if ('true' == is_restorable) {
-			var restore_link = spio_media.restore_link.replace('#post_id#', image_post_id);
-			div.innerHTML = '<p>' + spio_media.optimized_text + ' <a href="' + restore_link + '">' + spio_media.restore_link_text + '</a></p>';
+			var restore_link = spaatg_media.restore_link.replace('#post_id#', image_post_id);
+			div.innerHTML = '<p>' + spaatg_media.optimized_text + ' <a href="' + restore_link + '">' + spaatg_media.restore_link_text + '</a></p>';
 		}
 		else {
-			div.innerHTML = '<p>' + spio_media.optimized_text + ' ' + spio_media.restore_link_text_unrestorable + '</p>';
+			div.innerHTML = '<p>' + spaatg_media.optimized_text + ' ' + spaatg_media.restore_link_text_unrestorable + '</p>';
 
 		}
 		// only if not existing.
-		if (document.getElementById('shortpixel-edit-image-warning') == null) {
+		if (document.getElementById('spaatg-edit-image-warning') == null) {
 			var $menu = jQuery('.imgedit-menu');
 			if ($menu.length > 0) {
 				$menu.append(div);
@@ -979,7 +1008,7 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 			};
 
 			window.addEventListener('ShortPixelMedia.getItemEditWarning', self.CheckOptimizeWarning.bind(self), { 'once': true });
-			window.ShortPixelProcessor.AjaxRequest(data);
+			window.SPAATGProcessor.AjaxRequest(data);
 		});
 	}
 
@@ -1007,8 +1036,8 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 						if (self.gutenCheck.indexOf(imageId) === -1)
 						{
 						
-							window.ShortPixelProcessor.SetInterval(-1);
-							window.ShortPixelProcessor.RunProcess();
+							window.SPAATGProcessor.SetInterval(-1);
+							window.SPAATGProcessor.RunProcess();
 						
 							self.gutenCheck.push(imageId);
 						}
@@ -1052,9 +1081,6 @@ class ShortPixelScreen extends ShortPixelScreenItemBase //= function (MainScreen
 	}
 
 } // class
-
-
-
 
 
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
 class FrontImage
@@ -246,7 +246,7 @@ class FrontImage
 			return false;
 		}
 
-		$fs = \wpSPIO()->filesystem();
+		$fs = \wpSPAATG()->filesystem();
 		$fileObj = $fs->getFile($src);
 		$fileDir = $fileObj->getFileDir();
 		$this->imageBase = $fileObj->getFileDir();

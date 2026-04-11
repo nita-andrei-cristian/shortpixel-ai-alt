@@ -1,19 +1,19 @@
 <?php
-namespace ShortPixel\Model;
+namespace SPAATG\Model;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Controller\OtherMediaController as OtherMediaController;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Image\MediaLibraryModel as MediaLibraryModel;
+use SPAATG\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
-use ShortPixel\Helper\UtilHelper as UtilHelper;
-use ShortPixel\Helper\InstallHelper as InstallHelper;
+use SPAATG\Helper\UtilHelper as UtilHelper;
+use SPAATG\Helper\InstallHelper as InstallHelper;
 
 
 class StatsModel
@@ -88,7 +88,7 @@ class StatsModel
 
   public function load()
   {
-    $settings = \wpSPIO()->settings();
+    $settings = \wpSPAATG()->settings();
 
     $stats = $settings->currentStats;
 		if (! is_array($stats))
@@ -121,7 +121,7 @@ class StatsModel
 
   public function save()
   {
-     $settings = \wpSPIO()->settings();
+     $settings = \wpSPAATG()->settings();
      $stats = $this->stats;
      $stats['time'] = time();
      $settings->currentStats = $stats;
@@ -130,7 +130,7 @@ class StatsModel
   public function reset()
   {
       $this->stats = $this->defaults;
-			\wpSPIO()->settings()->deleteOption('currentStats');
+			\wpSPAATG()->settings()->deleteOption('currentStats');
 
   //    $this->save();
   }
@@ -341,7 +341,7 @@ class StatsModel
 			 // This query will return 2 positions after the thumbnail array declaration.  Value can be up to two positions ( 0-100 thumbnails) . If positions is 1-10 intval will filter out the string part.
 	     $sql = "SELECT  meta_id, post_id, substr(meta_value, instr(meta_value,'sizes')+9,2) as thumbcount, LOCATE('original_image', meta_value) as originalImage FROM " . $wpdb->postmeta . " WHERE meta_key = '_wp_attachment_metadata' ";
 
-	     $sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+	     $sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_spaatg_prevent_optimize' )";  // exclude 'crashed items'
 
 			 $sql .= " limit 0," . $args['limit'];
 		 }
@@ -393,7 +393,7 @@ class StatsModel
       }
 			else {
 				$sql = 'SELECT count(meta_id) FROM ' . $wpdb->postmeta . ' WHERE meta_key = "_wp_attached_file"';
-     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_shortpixel_prevent_optimize' )";  // exclude 'crashed items'
+     		$sql .= " AND post_id NOT IN ( SELECT post_id FROM " . $wpdb->postmeta . " where meta_key = '_spaatg_prevent_optimize' )";  // exclude 'crashed items'
 			}
 
 			if (count($prepare) > 0)

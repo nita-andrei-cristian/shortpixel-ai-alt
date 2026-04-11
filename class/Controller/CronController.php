@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 class CronController
 {
@@ -50,12 +50,12 @@ class CronController
 
   public function cron_schedules($schedules)
   {
-        $schedules['spio_interval'] = array(
+        $schedules['spaatg_interval'] = array(
           'interval' => apply_filters('shortpixel/cron/interval', 60),
           'display' => __('ShortPixel cron interval', 'shortpixel-image-optimiser')
         );
 
-        $schedules['spio_interval_30min'] = array(
+        $schedules['spaatg_interval_30min'] = array(
           'interval' => apply_filters('shortpixel/cron/interval', 30 * MINUTE_IN_SECONDS),
           'display' => __('ShortPixel 30 min interval', 'shortpixel-image-optimiser')
         );
@@ -100,7 +100,7 @@ class CronController
 
   protected function checkActive()
   {
-      $settings = \wpSPIO()->settings();
+      $settings = \wpSPAATG()->settings();
       $this->background_is_active = ($settings->doBackgroundProcess) ? true : false;
   }
 
@@ -149,12 +149,12 @@ class CronController
 
       $scheduled = wp_next_scheduled($name, $args);
 
-			$add_cron = (false == \wpSPIO()->settings()->showCustomMedia) ? false : true;
+			$add_cron = (false == \wpSPAATG()->settings()->showCustomMedia) ? false : true;
 			$add_cron = apply_filters('shortpixel/othermedia/add_cron', $add_cron);
 
       if (false == $scheduled && true === $add_cron && false === $unschedule)
       {
-                wp_schedule_event(time(), 'spio_interval_30min', $name, $args);
+                wp_schedule_event(time(), 'spaatg_interval_30min', $name, $args);
       }
       elseif(false !== $scheduled && (false === $add_cron || true == $unschedule) )
       {
@@ -202,7 +202,7 @@ class CronController
 
        if ($items  > 0)
        {
-          wp_schedule_event(time(), 'spio_interval', $options['cron_name'], $args);
+          wp_schedule_event(time(), 'spaatg_interval', $options['cron_name'], $args);
        }
 
   }

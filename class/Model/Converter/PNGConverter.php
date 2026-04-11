@@ -1,21 +1,21 @@
 <?php
- namespace ShortPixel\Model\Converter;
+ namespace SPAATG\Model\Converter;
 
  if ( ! defined( 'ABSPATH' ) ) {
  	exit; // Exit if accessed directly.
  }
 
- use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
- use ShortPixel\Model\Image\ImageModel as ImageModel;
- use ShortPixel\Model\File\DirectoryModel as DirectoryModel;
- use ShortPixel\Model\File\FileModel as FileModel;
- use ShortPixel\Notices\NoticeController as Notices;
+ use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+ use SPAATG\Model\Image\ImageModel as ImageModel;
+ use SPAATG\Model\File\DirectoryModel as DirectoryModel;
+ use SPAATG\Model\File\FileModel as FileModel;
+ use SPAATG\Notices\NoticeController as Notices;
 
- use ShortPixel\Controller\ResponseController as ResponseController;
+ use SPAATG\Controller\ResponseController as ResponseController;
 
- use ShortPixel\Helper\DownloadHelper as DownloadHelper;
-use ShortPixel\Model\Image\Image;
-use ShortPixel\Model\Queue\QueueItem;
+ use SPAATG\Helper\DownloadHelper as DownloadHelper;
+use SPAATG\Model\Image\Image;
+use SPAATG\Model\Queue\QueueItem;
 
 class PNGConverter extends MediaLibraryConverter
 {
@@ -37,8 +37,8 @@ class PNGConverter extends MediaLibraryConverter
 		{
 			parent::__construct($imageModel);
 
-			$settings = \wpSPIO()->settings();
-			$env = \wpSPIO()->env();
+			$settings = \wpSPAATG()->settings();
+			$env = \wpSPAATG()->env();
 
 
 			$this->converterActive = (intval($settings->png2jpg) > 0) ? true : false;
@@ -115,7 +115,7 @@ class PNGConverter extends MediaLibraryConverter
 				 return false;
 			 }
 
-			 $fs = \wpSPIO()->filesystem();
+			 $fs = \wpSPAATG()->filesystem();
 
 			 $defaults = array(
 				 	'runReplacer' => true, // The replacer doesn't need running when the file is just uploaded and doing in handle upload hook.
@@ -202,7 +202,7 @@ class PNGConverter extends MediaLibraryConverter
 			do_action('shortpixel/image/convertpng2jpg_before', $this->imageModel);
 
 			//$img = $this->getPNGImage();
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 
 			$image = $this->getPNGImage();
 
@@ -363,7 +363,7 @@ class PNGConverter extends MediaLibraryConverter
 			$params = array(
 				'restore' => true,
 			);
-			$fs = \wpSPIO()->filesystem();
+			$fs = \wpSPAATG()->filesystem();
 
 			$this->setupReplacer();
 

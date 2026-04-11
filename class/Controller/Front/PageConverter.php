@@ -1,14 +1,14 @@
 <?php
-namespace ShortPixel\Controller\Front;
+namespace SPAATG\Controller\Front;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 
-class PageConverter extends \ShortPixel\Controller
+class PageConverter extends \SPAATG\Controller
 {
 
 	protected $site_url;
@@ -26,7 +26,7 @@ class PageConverter extends \ShortPixel\Controller
   /** Check if the converters should run on this request.  This is mainly used to filter out frontend pagebuilder where changing images could result in crashing builders and such cases */
 	protected function shouldConvert()
 	{
-		$env = wpSPIO()->env();
+		$env = wpSPAATG()->env();
 
     $checks = [ $env->is_admin,
        $env->is_ajaxcall,
@@ -75,7 +75,7 @@ class PageConverter extends \ShortPixel\Controller
       return false;
     }
 
-    if (isset($_GET['spio_no_cdn']))
+    if (isset($_GET['spaatg_no_cdn']))
     {
        return false;
     }
@@ -90,7 +90,7 @@ class PageConverter extends \ShortPixel\Controller
        return false;
     }
 
-    if (false === \wpSPIO()->env()->is_front) // if is front.
+    if (false === \wpSPAATG()->env()->is_front) // if is front.
     {
        return false; 
     }

@@ -1,5 +1,5 @@
 <?php
-namespace ShortPixel\ShortQ;
+namespace SPAATG\ShortQ;
 
 /* The Queue Item
 *

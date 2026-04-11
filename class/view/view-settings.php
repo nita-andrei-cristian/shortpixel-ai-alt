@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\UiHelper as UiHelper;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <hr class='wp-header-end'>
 
-<div class="wrap is-shortpixel-settings-page <?php echo esc_attr($this->view_mode); ?> ">
+<div class="wrap is-spaatg-settings-page is-shortpixel-settings-page <?php echo esc_attr($this->view_mode); ?> ">
 
 <header>
   <h1>
@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
   <input type='checkbox' name='heavy_features' value='1' <?php echo ($this->disable_heavy_features) ? 'checked' : '' ?> class='shortpixel-hide' />
 
-<article class='shortpixel-settings'>
+<article class='spaatg-settings shortpixel-settings'>
   <?php if ($this->view->data->redirectedSettings < 3 && $view->key->is_verifiedkey)
   {
     $this->loadView('settings/part-quicktour');
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               'icon' => 'shortpixel-icon dashboard',
             ]); ?>
         </li>
-				<li>
+				<li class='is-hidden-visual'>
           <?php echo $this->settingLink([
             'part' => 'optimisation',
             'title' => __("Image Optimization", "shortpixel-image-optimiser"),
@@ -73,7 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             'title' => __("Processing", "shortpixel-image-optimiser"),
             'icon' => 'shortpixel-icon processing']); ?>
         </li>
-        <li>
+        <li class='is-hidden-visual'>
 					<?php echo $this->settingLink([
             'part' => 'webp',
             'title' => __("WebP/AVIF & CDN", "shortpixel-image-optimiser"),
@@ -120,7 +120,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php } ?>
 
 			</ul>
-			<div class="adv_switcher">
+			<div class="adv_switcher is-hidden-visual">
 				<?php esc_html_e('Advanced Mode','shortpixel-image-optimiser');?>
                 		<label class="adv_switch" id="viewmode-toggles">
                         		<input type="checkbox" <?php echo ('advanced' == $this->view_mode) ? 'checked' : '' ?> >
@@ -167,7 +167,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		</menu>
 		<section class="wrapper">
-      <form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options'>
+      <form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options' class='wp-spaatg-options wp-shortpixel-options'>
 
         <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
         <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
@@ -204,7 +204,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </section>
 
-<article id="shortpixel-settings-tabs" class="sp-tabs">
+<article id="spaatg-settings-tabs" class="sp-tabs">
     <?php if (! $view->key->is_verifiedkey)
     {
     } ?>
@@ -213,7 +213,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     if ($view->key->is_verifiedkey):
       ?>
       <div class='section-wrapper'>
-				<form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options'>
+				<form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options' class='wp-spaatg-options wp-shortpixel-options'>
 	        <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
 	        <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 

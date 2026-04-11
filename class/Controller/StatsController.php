@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\StatsModel as StatsModel;
-use ShortPixel\Controller\Queue\StatsQueue as StatsQueue;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\StatsModel as StatsModel;
+use SPAATG\Controller\Queue\StatsQueue as StatsQueue;
+use SPAATG\Model\Image\ImageModel as ImageModel;
 
 
-class StatsController extends \ShortPixel\Controller
+class StatsController extends \SPAATG\Controller
 {
 
     protected $model;
@@ -116,7 +116,7 @@ class StatsController extends \ShortPixel\Controller
                'thumbsTotal'); // according to database.
        $totalThumbsOptimized = $this->find('media', 'thumbs');
 
-       $excludedThumbnails = \wpSPIO()->settings()->excludeSizes;
+       $excludedThumbnails = \wpSPAATG()->settings()->excludeSizes;
        $excludeCount = (is_array($excludedThumbnails)) ? count($excludedThumbnails) : 0;
 
         // Totalthumbs - thumbsOptimized - minus amount of excluded (guess)

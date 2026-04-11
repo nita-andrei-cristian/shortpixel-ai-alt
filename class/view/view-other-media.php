@@ -1,13 +1,13 @@
 <?php
-namespace ShortPixel;
+namespace SPAATG;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-$fs = \wpSPIO()->filesystem();
+$fs = \wpSPAATG()->filesystem();
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended  -- This is not a form
 if ( isset($_GET['noheader']) ) {
@@ -31,7 +31,7 @@ $this->loadView('custom/part-othermedia-top');
 
   <span class='custom-filter'>
     <form method="get" action="<?php echo $this->url ?>" >
-      <input type='hidden' name='page' value='wp-short-pixel-custom'>
+      <input type='hidden' name='page' value='wp-spaatg-custom'>
     <?php $this->printFilter(); ?>
      <button class='button' type='submit'><?php _e('Filter', 'shortpixel-image-optimiser'); ?></button>
    </form>
@@ -120,7 +120,7 @@ $this->loadView('custom/part-othermedia-top');
 								{
 								 	echo('title="' . esc_attr__('This image is heavy and it would slow this page down if displayed here. Click to open it in a new browser tab.', 'shortpixel-image-optimiser') . '"');
 								}
-                ?> style="background-image:url('<?php echo($is_heavy ? esc_url(wpSPIO()->plugin_url('res/img/heavy-image@2x.png')) : esc_url($img_url)) ?>')">
+                ?> style="background-image:url('<?php echo($is_heavy ? esc_url(wpSPAATG()->plugin_url('res/img/heavy-image@2x.png')) : esc_url($img_url)) ?>')">
 							</div>
                 </a></span>
             <span class='filename'><?php echo esc_html($item->getFileName()) ?>

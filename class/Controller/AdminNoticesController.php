@@ -1,25 +1,25 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\Notices\NoticeController as Notices;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Notices\NoticeController as Notices;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\ViewController as ViewController;
+use SPAATG\ViewController as ViewController;
 
-use ShortPixel\Model\AccessModel as AccessModel;
+use SPAATG\Model\AccessModel as AccessModel;
 
-// Use ShortPixel\Model\ApiKeyModel as ApiKeyModel
+// Use SPAATG\Model\ApiKeyModel as ApiKeyModel
 
 /**
  * Controller for automatic Notices about status of the plugin.
  * This controller is bound for automatic fire. Regular procedural notices should just be queued using the Notices modules.
  * Called in admin_notices.
  */
-class AdminNoticesController extends \ShortPixel\Controller
+class AdminNoticesController extends \SPAATG\Controller
 {
     protected static $instance;
 
@@ -53,10 +53,10 @@ class AdminNoticesController extends \ShortPixel\Controller
         add_action('admin_notices', array($this, 'displayNotices'), 50); // notices occured before page load
         add_action('admin_footer', array($this, 'displayNotices'));  // called in views.
 
-        add_action('in_plugin_update_message-' . plugin_basename(SHORTPIXEL_PLUGIN_FILE), array($this, 'pluginUpdateMessage') , 50, 2 );
+        add_action('in_plugin_update_message-' . plugin_basename(SPAATG_PLUGIN_FILE), array($this, 'pluginUpdateMessage') , 50, 2 );
 
         // no persistent notifications with this flag set.
-        if (defined('SHORTPIXEL_SILENT_MODE') && SHORTPIXEL_SILENT_MODE === true)
+        if (defined('SPAATG_SILENT_MODE') && SPAATG_SILENT_MODE === true)
         {
             $this->silent_mode = true;
             return;
@@ -127,22 +127,22 @@ class AdminNoticesController extends \ShortPixel\Controller
 
     public function displayNotices()
     {
-        if (! \wpSPIO()->env()->is_screen_to_use)
+        if (! \wpSPAATG()->env()->is_screen_to_use)
         {
             if(get_current_screen()->base !== 'dashboard') // ugly exception for dashboard.
             {
                 return; // suppress all when not our screen.
             }
             else {
-              \wpSPIO()->load_style('shortpixel-notices');
-              \wpSPIO()->load_style('notices-module');
+              \wpSPAATG()->load_style('spaatg-notices');
+              \wpSPAATG()->load_style('spaatg-notices-module');
             }
         }
 
         $access = AccessModel::getInstance();
         $screen = get_current_screen();
-        $screen_id = \wpSPIO()->env()->screen_id;
-        $is_our_screen = \wpSPIO()->env()->is_our_screen; 
+        $screen_id = \wpSPAATG()->env()->screen_id;
+        $is_our_screen = \wpSPAATG()->env()->is_our_screen; 
 
         $noticeControl = Notices::getInstance();
 
@@ -179,8 +179,8 @@ class AdminNoticesController extends \ShortPixel\Controller
                     if ($notice->getID() == 'MSG_QUOTA_REACHED' || $notice->getID() == 'MSG_UPGRADE_MONTH')
                     {
                         // This is still needed
-                        wp_enqueue_script('jquery.knob.min.js');
-                        wp_enqueue_script('shortpixel');
+                        wp_enqueue_script('spaatg-jquery-knob');
+                        wp_enqueue_script('spaatg');
                     }
                 }
             }
@@ -191,7 +191,7 @@ class AdminNoticesController extends \ShortPixel\Controller
     /* General function to check on Hook for admin notices if there is something to show globally */
     public function check_admin_notices()
     {
-        if (! \wpSPIO()->env()->is_screen_to_use)
+        if (! \wpSPAATG()->env()->is_screen_to_use)
         {
             if(get_current_screen()->base !== 'dashboard') // ugly exception for dashboard.
                 return; // suppress all when not our screen.
@@ -204,7 +204,7 @@ class AdminNoticesController extends \ShortPixel\Controller
     {
         foreach($this->definedNotices as $className)
         {
-            $ns = '\ShortPixel\Model\AdminNotices\\' . $className;
+            $ns = '\SPAATG\Model\AdminNotices\\' . $className;
             $class = new $ns();
 
             $this->adminNotices[$class->getKey()] = $class;
@@ -213,10 +213,10 @@ class AdminNoticesController extends \ShortPixel\Controller
         // Init the notice icons
         $noticeControl = Notices::getInstance();
         $noticeControl->loadIcons(array(
-            'normal' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/slider.png', SHORTPIXEL_PLUGIN_FILE) . '">',
-            'success' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-cool.png', SHORTPIXEL_PLUGIN_FILE) . '">',
-            'warning' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SHORTPIXEL_PLUGIN_FILE) . '">',
-            'error' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SHORTPIXEL_PLUGIN_FILE) . '">',
+            'normal' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/slider.png', SPAATG_PLUGIN_FILE) . '">',
+            'success' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-cool.png', SPAATG_PLUGIN_FILE) . '">',
+            'warning' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SPAATG_PLUGIN_FILE) . '">',
+            'error' => '<img class="short-pixel-notice-icon" src="' . plugins_url('res/img/robo-scared.png', SPAATG_PLUGIN_FILE) . '">',
         ));
 
     }
@@ -261,7 +261,7 @@ class AdminNoticesController extends \ShortPixel\Controller
 
     /**
      * 
-     * @var ShortPixel\Controller\functon
+     * @var SPAATG\Controller\functon
      */
     public function getRemoteOffer()
     {
@@ -301,7 +301,7 @@ class AdminNoticesController extends \ShortPixel\Controller
     protected function doRemoteNotices()
     {
          // Don't load on ajax, or other complicated things
-        if (! \wpSPIO()->env()->is_screen_to_use)
+        if (! \wpSPAATG()->env()->is_screen_to_use)
         {
            return;
         }
@@ -387,7 +387,7 @@ class AdminNoticesController extends \ShortPixel\Controller
         //$stats = $this->countAllIfNeeded($this->_settings->currentStats, 300);
         $statsController = StatsController::getInstance();
         $apiKeyController = ApiKeyController::getInstance();
-        $settings = \wpSPIO()->settings();
+        $settings = \wpSPAATG()->settings();
 
         $webpActive = ($settings->createWebp) ? true : false;
         $avifActive =  ($settings->createAvif) ? true : false;
@@ -400,7 +400,7 @@ class AdminNoticesController extends \ShortPixel\Controller
             'blocking' => true,
             'headers' => array(),
             'body' => array("params" => json_encode(array(
-                'plugin_version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+                'plugin_version' => SPAATG_IMAGE_OPTIMISER_VERSION,
                 'key' => $apiKeyController->forceGetApiKey(),
                 'm1' => $statsController->find('period', 'months', '1'),
                 'm2' => $statsController->find('period', 'months', '2'),
@@ -411,7 +411,7 @@ class AdminNoticesController extends \ShortPixel\Controller
                 'webp' => $webpActive,
                 'avif' => $avifActive,
                 /* */
-                'iconsUrl' => base64_encode(wpSPIO()->plugin_url('res/img'))
+                'iconsUrl' => base64_encode(wpSPAATG()->plugin_url('res/img'))
             ))),
             'cookies' => array()
 
@@ -432,7 +432,7 @@ class AdminNoticesController extends \ShortPixel\Controller
         $transient_name = 'shortpixel_remote_notice';
         $transient_duration = DAY_IN_SECONDS;
 
-        if (\wpSPIO()->env()->is_debug)
+        if (\wpSPAATG()->env()->is_debug)
             $transient_duration = 180;
 
         $keyControl = new apiKeyController();
@@ -442,7 +442,7 @@ class AdminNoticesController extends \ShortPixel\Controller
         $url = $this->remote_message_endpoint;
         $url = add_query_arg(array(  // has url
             'key' => $keyControl->forceGetApiKey(),
-            'version' => SHORTPIXEL_IMAGE_OPTIMISER_VERSION,
+            'version' => SPAATG_IMAGE_OPTIMISER_VERSION,
             'target' => 3,
         ), $url);
 
@@ -495,7 +495,7 @@ class AdminNoticesController extends \ShortPixel\Controller
 
         $transient_duration = DAY_IN_SECONDS;
 
-        if (\wpSPIO()->env()->is_debug)
+        if (\wpSPAATG()->env()->is_debug)
             $transient_duration = 30;
 
         $update_notice  = get_transient( $transient_name );
@@ -537,7 +537,7 @@ class AdminNoticesController extends \ShortPixel\Controller
 
         // foreach ( $check_for_notices as $id => $check_version ) {
 
-        if ( version_compare( SHORTPIXEL_IMAGE_OPTIMISER_VERSION, $new_version, '>' ) ) {
+        if ( version_compare( SPAATG_IMAGE_OPTIMISER_VERSION, $new_version, '>' ) ) {
             return '';
         }
 
@@ -608,7 +608,7 @@ class AdminNoticesController extends \ShortPixel\Controller
 
             foreach($versions as $version => $line)
             {
-                if (version_compare(SHORTPIXEL_IMAGE_OPTIMISER_VERSION, $version, '<') && version_compare($version, $new_version, '<='))
+                if (version_compare(SPAATG_IMAGE_OPTIMISER_VERSION, $version, '<') && version_compare($version, $new_version, '<='))
                 {
                     $notice .= '<span>';
                     $notice .= $this->markdown2html( $line );
@@ -624,7 +624,7 @@ class AdminNoticesController extends \ShortPixel\Controller
 
     /*private function replace_readme_constants( $content, $response ) {
             $constants    = [ '{{ NEW VERSION }}', '{{ CURRENT VERSION }}', '{{ PHP VERSION }}', '{{ REQUIRED PHP VERSION }}' ];
-            $replacements = [ $response->new_version, SHORTPIXEL_IMAGE_OPTIMISER_VERSION, PHP_VERSION, $response->requires_php ];
+            $replacements = [ $response->new_version, SPAATG_IMAGE_OPTIMISER_VERSION, PHP_VERSION, $response->requires_php ];
 
             return str_replace( $constants, $replacements, $content );
     } */

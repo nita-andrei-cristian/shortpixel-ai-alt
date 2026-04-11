@@ -1,26 +1,26 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
-use ShortPixel\Controller\Api\RequestManager;
+use SPAATG\Controller\Api\RequestManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Model\Queue\QueueItem as QueueItem;
-use ShortPixel\Controller\Queue\QueueItems as QueueItems;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\Queue\QueueItem as QueueItem;
+use SPAATG\Controller\Queue\QueueItems as QueueItems;
 
-use ShortPixel\Controller\ApiKeyController as ApiKeyController;
-use ShortPixel\Controller\QuotaController as QuotaController;
+use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\QuotaController as QuotaController;
 
-use ShortPixel\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
-use ShortPixel\Controller\Queue\CustomQueue as CustomQueue;
-use ShortPixel\Controller\Queue\Queue as Queue;
-use ShortPixel\Controller\Api\ApiController as ApiController;
+use SPAATG\Controller\Queue\MediaLibraryQueue as MediaLibraryQueue;
+use SPAATG\Controller\Queue\CustomQueue as CustomQueue;
+use SPAATG\Controller\Queue\Queue as Queue;
+use SPAATG\Controller\Api\ApiController as ApiController;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 // Controller,  the glue between the Queue and the Optimizers.
 class QueueController
@@ -338,7 +338,7 @@ class QueueController
   protected function runTick($Q)
   {
     $result = $Q->run();
-    $fs = \wpSPIO()->filesystem();
+    $fs = \wpSPAATG()->filesystem();
 
     ResponseController::setQ($Q);
 
@@ -727,8 +727,8 @@ class QueueController
   // @todo - move this to the optimiser.
   public function thumbnailsChangedHook($post_id, $sizes)
   {
-     $fs = \wpSPIO()->filesystem();
-     $settings = \wpSPIO()->settings();
+     $fs = \wpSPAATG()->filesystem();
+     $settings = \wpSPAATG()->settings();
      $imageObj = $fs->getMediaImage($post_id);
 
      if (! is_object($imageObj))
@@ -768,7 +768,7 @@ class QueueController
 
 
 
-      if (\wpSPIO()->env()->is_autoprocess)
+      if (\wpSPAATG()->env()->is_autoprocess)
       {
           $imageObj = $fs->getMediaImage($post_id, false);
           if($imageObj->isProcessable())
@@ -782,8 +782,8 @@ class QueueController
   // @todo - move this to the optimiser.
   public function scaledImageChangedHook($post_id, $removed = false)
   {
-      $fs = \wpSPIO()->filesystem();
-      $settings = \wpSPIO()->settings();
+      $fs = \wpSPAATG()->filesystem();
+      $settings = \wpSPAATG()->settings();
       $imageObj = $fs->getMediaImage($post_id);
 
 
@@ -817,7 +817,7 @@ class QueueController
 
       $imageObj->saveMeta();
 
-      if (false === $removed && \wpSPIO()->env()->is_autoprocess)
+      if (false === $removed && \wpSPAATG()->env()->is_autoprocess)
       {
           $imageObj = $fs->getMediaImage($post_id, false);
           if($imageObj->isProcessable())
@@ -837,8 +837,8 @@ class QueueController
       return;
     }
 
-    $fs = \wpSPIO()->filesystem();
-    $backupDir = $fs->getDirectory(SHORTPIXEL_BACKUP_FOLDER);
+    $fs = \wpSPAATG()->filesystem();
+    $backupDir = $fs->getDirectory(SPAATG_BACKUP_FOLDER);
     $fileLog = $fs->getFile($backupDir->getPath() . 'current_bulk_' . $type . '.log');
 
     $time = UiHelper::formatTs(time());

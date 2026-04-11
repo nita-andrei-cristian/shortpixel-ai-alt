@@ -1,8 +1,8 @@
 <?php
 
-namespace ShortPixel;
+namespace SPAATG;
 
-use ShortPixel\Helper\UiHelper as UiHelper;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 
 if (! defined('ABSPATH')) {
@@ -16,13 +16,13 @@ if (! defined('ABSPATH')) {
 
   <?php
 
-  if (true === \wpSPIO()->env()->useTrustedMode()) {
+  if (true === \wpSPAATG()->env()->useTrustedMode()) {
   ?>
     <div class='compression-notice warning'>
       <p><?php
           _e('Trusted file mode is active. This means that ShortPixel will depend on the metadata and not check the fileystem while loading the UI. Information may be incorrect and error may occur during optimization ', 'shortpixel-image-optimiser');
           ?></p>
-      <?php if (true === \ShortPixel\Pantheon::IsActive()) {
+      <?php if (true === \SPAATG\Pantheon::IsActive()) {
         echo '<p>';
         _e('(You are on Pantheon. This setting was automatically activated)');
         echo '</p>';
@@ -88,7 +88,7 @@ if (! defined('ABSPATH')) {
       <warning id='compression-notice'>
         <h4><?php _e('Changing compression type', 'shortpixel-image-optimiser'); ?></h4>
         <message>
-          <p><?php printf(esc_html__('This compression type will apply only to new or unprocessed images. Images that were already processed will not be re-optimized. If you want to change the compression type of already optimized images, %s restore them from the backup %s first.', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-shortpixel-settings&part=tools">', '</a>'); ?></p>
+          <p><?php printf(esc_html__('This compression type will apply only to new or unprocessed images. Images that were already processed will not be re-optimized. If you want to change the compression type of already optimized images, %s restore them from the backup %s first.', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-spaatg-settings&part=tools">', '</a>'); ?></p>
           <p><?php esc_html_e('The current optimization processes in the queue will be stopped.', 'shortpixel-image-optimiser'); ?></p>
         </message>
       </warning>
@@ -322,7 +322,7 @@ if (! defined('ABSPATH')) {
           <?php printf(esc_html__('Warning - Converting from PNG to JPG will %s not %s keep the EXIF information!', 'shortpixel-image-optimiser'), "<strong>", "</strong>"); ?>
         </message>
       </warning>
-      <?php $imagick = (\wpSPIO()->env()->hasImagick()) ? 1 : 0; ?>
+      <?php $imagick = (\wpSPAATG()->env()->hasImagick()) ? 1 : 0; ?>
       <warning id="exif-imagick-warning" data-imagick="<?php echo esc_attr($imagick) ?>">
         <message>
           <?php printf(esc_html__('Warning - Imagick library not detected on server. WordPress will use another library to resize images, which may result in loss of EXIF information', 'shortpixel-image-optimiser'), "<strong>", "</strong>"); ?>
@@ -379,11 +379,11 @@ if (! defined('ABSPATH')) {
           <?php printf(esc_html__('Smart crop images where applicable.', 'shortpixel-image-optimiser')); ?>
         </name>
         <info>
-          <?php printf(esc_html__('Generate subject-centered thumbnails using ShortPixel\'s AI engine (%ssee example%s). These new thumbnails appear sharper and may be slightly larger than those created by WordPress, making them ideal for e-commerce websites and blogs where images are key to showcasing products and content.', 'shortpixel-image-optimiser'), '<a href="https://shortpixel.com/knowledge-base/article/what-is-smart-cropping/" target="_blank">', '</a>'); ?>
+          <?php printf(esc_html__('Generate subject-centered thumbnails using SPAATG\'s AI engine (%ssee example%s). These new thumbnails appear sharper and may be slightly larger than those created by WordPress, making them ideal for e-commerce websites and blogs where images are key to showcasing products and content.', 'shortpixel-image-optimiser'), '<a href="https://shortpixel.com/knowledge-base/article/what-is-smart-cropping/" target="_blank">', '</a>'); ?>
         </info>
         <?php
         $smartcrop = (
-          true === \wpSPIO()->env()->plugin_active('s3-offload')
+          true === \wpSPAATG()->env()->plugin_active('s3-offload')
         ) ? 1 : 0; ?>
       </content>
 
@@ -459,12 +459,12 @@ if (! defined('ABSPATH')) {
 
           $frame_style = 'padding-top:' . round(($ratio < 1.5 ? ($ratio < 0.5 ? 0.5 : $ratio) : 1.5) * 100, 0) . '%;';
 
-          $image_size = getimagesize(wpSPIO()->plugin_path('res/img/resize-type.png'));
+          $image_size = getimagesize(wpSPAATG()->plugin_path('res/img/resize-type.png'));
           ?>
           <div class="presentation-wrap">
             <div class="spai-resize-frame"></div>
-            <img class="spai-resize-img" src="<?php echo esc_url(wpSPIO()->plugin_url('res/img/resize-type.png')); ?>" data-width="300" data-height="160"
-              srcset="<?php echo esc_url(wpSPIO()->plugin_url('res/img/resize-type@2x.png')); ?> 2x" alt="">
+            <img class="spai-resize-img" src="<?php echo esc_url(wpSPAATG()->plugin_url('res/img/resize-type.png')); ?>" data-width="300" data-height="160"
+              srcset="<?php echo esc_url(wpSPAATG()->plugin_url('res/img/resize-type@2x.png')); ?> 2x" alt="">
           </div>
 
         </div>

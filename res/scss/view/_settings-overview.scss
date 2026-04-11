@@ -260,6 +260,29 @@
                }
             }
           } // PANEL
+          > .panel.dashboard-shortpixel {
+            padding: 8px 18px;
+
+            > i:first-child {
+              filter: none;
+            }
+
+            h4 {
+              text-align: center;
+              margin: 0 0 4px;
+            }
+
+            .status-wrapper {
+              width: 100%;
+              padding: 0 16px;
+            }
+
+            .status-wrapper .status-line {
+              justify-content: center;
+              flex-direction: row;
+              text-align: center;
+            }
+          }
           @include breakpoint(768px, 1100px)
           {
               flex-wrap: wrap;
@@ -280,6 +303,22 @@
                  position: relative;
                  padding-left: 20%;
                  align-items: flex-start;
+                 &.dashboard-shortpixel {
+                    padding-right: 20px;
+
+                    h4 {
+                       text-align: left;
+                    }
+
+                    .status-wrapper {
+                       padding: 0;
+                    }
+
+                    .status-wrapper .status-line {
+                       justify-content: flex-start;
+                       text-align: left;
+                    }
+                 }
                  > i {
                     position: absolute;
                     top: calc(50% - 30px);

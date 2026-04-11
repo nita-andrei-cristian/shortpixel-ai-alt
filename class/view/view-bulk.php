@@ -1,7 +1,7 @@
 <?php
-namespace ShortPixel;
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Helper\UiHelper as UiHelper;
+namespace SPAATG;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <hr class="wp-header-end">
 
-<div class="wrap is-shortpixel-bulk-page">
+<div class="wrap is-spaatg-bulk-page">
 <header>
   <h1>
       <?php echo UIHelper::getIcon('res/images/illustration/logo_settings.svg'); ?>
@@ -24,10 +24,10 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div>
 -->
 </header>
-<div class="shortpixel-bulk-wrapper">
+<div class="spaatg-bulk-wrapper">
 
   <div id="processPaused" class="processor-paused" data-action="ResumeBulk"><span class='dashicons dashicons-controls-pause' data-action="ResumeBulk"></span>
-    <?php if (true === \wpSPIO()->settings()->doBackgroundProcess)
+    <?php if (true === \wpSPAATG()->settings()->doBackgroundProcess)
     {
         $title = esc_html__('Bulk Processing is paused in this browser and continues to run in the background as long as visitors are on the website','shortpixel-image-optimiser');
         $alt = __('Click here to continue processing in this browser, which may be faster', 'shortpixel-image-optimiser');

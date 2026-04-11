@@ -1,11 +1,11 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
 class ErrorController
 {
@@ -17,7 +17,7 @@ class ErrorController
 
 			public static function start()
 			{
-					if (true === \wpSPIO()->env()->is_debug)
+					if (true === \wpSPAATG()->env()->is_debug)
 					{
 				 		register_shutdown_function(array(self::class, 'checkErrors'));
 					}

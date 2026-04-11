@@ -1,17 +1,17 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
-use ShortPixel\Model\ApiKeyModel as ApiKeyModel;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\Model\ApiKeyModel as ApiKeyModel;
 
 /* Main function of this controller is to load key on runtime
 This should probably in future incorporate some apikey checking functions that shouldn't be in model.
 */
-class ApiKeyController extends \ShortPixel\Controller
+class ApiKeyController extends \SPAATG\Controller
 {
     private static $instance;
 

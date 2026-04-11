@@ -1,18 +1,18 @@
 <?php
-namespace ShortPixel\Controller;
+namespace SPAATG\Controller;
 
-use ShortPixel\Controller\Api\RequestManager;
+use SPAATG\Controller\Api\RequestManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use ShortPixel\ShortPixelLogger\ShortPixelLogger as Log;
+use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 
-use ShortPixel\Model\ResponseModel as ResponseModel;
-use ShortPixel\Model\Image\ImageModel as ImageModel;
-use ShortPixel\Controller\Api\ApiController as ApiController;
-use ShortPixel\Model\Queue\QueueItem;
+use SPAATG\Model\ResponseModel as ResponseModel;
+use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Controller\Api\ApiController as ApiController;
+use SPAATG\Model\Queue\QueueItem;
 
 class ResponseController
 {

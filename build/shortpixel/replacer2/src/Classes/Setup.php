@@ -1,6 +1,6 @@
 <?php 
 
-namespace ShortPixel\Replacer\Classes; 
+namespace SPAATG\Replacer\Classes; 
 
 if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
