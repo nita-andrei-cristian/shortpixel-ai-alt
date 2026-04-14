@@ -19,14 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
    <div class='content-wrapper'>
       <div class='close'><i class='shortpixel-icon close'></i></div>
       <div class='steps'>
-        <div class='step step-0 active' data-screen='overview'>
+        <div class='step step-0 active' data-screen='ai'>
 						<h4><?php _e('Welcome aboard', 'shortpixel-image-optimiser') ?></h4>
             <p>
 							<?php _e('Welcome to the settings page! Click below to start a quick tour of the plugin\'s features and settings.', 'shortpixel-image-optimiser'); ?>
             </p>
         </div>
-        <div class='step step-1' data-screen='overview'>
-						<p><?php _e('This is the overview page where you can take a quick look at the status of the media files on your website. In addition to the statistics, you\'ll also get recommended actions to improve your website\'s performance.','shortpixel-image-optimiser'); ?>
+        <div class='step step-1' data-screen='ai'>
+						<p><?php _e('This is the AI Image SEO page where you can configure how alt text, captions, descriptions and titles are generated for your images.','shortpixel-image-optimiser'); ?>
           </p>
         </div>
         <div class='step step-2' data-screen='optimisation'>

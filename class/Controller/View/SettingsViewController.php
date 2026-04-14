@@ -52,7 +52,7 @@ class SettingsViewController extends \SPAATG\ViewController
      );
 
      protected $display_part = 'ai';
-     protected $all_display_parts = array('overview', 'optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
+     protected $all_display_parts = array('optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
      protected $form_action = 'save-settings';
      protected $view_mode = 'simple'; // advanced or simple
 		 protected $is_ajax_save = false; // checker if saved via ajax ( aka no redirect / json return )

@@ -47,13 +47,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     <input type='checkbox'></label>
   <menu>
 			<ul>
-				<li>
-          <?php echo $this->settingLink([
-              'part' => 'overview',
-              'title' =>  __("Overview", "shortpixel-image-optimiser"),
-              'icon' => 'shortpixel-icon dashboard',
-            ]); ?>
-        </li>
 				<li class='is-hidden-visual'>
           <?php echo $this->settingLink([
             'part' => 'optimisation',
@@ -172,7 +165,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
         <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 
-          <?php $this->loadView('settings/part-overview'); ?>
           <?php $this->loadView('settings/part-optimisation'); ?>
           <?php $this->loadView('settings/part-processing'); ?>
           <?php $this->loadView('settings/part-webp'); ?>
