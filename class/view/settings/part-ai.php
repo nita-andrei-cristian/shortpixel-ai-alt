@@ -8,6 +8,7 @@ if (! defined('ABSPATH')) {
 
 ?>
 <section id="tab-ai" class="<?php echo ($this->display_part == 'ai') ? 'active setting-tab' : 'setting-tab'; ?>" data-part="ai">
+  <input type="hidden" name="enable_ai" value="1">
 
   <settinglist>
 
@@ -16,29 +17,6 @@ if (! defined('ABSPATH')) {
     <gridbox class="width_half">
 
     <setting class='switch'>
-      <content>
-
-        <?php $this->printSwitchButton(
-          [
-            'name' => 'enable_ai',
-            'checked' => $view->data->enable_ai,
-            'label' => esc_html__('Enable AI Image SEO', 'shortpixel-image-optimiser'),
-            'data' => ['data-toggle="autoAiOptions"'],
-
-            ]
-        );
-        ?>
-
-        <i class='documentation dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/ai-image-seo-settings-explained/#0-toc-title?target=iframe"></i>
-        <name>
-
-          <?php esc_html_e('Show AI image SEO options throughout ShortPixel AI Alt Text Generator. The generated ALT tag is also very useful for accessibility.', 'shortpixel-image-optimiser'); ?>
-
-        </name>
-      </content>
-    </setting>
-
-    <setting class='switch toggleTarget autoAiOptions'>
       <content>
 
         <?php $this->printSwitchButton(
@@ -59,7 +37,7 @@ if (! defined('ABSPATH')) {
       </content>
     </setting>
 
-    <setting class='switch toggleTarget autoAiOptions'>
+    <setting class='switch'>
       <content>
 
         <?php $this->printSwitchButton(

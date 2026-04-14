@@ -51,7 +51,7 @@ class SettingsViewController extends \SPAATG\ViewController
        'cmyk2rgb' => 'CMYKtoRGBconversion',
      );
 
-     protected $display_part = 'overview';
+     protected $display_part = 'ai';
      protected $all_display_parts = array('overview', 'optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
      protected $form_action = 'save-settings';
      protected $view_mode = 'simple'; // advanced or simple
@@ -698,7 +698,7 @@ class SettingsViewController extends \SPAATG\ViewController
 
           $this->disable_heavy_features = (false === \wpSPAATG()->env()->useVirtualHeavyFunctions()) ? true : false;
 
-          $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'overview';
+          $this->display_part = (isset($_GET['part']) && in_array($_GET['part'], $this->all_display_parts) ) ? sanitize_text_field($_GET['part']) : 'ai';
       }
 
       protected function settingLink($args)

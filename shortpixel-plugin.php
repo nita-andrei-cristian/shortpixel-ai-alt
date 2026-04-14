@@ -362,7 +362,7 @@ class ShortPixelPlugin {
 
 		wp_localize_script( 'spaatg-tooltip', 'spaatg_tooltipStrings', $tooltip_localize);
 
-		wp_register_script( 'spaatg-settings', plugins_url( 'res/js/shortpixel-settings.js', SPAATG_PLUGIN_FILE ), array('spaatg-shiftselect', 'spaatg-inline-help'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
+		wp_register_script( 'spaatg-settings', plugins_url( 'res/js/shortpixel-settings.js', SPAATG_PLUGIN_FILE ), array('spaatg', 'spaatg-shiftselect', 'spaatg-inline-help', 'media-editor'), SPAATG_IMAGE_OPTIMISER_VERSION, true );
 
 		wp_register_script('spaatg-shiftselect', plugins_url('res/js/shift-select.js', SPAATG_PLUGIN_FILE), array(), SPAATG_IMAGE_OPTIMISER_VERSION, true);
 
@@ -600,6 +600,8 @@ class ShortPixelPlugin {
 		}
 
 		if ( $plugin_page == 'wp-spaatg-settings' || $plugin_page == 'spaatg-network-settings' ) {
+			wp_enqueue_media();
+			$this->load_script( $load_processor );
 
 			$this->load_script( 'spaatg-screen-nolist' ); // screen
 			$this->load_script( 'spaatg-settings' );

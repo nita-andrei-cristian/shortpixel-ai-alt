@@ -598,9 +598,15 @@ class OptimizeAiController extends OptimizerBase
    */
   public function isAiEnabled()
   {
-     $settings = \wpSPAATG()->settings(); 
-
-     $bool = (true == $settings->enable_ai) ? true : false; // make sure boolean is hard type. 
+     if (true === static::isImageOptimizationDisabled())
+     {
+         $bool = true;
+     }
+     else
+     {
+         $settings = \wpSPAATG()->settings(); 
+         $bool = (true == $settings->enable_ai) ? true : false; // make sure boolean is hard type. 
+     }
     
      $no_ai = apply_filters('shortpixel/settings/no_ai', false);
      if (true === $no_ai) // switch around negative filter

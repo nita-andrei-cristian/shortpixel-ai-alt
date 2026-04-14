@@ -11,6 +11,7 @@ class SPAATGSettings {
 	strings;
 	dashboard_status = {};
 	save_in_progress = false;
+	aiPreviewMediaFrame = null;
 
 	Init() {
 		this.root = document.querySelector('.wrap.is-spaatg-settings-page, .wrap.is-shortpixel-settings-page');
@@ -27,13 +28,13 @@ class SPAATGSettings {
 		var self = this;
 		this.strings = settings_strings;
 
+		this.InitAiEvents();
 		this.InitToggle(); // data- toggles 
 		this.InitExclusions(); // Exclusions 
 		this.InitWarnings(); // Settings warnings 
 		this.InitMenu(); // The menu 
 		this.InitModeSwitcher(); // Simple / Advanced mode 
 		this.InitActionEvents(); // Action events.
-		this.InitAiEvents(); 
 
 		// Modals
 		var modals = this.root.querySelectorAll('[data-action="open-modal"]');
@@ -360,8 +361,8 @@ class SPAATGSettings {
 
 	InitAiEvents()
 	{
-			window.addEventListener('spaatg.ui.settingsTabLoad', this.AiWindowLoadEvent);
-			window.addEventListener('shortpixelSettings.UpdateAiExampleEvent', this.UpdateAiExampleEvent );
+			window.addEventListener('spaatg.ui.settingsTabLoad', this.AiWindowLoadEvent.bind(this));
+			window.addEventListener('shortpixelSettings.UpdateAiExampleEvent', this.UpdateAiExampleEvent.bind(this));
 
 			var self = this;
 
@@ -375,7 +376,8 @@ class SPAATGSettings {
 			}
 
 			var button = document.querySelector('button[name="refresh_ai_preview"]'); 
-			button.addEventListener('click', function () {
+			if (button !== null) {
+				button.addEventListener('click', function () {
 
 				 var attach_id = document.querySelector('input[name="ai_preview_image_id"]').value; 
 				 var inputs = document.querySelectorAll('#tab-ai input, #tab-ai select, #tab-ai textarea'); 
@@ -433,54 +435,67 @@ class SPAATGSettings {
 					}
 					else
 					{
-						var triggerEvent = new CustomEvent('shortpixelSettings.getAiExample', { detail: { 
-							'response' : response, 
-						}});
-						// If aiData is loaded, updated Ai texts. 
 						window.dispatchEvent(triggerLoadEvent); 
 					}
 					
 				}, {once: true}); 
 
-			});
+				});
+			}
 
 			var button = document.querySelector('button[name="open_change_photo"]');
-			button.addEventListener('click', function () {
-
-				var mediaFrame = wp.media({
-					title: self.strings.ai_strings.imagemodaltitle,
-					button: {
-						text: self.strings.ai_strings.selectimage, 
-					},
-					multiple: false // Set to true to allow multiple image selection
-				});
-		
-				// When an image is selected, run a callback
-				mediaFrame.on('select', function() {
-					var attachment = mediaFrame.state().get('selection').first().toJSON();
-					//alert('Selected Image ID: ' + attachment.id); // Show the image ID in an alert
-					var data = {
-						id: attachment.id,
-						type: 'media',
-						screen_action: 'settings/setAiImageId',
-						callback : 'shortpixelSettings.AiImageSet',
-						
+			if (button !== null) {
+				button.addEventListener('click', function () {
+					if (typeof wp === 'undefined' || typeof wp.media === 'undefined') {
+						console.error('WordPress media library is not available on this screen');
+						return;
 					}
 
-					window.SPAATGProcessor.AjaxRequest(data); 
+					if (self.aiPreviewMediaFrame === null) {
+						self.aiPreviewMediaFrame = wp.media({
+							title: self.strings.ai_strings.imagemodaltitle,
+							button: {
+								text: self.strings.ai_strings.selectimage,
+							},
+							library: {
+								type: 'image',
+							},
+							multiple: false
+						});
 
-					window.addEventListener('shortpixelSettings.AiImageSet', function (response) {
-						
-						window.dispatchEvent(triggerLoadEvent); 
-					}, {once: true});
+						self.aiPreviewMediaFrame.on('select', function() {
+							var attachment = self.aiPreviewMediaFrame.state().get('selection').first().toJSON();
+							var data = {
+								id: attachment.id,
+								type: 'media',
+								screen_action: 'settings/setAiImageId',
+								callback : 'shortpixelSettings.AiImageSet',
+							}
 
-				
+							window.SPAATGProcessor.AjaxRequest(data);
 
-				}); 
-		
-				// Open the media library
-				mediaFrame.open();
-			});
+							window.addEventListener('shortpixelSettings.AiImageSet', function () {
+								window.dispatchEvent(triggerLoadEvent);
+							}, {once: true});
+						});
+
+						self.aiPreviewMediaFrame.on('open', function () {
+							var idInput = document.querySelector('input[name="ai_preview_image_id"]');
+							var selection = self.aiPreviewMediaFrame.state().get('selection');
+							var currentId = (idInput !== null) ? parseInt(idInput.value, 10) : 0;
+
+							selection.reset();
+							if (currentId > 0) {
+								var attachment = wp.media.attachment(currentId);
+								attachment.fetch();
+								selection.add(attachment ? [attachment] : []);
+							}
+						});
+					}
+
+					self.aiPreviewMediaFrame.open();
+				});
+			}
 
 	}
 
@@ -497,17 +512,21 @@ class SPAATGSettings {
 			callback: 'shortpixelSettings.UpdateAiExampleEvent',
 		};
 
-				// Processor / Screen might not be loaded if the current screen is AI.
+		if (typeof window.SPAATGProcessor === 'undefined')
+		{
+			return;
+		}
+
 		if (null === window.SPAATGProcessor.screen)
-			{
-					addEventListener('spaatg.screen.loaded', function () {
-						window.SPAATGProcessor.AjaxRequest(data);
-					} );
-			}
-			else
-			{
+		{
+			addEventListener('spaatg.screen.loaded', function () {
 				window.SPAATGProcessor.AjaxRequest(data);
-			}
+			});
+		}
+		else
+		{
+			window.SPAATGProcessor.AjaxRequest(data);
+		}
 	}
 
 	UpdateAiExampleEvent(response)
