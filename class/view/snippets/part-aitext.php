@@ -57,7 +57,7 @@ elseif (false === $has_data):
 
 	<?php else: ?>
 
-        <a class='button button-secondary' title="Generate image SEO data with ShortPixel AI (Beta)" href="javascript:window.SPAATGProcessor.screen.RequestAlt(<?php echo $item_id ?>)">
+        <a class='button button-secondary' title="Generate image SEO data with ShortPixel AI" href="javascript:window.SPAATGProcessor.screen.RequestAlt(<?php echo $item_id ?>)">
 			<img class="shortpixel-ai-icon ai" src="<?php echo $ai_icon ?>">	
 			<span><?php printf(__('AI Image SEO by ShortPixel %s', 'shortpixel-image-optimiser'), $dataItems) ?></span>
 			<img class="shortpixel-ai-icon shortpixel" src="<?php echo $robo_icon ?>">

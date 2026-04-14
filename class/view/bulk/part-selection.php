@@ -95,20 +95,7 @@ $approx = $this->view->approx;
 			 <div class='ai-images optiongroup'>
 				<div class='switch_button'>
 				<label>
-		               <input type="checkbox" class="switch" id="autoai_checkbox" name="autoai_checkbox"
-		                <?php checked(\wpSPAATG()->settings()->autoAIBulk); ?>  />
-		               <div class="the_switch">&nbsp; </div>
-	             </label>
-				 <h4><label for="autoai_checkbox">
-					<?php printf(esc_html__('Use ShortPixel AI to generate image SEO data for all Media Library images, according to the %ssettings%s', 'shortpixel-image-optimiser'), '<a href="options-general.php?page=wp-spaatg-settings&part=ai">', '</a>' ); ?>
-				 </label></h4>
-
-				</div>	
-
-				<div class='switch_button indent'>
-				<label>
-		               <input type="checkbox" class="switch" id="aipreserve_checkbox" name="aipreserve_checkbox"
-		                <?php checked(\wpSPAATG()->settings()->aiPreserve); ?>  />
+		               <input type="checkbox" class="switch" id="aipreserve_checkbox" name="aipreserve_checkbox" />
 		               <div class="the_switch">&nbsp; </div>
 	             </label>
 				 <h4><label for="aipreserve_checkbox">
@@ -154,13 +141,13 @@ $approx = $this->view->approx;
 
 				</div> <!-- // option top block -->
 
- 	 	 <div class="option-block all-round">
-       <div class='optiongroup' data-check-visibility="false" data-control="data-check-approx-total">
+	 	 	 <div class="option-block all-round hidden" data-check-visibility="false" data-control="data-check-approx-total">
+       <div class='optiongroup'>
           <h3><?php esc_html_e('No images found', 'shortpixel-image-optimiser'); ?></h3>
           <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any images that need alt text generation.','shortpixel-image-optimiser'); ?></p>
        </div>
 
-		 </div>
+			 </div>
 
       <nav>
         <button class="button" type="button" data-action="FinishBulk">

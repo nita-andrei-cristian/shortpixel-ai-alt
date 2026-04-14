@@ -6,6 +6,15 @@
 	{
 		 return;
 	}
+
+	if (
+		typeof spaatg_media === 'undefined' ||
+		typeof spaatg_media.mediafilters === 'undefined' ||
+		typeof spaatg_media.mediafilters.optimized === 'undefined'
+	)
+	{
+		return;
+	}
 	var SPAATGFilter = wp.media.view.AttachmentFilters.extend
 	({
 		id: 'spaatg-media-filter',

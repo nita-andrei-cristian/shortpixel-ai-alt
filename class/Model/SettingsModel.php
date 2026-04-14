@@ -66,7 +66,7 @@ class SettingsModel extends \SPAATG\Model
         'cdn_purge_version' => ['s' => 'int', 'default' => 1, 'export' => false],
         'enable_ai' => ['s' => 'boolean', 'default' => true],
         'autoAI' => ['s' => 'boolean', 'default' => false],
-        'autoAIBulk' => ['s' => 'boolean', 'default' => false],
+        'autoAIBulk' => ['s' => 'boolean', 'default' => true],
         'aiPreserve' => ['s' => 'boolean', 'default' => false ],
         'ai_general_context' => ['s' => 'string', 'default' => 'callback', 'maxlength' => 500],
         'ai_use_post' => ['s' => 'boolean', 'default' => true],
@@ -310,4 +310,3 @@ class SettingsModel extends \SPAATG\Model
 		}
 
 } // class
-

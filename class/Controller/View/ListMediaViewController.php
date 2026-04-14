@@ -46,8 +46,6 @@ class ListMediaViewController extends \SPAATG\ViewController
     //Sort and filter on ShortPixel Compression column
     //add_filter( 'manage_upload_sortable_columns', array( $this, 'registerSortable') );
 
-    add_action('restrict_manage_posts', array( $this, 'mediaAddFilterDropdown'));
-
     add_action('loop_end', array($this, 'loadComparer'));
 
   }

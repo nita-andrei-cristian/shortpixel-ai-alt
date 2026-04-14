@@ -194,6 +194,8 @@ class ShortPixelPlugin {
 
 		// Handle for EMR
 		add_action( 'wp_handle_replace', array( $admin, 'handleReplaceHook' ) );
+		add_action( 'admin_init', array( $admin, 'removeEmrFeatureNotice' ), 999 );
+		add_action( 'admin_footer', array( $admin, 'removeEmrFeatureNotice' ), 999 );
 
 		// Action / hook for who wants to use CRON. Please refer to manual / support to prevent loss of credits.
 		add_action( 'shortpixel/hook/processqueue', array( $admin, 'processQueueHook' ) );
@@ -372,17 +374,7 @@ class ShortPixelPlugin {
 		wp_register_script('spaatg-chatbot', 
 			apply_filters('shortpixel/plugin/nohelp', 'https://spcdn.shortpixel.ai/assets/js/ext/ai-chat-agent.js'), [], SPAATG_IMAGE_OPTIMISER_VERSION, $args_footer_async);
 
-		// This filter is from ListMediaViewController for the media library grid display, executive script in spaatg-media.js.
-
-		$filters = array('optimized' => array(
-					'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-					'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-					'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-					'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
-		));
-
 		$editor_localize = ImageEditorController::localizeScript();
-		$editor_localize['mediafilters'] = $filters;
 		wp_localize_script('spaatg-media', 'spaatg_media', $editor_localize);
 
 		wp_register_script( 'spaatg-processor', plugins_url( '/res/js/shortpixel-processor.js', SPAATG_PLUGIN_FILE ), array( 'jquery', 'spaatg-tooltip' ), SPAATG_IMAGE_OPTIMISER_VERSION, true );
@@ -501,7 +493,6 @@ class ShortPixelPlugin {
 		}
 
 		$jsTranslation = array(
-			'optimizeWithSP'              => __( 'ShortPixel AI Alt Text Generator', 'shortpixel-image-optimiser' ),
 			'optimize'              => __( 'Optimize', 'shortpixel-image-optimiser' ),
 			'redoLossy'                   => __( 'Re-optimize Lossy', 'shortpixel-image-optimiser' ),
 			'redoGlossy'                  => __( 'Re-optimize Glossy', 'shortpixel-image-optimiser' ),

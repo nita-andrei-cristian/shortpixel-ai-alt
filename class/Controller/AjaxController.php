@@ -915,6 +915,7 @@ class AjaxController
 		$type = $data['type'];
 
 		$preview_only = isset($_POST['preview_only']) ? true : false; 
+		$aiPreserve = isset($_POST['aiPreserve']) ? filter_var(sanitize_text_field($_POST['aiPreserve']), FILTER_VALIDATE_BOOLEAN) : null;
 		$imageModel = $this->getMediaItem($id, $type);
 
 		$queueController = new QueueController();
@@ -925,6 +926,10 @@ class AjaxController
 		if (true === $preview_only)
 		{
 			$args['preview_only'] = true; 
+		}
+		if (false === is_null($aiPreserve))
+		{
+			$args['aiPreserve'] = $aiPreserve;
 		}
 		$result = $queueController->addItemToQueue($imageModel, $args);
 		$result->apiName = 'ai'; // prevent response leaking to media interface.

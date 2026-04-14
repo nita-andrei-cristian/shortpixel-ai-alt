@@ -30,11 +30,6 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 		{
 			this.ai_enabled = ! settings.hide_ai;
 		}
-		
-		// bind DoAction, for bulk actions in Media Libbrary to event
-		var actionEl = document.getElementById('doaction');
-		if (actionEl !== null)
-			actionEl.addEventListener('click', this.BulkActionEvent.bind(this));
 	   
 		// This init only in edit-media and pass the ID for safety. 
 		if (document.getElementById('attachment_alt') !== null)
@@ -581,97 +576,6 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 		return false; // callback shouldn't do more, see processor.
 	}
 
-	BulkActionEvent(event) {
-
-		var actionSelect = document.querySelector('select[name="action"]');
-		if (null === actionSelect)
-			return;
-
-		var actionValue = actionSelect.value;
-
-		// Check if we have a shortpixel event
-		if (actionValue.includes('spaatg')) {
-			event.preventDefault();
-			var items = document.querySelectorAll('input[name="media[]"]:checked');
-
-			for (var i = 0; i < items.length; i++) {
-				var media_id = items[i].value;
-				var column = document.getElementById('spaatg-data-' + media_id);
-				var optimizable = column.classList.contains('is-optimizable');
-				var restorable = column.classList.contains('is-restorable');
-				var aiAction = column.classList.contains('ai-action');
-
-				var compressionType = column.dataset.compression;
-
-				switch (actionValue) {
-					case 'spaatg-optimize':
-						if (optimizable) {
-							this.Optimize(media_id);
-						}
-						break;
-					case 'spaatg-glossy':
-					case 'spaatg-lossy':
-					case 'spaatg-lossless':
-					case 'spaatg-smartcrop':
-					case 'spaatg-smartcropless':
-
-						switch (actionValue) {
-							case 'spaatg-glossy':
-								var compression = this.imageConstants.COMPRESSION_GLOSSY;
-								break;
-							case 'spaatg-lossless':
-								var compression = this.imageConstants.COMPRESSION_LOSSLESS;
-								break;
-							case 'spaatg-lossy':
-								var compression = this.imageConstants.COMPRESSION_LOSSY;
-								break;
-							case 'spaatg-smartcrop':
-								var action = this.imageConstants.ACTION_SMARTCROP;
-								break;
-							case 'spaatg-smartcropless':
-								var action = this.imageConstants.ACTION_SMARTCROPLESS;
-								break;
-						}
-
-						if (typeof action === 'undefined' && compressionType == compression) {
-							items[i].checked = false
-							continue; // no need for compression. Should probably not work when actionstuff is happening.
-						}
-						else {
-							compressionType = compression;
-						}
-
-						if (restorable) {
-							this.ReOptimize(media_id, compressionType, action);
-						}
-
-						break;
-					case 'spaatg-restore':
-						if (restorable) {
-							this.RestoreItem(media_id);
-						}
-						break;
-					case 'spaatg-mark-completed':
-							if (optimizable) {
-								this.MarkCompleted(media_id);
-							}
-					break; 
-					case 'spaatg-generateai':
-						if (aiAction)
-						{
-							 this.RequestAlt(media_id);
-						}
-					break; 
-				}
-				items[i].checked = false;
-
-			} // for Loop
-
-			var selectAllCheck = document.getElementById('cb-select-all-1');
-			selectAllCheck.checked = false;
-		} // actionvalue shortpixel check
-	}
-
 	HandleImage(resultItem, type) {
 		var res = super.HandleImage(resultItem, type);
 		var fileStatus = this.processor.fStatus[resultItem.fileStatus];
@@ -810,6 +714,7 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 
 				var html = this.doSPIORow(item_id, e.detail.media.itemView);
 				$spSpace.after(html);
+
 				self.UpdateGeneratedAltPanels(item_id, self.GetAttachmentAltValue(item_id));
 				self.FetchAltView(undefined, item_id); 
 
@@ -857,8 +762,24 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 			return false; 
 		}
 
-			element.dataset.shortpixelAlt = data.item_id;		
-			this.UpdateGeneratedAltPanels(data.item_id, this.ResolveAltText(data));
+		var wrapper = document.getElementById('spaatg-ai-wrapper-' + item_id);
+
+		if (null !== wrapper)
+		{
+			wrapper.remove();
+		}
+
+		if (typeof data.snippet === 'string' && data.snippet.length > 0)
+		{
+			wrapper = document.createElement('div');
+			wrapper.id = 'spaatg-ai-wrapper-' + item_id;
+			wrapper.classList.add('shortpixel-ai-interface', element.getAttribute('id'));
+			wrapper.innerHTML = data.snippet;
+			element.after(wrapper);
+		}
+
+		element.dataset.shortpixelAlt = data.item_id;		
+		this.UpdateGeneratedAltPanels(data.item_id, this.ResolveAltText(data));
 
 		if (data.generated && typeof data.generated.alt !== 'undefined')
 			element.value = data.generated.alt;
@@ -1081,6 +1002,3 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 	}
 
 } // class
-
-
-

@@ -287,17 +287,24 @@ class SPAATGScreen extends SPAATGScreenBase
      data.webpActive = (document.getElementById('webp_checkbox') !== null && document.getElementById('webp_checkbox').checked) ? true : false;
      data.avifActive = (document.getElementById('avif_checkbox') !== null && document.getElementById('avif_checkbox').checked) ? true : false;
      
-     if (null !== document.getElementById('autoai_checkbox'))
-     {
-        data.aiActive = (document.getElementById('autoai_checkbox').checked) ? true : false;
-        data.aiPreserve = (document.getElementById('aipreserve_checkbox').checked) ? true : false;
-     }
-     else
-     {
-       data.aiActive = false; 
-     //  data.aiPreserve = false; 
-     }
-     data.backgroundProcess = (document.getElementById('background_checkbox') !== null && document.getElementById('background_checkbox').checked) ? true : false;
+	     if (null !== document.getElementById('autoai_checkbox'))
+	     {
+	        data.aiActive = (document.getElementById('autoai_checkbox').checked) ? true : false;
+	     }
+	     else if (null !== document.getElementById('aipreserve_checkbox'))
+	     {
+	        data.aiActive = true;
+	     }
+	     else
+	     {
+	       data.aiActive = false; 
+	     }
+
+	     if (null !== document.getElementById('aipreserve_checkbox'))
+	     {
+	        data.aiPreserve = (document.getElementById('aipreserve_checkbox').checked) ? true : false;
+	     }
+	     data.backgroundProcess = (document.getElementById('background_checkbox') !== null && document.getElementById('background_checkbox').checked) ? true : false;
 
 
 		 if (document.getElementById('thumbnails_checkbox') !== null)
@@ -397,12 +404,11 @@ class SPAATGScreen extends SPAATGScreenBase
   {
 
     var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize'; 
-    var aiPreviewElement = document.querySelector('.ai-preview-wrapper'); 
     var imagePreviewSection = document.querySelector('.image-preview-section');
 
-    if (false === aiPreviewElement.classList.contains('hidden'))
+    if (imagePreviewSection === null)
     {
-       aiPreviewElement.classList.add('hidden');
+      return false;
     }
 
 
@@ -474,31 +480,6 @@ class SPAATGScreen extends SPAATGScreenBase
             }
 
      //     }
-          if ('ai' === apiName)
-          {            
-             if (aiPreviewElement.classList.contains('hidden'))
-             {
-                aiPreviewElement.classList.remove('hidden'); 
-             }
-
-          //   this.HandleImageEffect(resultItem.original, resultItem.optimized);
-
-
-             let ul = aiPreviewElement.querySelector('ul'); 
-             ul.innerHTML = ''; 
-
-             let labels = (resultItem.aiDataLabels) ? resultItem.aiDataLabels : {}; 
-             
-             for (var field in resultItem.aiData)
-             {  
-                let value = resultItem.aiData[field];
-                let li = document.createElement('li'); 
-                let label = (labels[field]) ? labels[field] : field; 
-                  
-                 li.innerHTML = '<strong>' + label + '</strong>: ' + value; 
-                 ul.append(li);
-             }
-          }
 					return true; // This prevents flooding.
       }
 

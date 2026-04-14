@@ -24,22 +24,6 @@ var SPAATG = function() {
 
         if (typeof SPAATG.API_IS_ACTIVE !== 'undefined') return; //was initialized by the 10 sec. setTimeout, rare but who knows, might happen on very slow connections...
 
-        //are we on media list?
-        if( jQuery('table.wp-list-table.media').length > 0) {
-            //register a bulk action
-            jQuery('select[name^="action"] option:last-child').before('<option value="spaatg-optimize">' + spaatgTr.optimizeWithSP
-                + '</option><option value="spaatg-optimize"> → ' + spaatgTr.optimize
-                + '</option><option value="spaatg-lossy"> → ' + spaatgTr.redoLossy
-                + '</option><option value="spaatg-glossy"> → ' + spaatgTr.redoGlossy
-                + '</option><option value="spaatg-lossless"> → ' + spaatgTr.redoLossless
-                + '</option><option value="spaatg-restore"> → ' + spaatgTr.restoreOriginal
-				+ '</option><option value="spaatg-smartcrop"> → ' + spaatgTr.redoSmartcrop
-				+ '</option><option value="spaatg-smartcropless"> → ' + spaatgTr.redoSmartcropless
-                + '</option><option value="spaatg-generateai"> → ' + spaatgTr.generateAI 
-                + '</option><option value="spaatg-mark-completed"> → ' + spaatgTr.markCompleted
-                + '</option>');
-        }
-
         // Extracting the protected Array from within the 0 element of the parent array
         SPAATG.setOptions(SPAATGConstants[0]);
 

@@ -306,11 +306,17 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		this.processor.AjaxRequest(data);
 	}
 
-	RequestAlt(id) {
+	RequestAlt(id, options) {
+		options = options || {};
 		var data = {
 			id: id,
 			type: this.type,
 			'screen_action': 'ai/requestalt',
+		}
+
+		if (typeof options.aiPreserve !== 'undefined')
+		{
+			data.aiPreserve = options.aiPreserve ? true : false;
 		}
 
 		if (!this.processor.CheckActive())
@@ -320,14 +326,20 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		this.processor.AjaxRequest(data);
 	}
 
-	UndoAlt(id, action_type)
+	UndoAlt(id, action_type, options)
 	{
+		options = options || {};
 		var data = {
 			id: id,
 			type: this.type,
 			'screen_action': 'ai/undoAlt',
 			'action_type' : action_type, 
 			'callback': 'spaatg.HandleUndoAlt',
+		}
+
+		if (typeof options.aiPreserve !== 'undefined')
+		{
+			data.aiPreserve = options.aiPreserve ? true : false;
 		}
 
 		window.addEventListener('spaatg.HandleUndoAlt', function (event) {

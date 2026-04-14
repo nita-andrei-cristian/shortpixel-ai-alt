@@ -3,7 +3,7 @@
  * Plugin Name: ShortPixel AI Alt Text Generator
  * Plugin URI: https://shortpixel.com/
  * Description: Generate AI-powered alt text and image SEO fields for your WordPress media library. Configure the plugin in <a href="/wp-admin/options-general.php?page=wp-spaatg-settings" target="_blank">Settings &gt; ShortPixel AI Alt Text Generator</a>.
- * Version: 6.4.4.5
+ * Version: 6.4.4.7
  * Author: ShortPixel
  * Author URI: https://shortpixel.com
  * GitHub Plugin URI: https://github.com/short-pixel-optimizer/shortpixel-image-optimiser
@@ -36,7 +36,7 @@ if (! defined('SPAATG_RESET_ON_ACTIVATE'))
 define('SPAATG_PLUGIN_FILE', __FILE__);
 define('SPAATG_PLUGIN_DIR', __DIR__);
 
-define('SPAATG_IMAGE_OPTIMISER_VERSION', "6.4.4.5");
+define('SPAATG_IMAGE_OPTIMISER_VERSION', "6.4.4.7");
 
 define('SPAATG_BACKUP', 'ShortpixelBackups');
 define('SPAATG_MAX_FAIL_RETRIES', 3);

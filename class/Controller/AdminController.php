@@ -77,6 +77,17 @@ class AdminController extends \SPAATG\Controller
 				return $columns;
 		}
 
+		public function removeEmrFeatureNotice()
+		{
+			if (! class_exists('\EnableMediaReplace\Notices\NoticeController') || ! class_exists('\EnableMediaReplace\UIHelper')) {
+				return;
+			}
+
+			\EnableMediaReplace\Notices\NoticeController::removeNoticeByID(
+				\EnableMediaReplace\UIHelper::NOTICE_NEW_FEATURE
+			);
+		}
+
 
     /** Handling upload actions
     * @hook wp_generate_attachment_metadata
