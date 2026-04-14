@@ -180,11 +180,11 @@ $bulkblock = $dashboard->bulkblock;
         <content>
             <div class="apifield">
                 <input name="apiKey" type="password" id="key" value="<?php echo esc_attr($view->key->apiKey); ?>"
-                       class="regular-text" <?php echo($view->key->is_editable ? '' : 'disabled') ?>>
+                       class="regular-text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" <?php echo($view->key->is_editable ? '' : 'disabled') ?>>
                 <i class="shortpixel-icon eye"></i>
             </div>
 
-            <button type="submit" id="validate" class="button button-primary" title="<?php esc_html_e('Validate the captioning API key','shortpixel-image-optimiser');?>"
+            <button type="button" id="validate" class="button button-primary" setting-action="SubmitSettingsFormEvent" title="<?php esc_html_e('Validate the captioning API key','shortpixel-image-optimiser');?>"
                      <?php echo $view->key->is_editable ? '' : 'disabled' ?>>
                 <i class='shortpixel-icon save'></i>
                 <span class ="save-button-text"> <?php esc_html_e('Save captioning settings & validate', 'shortpixel-image-optimiser'); ?></span>

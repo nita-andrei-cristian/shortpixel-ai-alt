@@ -960,8 +960,33 @@ class SPAATGSettings {
 	FormSendEvent(event) {
 		event.preventDefault();
 
-		var form = event.target;
-		var formData = new FormData(event.target, event.submitter);
+		this.SubmitSettingsForm(event.target, event.submitter);
+	}
+
+	SubmitSettingsFormEvent(event) {
+		event.preventDefault();
+
+		var button = event.target.closest('button');
+		if (button === null || button.disabled) {
+			return false;
+		}
+
+		var form = button.closest('form');
+		if (form === null) {
+			return false;
+		}
+
+		this.SubmitSettingsForm(form, button);
+	}
+
+	SubmitSettingsForm(form, submitter = null) {
+		var formData;
+		if (submitter !== null) {
+			formData = new FormData(form, submitter);
+		}
+		else {
+			formData = new FormData(form);
+		}
 
 		if (this.save_in_progress) {
 			return false;
@@ -1371,7 +1396,7 @@ class SPAATGSettings {
 			}
 
 			let submitButton = document.getElementById('save');
-			saveForm.requestSubmit(submitButton);
+			this.SubmitSettingsForm(saveForm, submitButton);
 			event.preventDefault();
 			return false;
 		}.bind(this));
