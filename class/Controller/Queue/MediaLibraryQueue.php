@@ -127,7 +127,6 @@ class MediaLibraryQueue extends Queue
        return []; 
      }
 
-
      $prepare = [];
      $fastmode = apply_filters('shortpixel/queue/fastmode', false);
 

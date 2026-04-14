@@ -105,6 +105,11 @@ class OptimizeController extends OptimizerBase
   {
     $action = $qItem->data()->action;
 
+    if (true === static::isImageOptimizationDisabled() && ('optimize' === $action || 'convert_api' ===  $action)) {
+      $this->skipImageOptimization($qItem);
+      return;
+    }
+
     if ('optimize' === $action || 'convert_api' ===  $action) {
       $is_processable = $qItem->imageModel->isProcessable();
 

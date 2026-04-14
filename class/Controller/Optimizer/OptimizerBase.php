@@ -42,6 +42,16 @@ abstract class OptimizerBase
        $this->response = $this->getJsonResponse();
     }
 
+    public static function isImageOptimizationDisabled()
+    {
+      return true;
+    }
+
+    public static function getImageOptimizationDisabledMessage()
+    {
+      return __('Image optimization is disabled in this build. AI alt text generation remains available.', 'shortpixel-image-optimiser');
+    }
+
 
     public static function getInstance()
     {
@@ -221,6 +231,22 @@ abstract class OptimizerBase
       ]);
 
       return $qItem;
+    }
+
+    protected function skipImageOptimization(QueueItem $qItem, $message = null)
+    {
+      if (is_null($message)) {
+        $message = static::getImageOptimizationDisabledMessage();
+      }
+
+      $qItem->addResult([
+        'apiStatus' => \SPAATG\Controller\Api\RequestManager::STATUS_NOT_API,
+        'message' => $message,
+        'is_done' => true,
+        'is_error' => false,
+      ]);
+
+      return $qItem->result();
     }
 
 }

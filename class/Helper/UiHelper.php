@@ -435,11 +435,10 @@ class UiHelper
       } //isOptimized
 
 
-      if (false === is_null($aiDataModel) && $aiDataModel->isProcessable() && 'media' === $mediaItem->get('type') )
-      {
-         if (true === $mediaItem->isSomethingOptimized()) // Prevent displaying this when only the 'optimize now' buttons are visible.
-           $list_actions['spaatg-generateai'] = self::getAction('spaatg-generateai', $id);
-      }
+	      if (false === is_null($aiDataModel) && $aiDataModel->isProcessable() && 'media' === $mediaItem->get('type') )
+	      {
+	         $list_actions['spaatg-generateai'] = self::getAction('spaatg-generateai', $id);
+	      }
 
       if(! $quotaControl->hasQuota())
       {

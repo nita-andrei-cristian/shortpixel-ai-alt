@@ -209,6 +209,9 @@ class ShortPixelPlugin {
 		add_filter('wp_get_attachment_url', array($admin, 'checkPlaceHolder'), 10, 2);
 		add_filter('media_row_actions', array($admin, 'filterMediaRowActions'), 999, 2);
 		add_filter('manage_media_columns', array($admin, 'filterMediaColumns'), 999, 1);
+		add_filter('bulk_actions-upload', array($admin, 'registerMediaBulkActions'));
+		add_filter('handle_bulk_actions-upload', array($admin, 'handleMediaBulkActions'), 10, 3);
+		add_action('admin_notices', array($admin, 'displayMediaBulkActionNotice'));
 
 		add_filter('rest_post_dispatch', [$admin, 'checkRestMedia'],10, 3);
 

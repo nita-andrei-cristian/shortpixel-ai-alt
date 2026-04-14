@@ -16,6 +16,7 @@ use SPAATG\Model\Converter\Converter as Converter;
 use SPAATG\Controller\Optimizer\OptimizeController as OptimizeController;
 use SPAATG\Controller\Optimizer\OptimizeAiController as OptimizeAiController;
 use SPAATG\Controller\Optimizer\ActionController as ActionController;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Helper\UiHelper;
 use SPAATG\Model\AiDataModel;
 use stdClass;
@@ -488,7 +489,12 @@ class QueueItem
 
       // Converter can alter the data for this item, based on conversion needs
       $converter = Converter::getConverter($imageModel, true);
-      if ($baseCount > 0 && is_object($converter) && $converter->isConvertable()) {
+      if (
+         false === OptimizerBase::isImageOptimizationDisabled() &&
+         $baseCount > 0 &&
+         is_object($converter) &&
+         $converter->isConvertable()
+      ) {
          $converter->filterQueue($this, ['debug_active' => $this->debug_active]);
       }
 

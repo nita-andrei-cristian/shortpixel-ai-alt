@@ -29,6 +29,17 @@ class ActionController extends OptimizerBase
 
   public function sendToProcessing(QueueItem $item)
   {
+      if (true === static::isImageOptimizationDisabled()) {
+         if ('reoptimize' === $item->data()->action) {
+            $item->data()->next_actions = [];
+            return $this->skipImageOptimization($item);
+         }
+
+         if ('png2jpg' === $item->data()->action) {
+            return $this->skipImageOptimization($item);
+         }
+      }
+
       switch($item->data()->action)
       {
          case 'restore':

@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 use SPAATG\Notices\NoticeController as Notices;
 use SPAATG\Controller\Queue\Queue as Queue;
@@ -15,6 +16,7 @@ use SPAATG\Model\Converter\ApiConverter as ApiConverter;
 
 use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
 use SPAATG\Model\Image\ImageModel as ImageModel;
+use SPAATG\Model\AiDataModel;
 
 use SPAATG\Model\AccessModel as AccessModel;
 use SPAATG\Helper\UtilHelper as UtilHelper;
@@ -68,13 +70,122 @@ class AdminController extends \SPAATG\Controller
 		}
 
 		public function filterMediaColumns($columns)
+			{
+					if (isset($columns['wp-spaatg']))
+					{
+							unset($columns['wp-spaatg']);
+					}
+
+					return $columns;
+			}
+
+		public function registerMediaBulkActions($actions)
 		{
-				if (isset($columns['wp-spaatg']))
+			$optimizeAiController = OptimizeAiController::getInstance();
+			if (false === $optimizeAiController->isAiEnabled())
+			{
+				return $actions;
+			}
+
+			$actions['spaatg-generateai'] = __('Generate image SEO data', 'shortpixel-image-optimiser');
+
+			return $actions;
+		}
+
+		public function handleMediaBulkActions($redirect_to, $doaction, $post_ids)
+		{
+			if ('spaatg-generateai' !== $doaction)
+			{
+				return $redirect_to;
+			}
+
+			$fs = \wpSPAATG()->filesystem();
+			$queueController = new QueueController();
+			$accessModel = AccessModel::getInstance();
+			$queued = 0;
+			$skipped = 0;
+
+			foreach ((array) $post_ids as $post_id)
+			{
+				$mediaItem = $fs->getImage((int) $post_id, 'media');
+
+				if (! is_object($mediaItem) || false === $accessModel->imageIsEditable($mediaItem))
 				{
-						unset($columns['wp-spaatg']);
+					$skipped++;
+					continue;
 				}
 
-				return $columns;
+				$aiDataModel = AiDataModel::getModelByAttachment($mediaItem->get('id'));
+				if (false === $aiDataModel->isProcessable())
+				{
+					$skipped++;
+					continue;
+				}
+
+				$inQueue = $queueController->isItemInQueue($mediaItem, 'requestAlt');
+				if (QueueController::IN_QUEUE_ACTION_ADDED === $inQueue)
+				{
+					$queued++;
+					continue;
+				}
+				if (QueueController::IN_QUEUE_SKIPPED === $inQueue)
+				{
+					$skipped++;
+					continue;
+				}
+
+				$result = $queueController->addItemToQueue($mediaItem, ['action' => 'requestAlt']);
+				if (is_object($result) && (! property_exists($result, 'is_error') || false === $result->is_error))
+				{
+					$queued++;
+				}
+				else
+				{
+					$skipped++;
+				}
+			}
+
+			$redirect_to = remove_query_arg(['spaatg_bulk_ai_queued', 'spaatg_bulk_ai_skipped'], $redirect_to);
+
+			return add_query_arg([
+				'spaatg_bulk_ai_queued' => $queued,
+				'spaatg_bulk_ai_skipped' => $skipped,
+			], $redirect_to);
+		}
+
+		public function displayMediaBulkActionNotice()
+		{
+			if (! isset($_GET['spaatg_bulk_ai_queued']) && ! isset($_GET['spaatg_bulk_ai_skipped']))
+			{
+				return;
+			}
+
+			$screen = get_current_screen();
+			if (! is_object($screen) || 'upload' !== $screen->id)
+			{
+				return;
+			}
+
+			$queued = isset($_GET['spaatg_bulk_ai_queued']) ? absint(wp_unslash($_GET['spaatg_bulk_ai_queued'])) : 0;
+			$skipped = isset($_GET['spaatg_bulk_ai_skipped']) ? absint(wp_unslash($_GET['spaatg_bulk_ai_skipped'])) : 0;
+
+			if ($queued > 0)
+			{
+				$message = sprintf(
+					_n('%s image was queued for AI SEO generation.', '%s images were queued for AI SEO generation.', $queued, 'shortpixel-image-optimiser'),
+					number_format_i18n($queued)
+				);
+				printf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html($message));
+			}
+
+			if ($skipped > 0)
+			{
+				$message = sprintf(
+					_n('%s image was skipped because it already has SEO data, is already queued, or cannot be processed.', '%s images were skipped because they already have SEO data, are already queued, or cannot be processed.', $skipped, 'shortpixel-image-optimiser'),
+					number_format_i18n($skipped)
+				);
+				printf('<div class="notice notice-info is-dismissible"><p>%s</p></div>', esc_html($message));
+			}
 		}
 
 		public function removeEmrFeatureNotice()
@@ -106,14 +217,19 @@ class AdminController extends \SPAATG\Controller
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
 
-				if ($mediaItem === false)
-				{
-					 Log::addError('Handle Image Upload Hook triggered, by error in image :' . $id );
-					 return $meta;
-				}
+					if ($mediaItem === false)
+					{
+						 Log::addError('Handle Image Upload Hook triggered, by error in image :' . $id );
+						 return $meta;
+					}
 
-				if ($mediaItem->getExtension()  == 'pdf')
-				{
+					if (true === OptimizerBase::isImageOptimizationDisabled())
+					{
+						 return $meta;
+					}
+
+					if ($mediaItem->getExtension()  == 'pdf')
+					{
 					$settings = \wpSPAATG()->settings();
 					if (! $settings->optimizePdfs)
 					{

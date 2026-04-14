@@ -14,9 +14,11 @@ use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\Controller\BulkController as BulkController;
 use SPAATG\Controller\StatsController as StatsController;
 use SPAATG\Controller\OtherMediaController as OtherMediaController;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Helper\UiHelper as UiHelper;
 
 use SPAATG\Model\AccessModel as AccessModel;
+use SPAATG\Model\AiDataModel;
 
 
 class BulkViewController extends \SPAATG\ViewController
@@ -181,19 +183,36 @@ class BulkViewController extends \SPAATG\ViewController
 		return $message;
 	}
 
-  protected function getApproxData()
-  {
-		$otherMediaController = OtherMediaController::getInstance();
+	  protected function getApproxData()
+	  {
+			$otherMediaController = OtherMediaController::getInstance();
 
     $approx = new \stdClass; // guesses on basis of the statsController SQL.
     $approx->media = new \stdClass;
     $approx->custom = new \stdClass;
     $approx->total = new \stdClass;
 
-    $sc = StatsController::getInstance();
-    $sc->reset(); // Get a fresh stat.
+	    $sc = StatsController::getInstance();
+	    $sc->reset(); // Get a fresh stat.
 
-    $excludeSizes = \wpSPAATG()->settings()->excludeSizes;
+		if (true === OptimizerBase::isImageOptimizationDisabled())
+		{
+			$pendingAiItems = AiDataModel::countCandidateMediaItems();
+
+			$approx->media->items = $pendingAiItems;
+			$approx->media->thumbs = 0;
+			$approx->media->total = $pendingAiItems;
+			$approx->media->isLimited = false;
+
+			$approx->custom->images = 0;
+			$approx->custom->has_custom = false;
+
+			$approx->total->images = $pendingAiItems;
+
+			return $approx;
+		}
+
+	    $excludeSizes = \wpSPAATG()->settings()->excludeSizes;
 
 
     $approx->media->items = $sc->find('media', 'itemsTotal') - $sc->find('media', 'items');

@@ -535,6 +535,183 @@ class AiDataModel
          return $wpdb->prefix . 'shortpixel_aipostmeta';
     }
 
+    public static function getSupportedMimeTypes()
+    {
+        return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    }
+
+    private static function queryCandidateMediaItemIds($args = [])
+    {
+        $defaults = [
+            'limit' => 200,
+            'last_id' => null,
+            'start_id' => null,
+            'end_id' => null,
+        ];
+        $args = wp_parse_args($args, $defaults);
+
+        global $wpdb;
+
+        $sql = "SELECT DISTINCT pm.post_id
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+            WHERE (pm.meta_key = %s OR pm.meta_key = %s)
+              AND p.post_type = %s
+              AND p.post_status != %s";
+
+        $prepare = ['_wp_attached_file', '_wp_attachment_metadata', 'attachment', 'trash'];
+
+        if (! empty($args['last_id'])) {
+            $sql .= ' AND pm.post_id < %d';
+            $prepare[] = (int) $args['last_id'];
+        } elseif (! is_null($args['start_id'])) {
+            $sql .= ' AND pm.post_id <= %d';
+            $prepare[] = (int) $args['start_id'];
+        }
+
+        if (! is_null($args['end_id'])) {
+            $sql .= ' AND pm.post_id >= %d';
+            $prepare[] = (int) $args['end_id'];
+        }
+
+        $sql .= ' ORDER BY pm.post_id DESC LIMIT %d';
+        $prepare[] = (int) $args['limit'];
+
+        $sql = $wpdb->prepare($sql, $prepare);
+        $results = $wpdb->get_col($sql);
+
+        return array_filter(array_map('intval', $results));
+    }
+
+    public static function hasPendingGenerationFields()
+    {
+        $settings = \wpSPAATG()->settings();
+        $fields = ['ai_gen_alt', 'ai_gen_caption', 'ai_gen_description', 'ai_gen_filename', 'ai_gen_post_title'];
+
+        foreach ($fields as $field) {
+            if (! empty($settings->$field)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function countCandidateMediaItems()
+    {
+        global $wpdb;
+
+        $mimes = self::getSupportedMimeTypes();
+        $mime_placeholders = implode(', ', array_fill(0, count($mimes), '%s'));
+
+        $sql = "SELECT COUNT(DISTINCT pm.post_id)
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+            WHERE (pm.meta_key = %s OR pm.meta_key = %s)
+              AND p.post_type = %s
+              AND p.post_status != %s
+              AND p.post_mime_type IN ({$mime_placeholders})";
+
+        $prepare = array_merge(
+            ['_wp_attached_file', '_wp_attachment_metadata', 'attachment', 'trash'],
+            $mimes
+        );
+
+        $sql = $wpdb->prepare($sql, $prepare);
+
+        return (int) $wpdb->get_var($sql);
+    }
+
+    public static function queryPendingMediaItems($args = [])
+    {
+        $defaults = [
+            'limit' => 200,
+            'last_id' => null,
+            'start_id' => null,
+            'end_id' => null,
+        ];
+        $args = wp_parse_args($args, $defaults);
+
+        if (false === self::hasPendingGenerationFields()) {
+            return [];
+        }
+
+        $pending = [];
+        $batch_limit = max((int) $args['limit'], 200);
+        $last_id = $args['last_id'];
+        $use_start_id = true;
+
+        while (count($pending) < $args['limit']) {
+            $candidates = self::queryCandidateMediaItemIds([
+                'limit' => $batch_limit,
+                'last_id' => $last_id,
+                'start_id' => ($use_start_id) ? $args['start_id'] : null,
+                'end_id' => $args['end_id'],
+            ]);
+
+            if (count($candidates) === 0) {
+                break;
+            }
+
+            foreach ($candidates as $candidate_id) {
+                $aiDataModel = new self($candidate_id, 'media');
+                if (true === $aiDataModel->isProcessable()) {
+                    $pending[] = $candidate_id;
+
+                    if (count($pending) >= $args['limit']) {
+                        break;
+                    }
+                }
+            }
+
+            $use_start_id = false;
+            $last_id = end($candidates);
+
+            if (count($candidates) < $batch_limit) {
+                break;
+            }
+        }
+
+        return $pending;
+    }
+
+    public static function countPendingMediaItems()
+    {
+        if (false === self::hasPendingGenerationFields()) {
+            return 0;
+        }
+
+        $count = 0;
+        $batch_limit = 500;
+        $last_id = null;
+
+        while (true) {
+            $candidates = self::queryCandidateMediaItemIds([
+                'limit' => $batch_limit,
+                'last_id' => $last_id,
+            ]);
+
+            if (count($candidates) === 0) {
+                break;
+            }
+
+            foreach ($candidates as $candidate_id) {
+                $aiDataModel = new self($candidate_id, 'media');
+                if (true === $aiDataModel->isProcessable()) {
+                    $count++;
+                }
+            }
+
+            $last_id = end($candidates);
+
+            if (count($candidates) < $batch_limit) {
+                break;
+            }
+        }
+
+        return $count;
+    }
+
     protected function updateRecord($data = [])
     {
         global $wpdb; 

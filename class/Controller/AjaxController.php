@@ -18,6 +18,7 @@ use SPAATG\Notices\NoticeController as Notices;
 use SPAATG\Helper\UiHelper as UiHelper;
 use SPAATG\Helper\InstallHelper as InstallHelper;
 use SPAATG\Helper\UtilHelper;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 
 use SPAATG\Model\Image\ImageModel as ImageModel;
 use SPAATG\Model\AccessModel as AccessModel;
@@ -639,6 +640,13 @@ class AjaxController
 
 		$this->checkImageAccess($mediaItem);
 
+		$json = new \stdClass;
+		$json->$type = new \stdClass;
+
+		if (true === OptimizerBase::isImageOptimizationDisabled()) {
+			return $this->buildOptimizationDisabledResponse($json, $type, $mediaItem);
+		}
+
 		// if order is given, remove barrier and file away.
 		if ($mediaItem->isOptimizePrevented() !== false)
 		{
@@ -646,8 +654,6 @@ class AjaxController
 		}
 
 		$control = new QueueController();
-		$json = new \stdClass;
-		$json->$type = new \stdClass;
 
 		$args = [];
 
@@ -889,6 +895,10 @@ class AjaxController
 
 		$this->checkImageAccess($imageModel);
 
+		if (true === OptimizerBase::isImageOptimizationDisabled()) {
+			return $this->buildOptimizationDisabledResponse($json, $type, $imageModel);
+		}
+
 		$args = ['action' => 'reoptimize', 'compressionType' => $compressionType];
 
 		// Smartcrop is not always passed, only add here when passed otherwise to defaults.
@@ -904,6 +914,23 @@ class AjaxController
 		$json->$type->results = [$result];
 		$json->$type->qstatus = $queueController->getLastQueueStatus();
 
+		$json->status = true;
+
+		return $json;
+	}
+
+	protected function buildOptimizationDisabledResponse($json, $type, $imageModel)
+	{
+		$qItem = QueueItems::getImageItem($imageModel);
+		$qItem->addResult([
+			'apiName' => 'optimize',
+			'apiStatus' => RequestManager::STATUS_NOT_API,
+			'message' => OptimizerBase::getImageOptimizationDisabledMessage(),
+			'is_done' => true,
+			'is_error' => false,
+		]);
+
+		$json->$type->results = [$qItem->result()];
 		$json->status = true;
 
 		return $json;
@@ -1043,11 +1070,16 @@ class AjaxController
 		}
 
 		
-		$bulkControl = BulkController::getInstance();
-		// This is where the settings start to break and double. This info is also needs inside the process. 
-		$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
-		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
-		$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
+			$bulkControl = BulkController::getInstance();
+			// This is where the settings start to break and double. This info is also needs inside the process. 
+			$doMedia = filter_var(sanitize_text_field($_POST['mediaActive']), FILTER_VALIDATE_BOOLEAN);
+			$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
+
+			if (true === OptimizerBase::isImageOptimizationDisabled()) {
+				$doMedia = false;
+			}
+
+			$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
 
 		$stats = $bulkControl->createNewBulk('media', $mediaArgs);
 		$json->media->stats = $stats;

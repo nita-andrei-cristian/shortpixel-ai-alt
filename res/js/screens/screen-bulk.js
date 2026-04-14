@@ -635,12 +635,24 @@ class SPAATGScreen extends SPAATGScreenBase
                     var value =  false;
                 }
 
+                if (value !== false)
+                {
+                  if (el == 'percentage_done')
+                  {
+                    value = Math.min(100, Math.max(0, parseInt(value) || 0));
+                  }
+                  else if (el == 'in_queue')
+                  {
+                    value = Math.max(0, parseInt(value) || 0);
+                  }
+                }
+
                 if (presentation)
                 {
                   if (value !== false)
                   {
                     if (presentation == 'css.width.percentage')
-                      element.style.width = parseInt(value) + '%';
+                      element.style.width = Math.min(100, Math.max(0, parseInt(value) || 0)) + '%';
                     if (presentation == 'inputval')
                     {
                       element.value = value;

@@ -17,6 +17,7 @@ use SPAATG\Model\Queue\QueueItem as QueueItem;
 
 use SPAATG\Helper\UiHelper as UiHelper;
 use SPAATG\Model\AiDataModel;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\ShortQ\ShortQ as ShortQ;
 
 abstract class Queue
@@ -407,7 +408,7 @@ abstract class Queue
 
                 // If autoAi is on the bulk, add operation to the item
                 $enqueueAi = false; 
-                $enqueueRegular = true; // basic item processing . 
+                $enqueueRegular = (false === OptimizerBase::isImageOptimizationDisabled()); // basic item processing.
 
                 if ('media' === $mediaItem->get('type'))
                 {
@@ -596,13 +597,13 @@ abstract class Queue
       $stats->is_preparing = (bool) $this->getStatus('preparing');
       $stats->is_running = (bool) $this->getStatus('running');
       $stats->is_finished = (bool) $this->getStatus('finished');
-      $stats->in_queue = (int) $this->getStatus('items');
-      $stats->in_process = (int) $this->getStatus('in_process');
+      $stats->in_queue = max(0, (int) $this->getStatus('items'));
+      $stats->in_process = max(0, (int) $this->getStatus('in_process'));
 			$stats->awaiting = $stats->in_queue + $stats->in_process; // calculation used for WP-CLI.
 
-      $stats->errors = (int) $this->getStatus('errors');
-      $stats->fatal_errors = (int) $this->getStatus('fatal_errors');
-      $stats->done = (int) $this->getStatus('done');
+      $stats->errors = max(0, (int) $this->getStatus('errors'));
+      $stats->fatal_errors = max(0, (int) $this->getStatus('fatal_errors'));
+      $stats->done = max(0, (int) $this->getStatus('done'));
       $stats->bulk_running = (bool) $this->getStatus('bulk_running');
 
 			$customData = $this->getStatus('custom_data');
@@ -617,6 +618,7 @@ abstract class Queue
       if ($stats->total > 0)
 			{
         $stats->percentage_done = round((100 / $stats->total) * ($stats->done + $stats->fatal_errors), 0, PHP_ROUND_HALF_DOWN);
+        $stats->percentage_done = min(100, max(0, (int) $stats->percentage_done));
 			}
 			else
         $stats->percentage_done = 100; // no items means all done.
