@@ -64,28 +64,6 @@ if (! defined('ABSPATH')) {
 
         <?php $this->printSwitchButton(
           [
-            'name' => 'autoAIBulk',
-            'checked' => $view->data->autoAIBulk,
-            'label' => esc_html__('Generate image SEO data during Bulk Processing', 'shortpixel-image-optimiser'),
-          ]
-        );
-        ?>
-
-        <i class='documentation dashicons dashicons-editor-help' data-link="https://shortpixel.com/knowledge-base/article/ai-image-seo-settings-explained/#2-toc-title?target=iframe"></i>
-        <name>
-
-          <?php esc_html_e('Automatically generate image SEO data using AI for all the images queued during the Bulk Processing. The settings below will be taken into account when running the bulk.', 'shortpixel-image-optimiser'); ?>
-
-        </name>
-      </content>
-    </setting>
-
-
-    <setting class='switch toggleTarget autoAiOptions'>
-      <content>
-
-        <?php $this->printSwitchButton(
-          [
             'name' => 'aiPreserve',
             'checked' => $view->data->aiPreserve,
             'label' => esc_html__('Preserve existing Image SEO data', 'shortpixel-image-optimiser'),

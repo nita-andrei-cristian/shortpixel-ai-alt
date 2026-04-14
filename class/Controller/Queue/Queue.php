@@ -417,8 +417,10 @@ abstract class Queue
                      $enqueueRegular = false; 
                   }      
 
+                  $bulkAiEnabled = (true === OptimizerBase::isImageOptimizationDisabled()) ? true : $settings->autoAIBulk;
+
                   if (true === $optimizeAiController->isAiEnabled() && 
-                  true === $settings->autoAIBulk &&
+                  true === $bulkAiEnabled &&
                   true === $queueOptions['doAi'])
                   {
                     $aiDataModel = AiDataModel::getModelByAttachment($mediaItem->get('id'));  

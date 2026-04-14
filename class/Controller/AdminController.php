@@ -71,11 +71,6 @@ class AdminController extends \SPAATG\Controller
 
 		public function filterMediaColumns($columns)
 			{
-					if (isset($columns['wp-spaatg']))
-					{
-							unset($columns['wp-spaatg']);
-					}
-
 					return $columns;
 			}
 

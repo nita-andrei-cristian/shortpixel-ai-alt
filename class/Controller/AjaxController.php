@@ -1077,6 +1077,7 @@ class AjaxController
 
 			if (true === OptimizerBase::isImageOptimizationDisabled()) {
 				$doMedia = false;
+				$doAi = true;
 			}
 
 			$mediaArgs = array_merge($args, ['doMedia' => $doMedia, 'doAi' => $doAi]);
@@ -1099,6 +1100,11 @@ class AjaxController
 		$doWebp = filter_var(sanitize_text_field($_POST['webpActive']), FILTER_VALIDATE_BOOLEAN);
 		$doAvif = filter_var(sanitize_text_field($_POST['avifActive']), FILTER_VALIDATE_BOOLEAN);
 		$doAi = filter_var(sanitize_text_field($_POST['aiActive']), FILTER_VALIDATE_BOOLEAN);
+
+		if (true === OptimizerBase::isImageOptimizationDisabled()) {
+			$doMedia = false;
+			$doAi = true;
+		}
 
 		$aiPreserve = isset($_POST['aiPreserve']) ? filter_var(sanitize_text_field($_POST['aiPreserve']), FILTER_VALIDATE_BOOLEAN) : null; 
 		$backgroundProcess = filter_var(sanitize_text_field($_POST['backgroundProcess']), FILTER_VALIDATE_BOOLEAN);

@@ -414,7 +414,7 @@ class AiDataModel
      */
     public function isProcessable()
     {
-        if (true === $this->has_record)
+        if (true === $this->has_record && true === $this->isSomeThingGenerated())
         {
              $this->processable_status = SELF::P_ALREADYDONE;
              return false; 

@@ -215,7 +215,8 @@ class SpioBulk extends SpioCommandBase
 			 $args['filters'] = $filters; 
 		}
 
-		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => \wpSPAATG()->settings()->autoAIBulk]);
+		$bulkAiEnabled = (\SPAATG\Controller\Optimizer\OptimizerBase::isImageOptimizationDisabled()) ? true : \wpSPAATG()->settings()->autoAIBulk;
+		$mediaArgs = array_merge($args, ['doMedia' => true, 'doAi' => $bulkAiEnabled]);
 
 		foreach ($queues as $qname) {
 

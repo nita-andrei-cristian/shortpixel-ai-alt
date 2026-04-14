@@ -13,6 +13,7 @@ use SPAATG\Helper\UtilHelper as UtilHelper;
 
 use SPAATG\Controller\ApiKeyController as ApiKeyController;
 use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Controller\QuotaController as QuotaController;
 use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\Model\AiDataModel;
@@ -108,7 +109,7 @@ class ListMediaViewController extends \SPAATG\ViewController
 
     if ( count($this->view->list_actions) > 0)
 		{
-      $this->view->list_actions = UiHelper::renderBurgerList($this->view->list_actions, $mediaItem);
+      $this->view->list_actions = '';
 		}
     else
 		{
@@ -119,6 +120,26 @@ class ListMediaViewController extends \SPAATG\ViewController
     $this->view->actions = $actions;
 
 		$allActions = array_merge($list_actions, $actions);
+
+    if (
+      true === OptimizerBase::isImageOptimizationDisabled() &&
+      true === $optimizeAiController->isAiEnabled() &&
+      false === is_null($aiDataModel) &&
+      0 === strlen(trim(wp_strip_all_tags((string) $this->view->text)))
+    ) {
+      if (true === $aiDataModel->isSomeThingGenerated()) {
+        $this->view->text = '<p>' . esc_html__('AI-generated SEO data available', 'shortpixel-image-optimiser') . '<!-- eofsngline --></p>';
+      } elseif (count($actions) > 0) {
+        $this->view->text = '<p>' . esc_html__('No AI-generated SEO data yet', 'shortpixel-image-optimiser') . '<!-- eofsngline --></p>';
+      } else {
+        $processableStatus = $aiDataModel->getProcessableReason(true);
+        $message = ($processableStatus === AiDataModel::P_PROCESSABLE)
+          ? __('No AI-generated SEO data yet', 'shortpixel-image-optimiser')
+          : $aiDataModel->getProcessableReason();
+
+        $this->view->text = '<p>' . esc_html($message) . '<!-- eofsngline --></p>';
+      }
+    }
 
   	$checkBoxActions = array();
     foreach($allActions as $action => $data)

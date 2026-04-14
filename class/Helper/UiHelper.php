@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use SPAATG\Model\Image\ImageModel as ImageModel;
 use SPAATG\Controller\ApiKeyController as ApiKeyController;
+use SPAATG\Controller\Optimizer\OptimizeAiController;
+use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Controller\QuotaController as QuotaController;
 use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
@@ -455,6 +457,7 @@ class UiHelper
     $id = $mediaItem->get('id');
     $quotaControl = QuotaController::getInstance();
     $queueController = new QueueController();
+    $optimizeAiController = OptimizeAiController::getInstance();
 
 		$keyControl = ApiKeyController::getInstance();
 		if (! $keyControl->keyIsVerified())
@@ -473,10 +476,25 @@ class UiHelper
 			return [];
     }
 
+    $isAiOnlyMediaAction = (
+      true === OptimizerBase::isImageOptimizationDisabled() &&
+      'media' === $mediaItem->get('type') &&
+      true === $optimizeAiController->isAiEnabled()
+    );
+
     if(! $quotaControl->hasQuota())
     {
        $actions['extendquota'] = self::getAction('extendquota', $id);
        $actions['checkquota'] = self::getAction('checkquota', $id);
+    }
+    elseif ($isAiOnlyMediaAction && ! $queueController->isItemInQueue($mediaItem))
+    {
+      $aiDataModel = AiDataModel::getModelByAttachment($id);
+
+      if (false !== $aiDataModel && $aiDataModel->isProcessable())
+      {
+        $actions['optimize'] = self::getAction('optimize', $id);
+      }
     }
     elseif($mediaItem->isProcessable() && false === $mediaItem->isSomethingOptimized() && ! $mediaItem->isOptimizePrevented() && ! $queueController->isItemInQueue($mediaItem))
     {
@@ -654,9 +672,17 @@ class UiHelper
     switch($name)
     {
       case 'optimize':
-         $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ')';
+         if (true === OptimizerBase::isImageOptimizationDisabled())
+         {
+           $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
+           $action['text'] = __('Generate Alt Text', 'shortpixel-image-optimiser');
+         }
+         else
+         {
+           $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ')';
+           $action['text'] = __('Optimize Now', 'shortpixel-image-optimiser');
+         }
          $action['type']  = 'js';
-         $action['text'] = __('Optimize Now', 'shortpixel-image-optimiser');
          $action['display'] = 'button';
          $action['is-optimizable'] = true;
       break;
@@ -769,7 +795,8 @@ class UiHelper
      case 'spaatg-generateai': 
       $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
       $action['type'] = 'js';
-      $action['text'] = __('Generate image SEO data','shortpixel-image-optimiser');     
+      $action['text'] = __('Generate Alt Text','shortpixel-image-optimiser');
+      $action['display'] = 'button';
       $action['ai-action'] = true;
       break; 
      case 'extendquota':
