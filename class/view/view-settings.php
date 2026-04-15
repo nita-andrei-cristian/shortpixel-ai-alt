@@ -34,13 +34,6 @@ if ( ! defined( 'ABSPATH' ) ) {
   <input type='checkbox' name='heavy_features' value='1' <?php echo ($this->disable_heavy_features) ? 'checked' : '' ?> class='shortpixel-hide' />
 
 <article class='spaatg-settings shortpixel-settings'>
-  <?php if ($this->view->data->redirectedSettings < 3 && $view->key->is_verifiedkey)
-  {
-    $this->loadView('settings/part-quicktour');
-  }
-
-  ?>
-
   <label class='mobile-menu closed'>
     <span class='open'><?php echo UIHelper::getIcon('res/images/icon/accordion.svg'); ?></span>
     <span class='close'><?php echo UIHelper::getIcon('res/images/icon/close.svg'); ?></span>
@@ -165,6 +158,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
         <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 
+          <?php $this->loadView('settings/part-overview'); ?>
           <?php $this->loadView('settings/part-optimisation'); ?>
           <?php $this->loadView('settings/part-processing'); ?>
           <?php $this->loadView('settings/part-webp'); ?>

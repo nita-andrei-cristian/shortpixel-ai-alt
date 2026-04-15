@@ -1473,7 +1473,8 @@ div.spio-modal-title {
   background: #F4FBFC;
   border-radius: 6px;
 }
-.wrap.is-spaatg-settings-page #tab-overview settinglist {
+.wrap.is-spaatg-settings-page #tab-overview settinglist,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting {
   background: #F4FBFC;
   border-radius: 6px;
   width: 100%;
@@ -1483,55 +1484,66 @@ div.spio-modal-title {
   margin-bottom: 10px;
 }
 @media (max-width: 782px) {
-  .wrap.is-spaatg-settings-page #tab-overview settinglist {
+  .wrap.is-spaatg-settings-page #tab-overview settinglist,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting {
     max-height: none;
   }
-  .wrap.is-spaatg-settings-page #tab-overview settinglist content {
+  .wrap.is-spaatg-settings-page #tab-overview settinglist content,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content {
     flex-direction: column;
     align-items: center;
   }
-  .wrap.is-spaatg-settings-page #tab-overview settinglist content button {
+  .wrap.is-spaatg-settings-page #tab-overview settinglist content button,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content button {
     margin: 10px 0;
     width: 240px;
   }
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   font-weight: 600;
   margin-bottom: 8px;
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown name {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown name,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown name {
   margin: 20px 20px 0 15px;
   font-family: Roboto, sans-serif;
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown info {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown info,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown info {
   margin-top: 20px;
   color: #00C898;
   font-family: Roboto, sans-serif;
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .shortpixel-icon.ok {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .shortpixel-icon.ok,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .shortpixel-icon.ok {
   width: 13px;
   height: 14px;
   margin-left: 10px;
   vertical-align: text-top;
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .shortpixel-icon.chevron {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .shortpixel-icon.chevron,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .shortpixel-icon.chevron {
   height: 8px;
   width: 12px;
   transition: transform 0.3s ease;
   margin-left: 5px;
 }
 @media (max-width: 782px) {
-  .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown {
+  .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown {
     flex-direction: column;
   }
-  .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown info {
+  .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown info,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown info {
     margin-left: 15px;
   }
 }
-.wrap.is-spaatg-settings-page #tab-overview .toggle-link {
+.wrap.is-spaatg-settings-page #tab-overview .toggle-link,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting .toggle-link {
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -1543,7 +1555,8 @@ div.spio-modal-title {
   margin-top: 20px;
   margin-right: 10px;
 }
-.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown + hr {
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown + hr,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown + hr {
   width: 96%;
   margin: 0 auto;
   border: none;
@@ -1551,7 +1564,8 @@ div.spio-modal-title {
   height: 1px;
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
-.wrap.is-spaatg-settings-page #tab-overview content {
+.wrap.is-spaatg-settings-page #tab-overview content,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content {
   opacity: 1;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
@@ -1560,7 +1574,8 @@ div.spio-modal-title {
   align-items: flex-start;
   margin: 10px;
 }
-.wrap.is-spaatg-settings-page #tab-overview content input {
+.wrap.is-spaatg-settings-page #tab-overview content input,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content input {
   border: 1px solid #1ABDCA;
   background: url("../images/icon/key.svg") 5% center no-repeat;
   background-color: #fff;
@@ -1568,22 +1583,27 @@ div.spio-modal-title {
   height: 36px;
   width: 240px;
 }
-.wrap.is-spaatg-settings-page #tab-overview content input:focus {
+.wrap.is-spaatg-settings-page #tab-overview content input:focus,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content input:focus {
   outline: none;
   box-shadow: none;
 }
-.wrap.is-spaatg-settings-page #tab-overview content button {
+.wrap.is-spaatg-settings-page #tab-overview content button,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content button {
   padding: 4px 12px;
   width: max-content;
   margin: 0 0 0 10px;
 }
-.wrap.is-spaatg-settings-page #tab-overview content .save-button-text {
+.wrap.is-spaatg-settings-page #tab-overview content .save-button-text,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content .save-button-text {
   font-size: 14px;
 }
-.wrap.is-spaatg-settings-page #tab-overview content .apifield {
+.wrap.is-spaatg-settings-page #tab-overview content .apifield,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content .apifield {
   position: relative;
 }
-.wrap.is-spaatg-settings-page #tab-overview content .apifield i {
+.wrap.is-spaatg-settings-page #tab-overview content .apifield i,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content .apifield i {
   position: absolute;
   right: 3px;
   top: 5px;
@@ -1591,17 +1611,22 @@ div.spio-modal-title {
   cursor: pointer;
 }
 .wrap.is-spaatg-settings-page #tab-overview #toggle-content:not(:checked) ~ content,
-.wrap.is-spaatg-settings-page #tab-overview #toggle-content:not(:checked) ~ closed-apikey-dropdown + hr {
+.wrap.is-spaatg-settings-page #tab-overview #toggle-content:not(:checked) ~ closed-apikey-dropdown + hr,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting #toggle-content:not(:checked) ~ content,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting #toggle-content:not(:checked) ~ closed-apikey-dropdown + hr {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
 }
 .wrap.is-spaatg-settings-page #tab-overview #toggle-content:checked ~ content,
-.wrap.is-spaatg-settings-page #tab-overview #toggle-content:checked ~ closed-apikey-dropdown + hr {
+.wrap.is-spaatg-settings-page #tab-overview #toggle-content:checked ~ closed-apikey-dropdown + hr,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting #toggle-content:checked ~ content,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting #toggle-content:checked ~ closed-apikey-dropdown + hr {
   opacity: 1;
   max-height: 200px;
 }
-.wrap.is-spaatg-settings-page #tab-overview #toggle-content:checked + closed-apikey-dropdown .shortpixel-icon.chevron {
+.wrap.is-spaatg-settings-page #tab-overview #toggle-content:checked + closed-apikey-dropdown .shortpixel-icon.chevron,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting #toggle-content:checked + closed-apikey-dropdown .shortpixel-icon.chevron {
   transform: rotate(180deg);
 }
 .wrap.is-spaatg-settings-page .deliverWebpTypes, .wrap.is-spaatg-settings-page .picture-option-list {

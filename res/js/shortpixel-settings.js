@@ -76,8 +76,15 @@ class SPAATGSettings {
 
 
 		// ApiKeyField toggle
-		var keyField = this.root.querySelector('.apifield i.eye');
-		keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
+			var keyField = this.root.querySelector('.apifield i.eye');
+			if (keyField !== null) {
+				keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
+			}
+
+			var apiKeyField = this.root.querySelector('input[name="apiKey"]');
+			if (apiKeyField !== null) {
+				apiKeyField.addEventListener('input', self.ApiKeyChangedEvent.bind(self));
+			}
 
 			var compressionRadios = this.root.querySelectorAll('.shortpixel-compression-options input[type="radio"]');
 			for (var i = 0; i < compressionRadios.length; i++)
@@ -1011,7 +1018,16 @@ class SPAATGSettings {
 			return false;
 		}
 
-		this.save_in_progress = true;
+		var apiKeyField = form.querySelector('input[name="apiKey"]');
+		if (apiKeyField !== null && ! apiKeyField.disabled) {
+			formData.set('apiKey', apiKeyField.value);
+		}
+
+		if (formData.has('apiKey')) {
+			this.SetApiKeyValidationState(false);
+		}
+
+			this.save_in_progress = true;
 
 		var saveButtons = this.root.querySelector('.setting-tab.active .save-buttons');
 		if (saveButtons !== null) {
@@ -1070,12 +1086,16 @@ class SPAATGSettings {
 
 	}
 
-	FormResponseEvent(json) {
-		let saveDialog = document.querySelector('.ajax-save-done');
-		var noticeLine = saveDialog.querySelector('.after-save-notices');
-		this.save_in_progress = false;
+		FormResponseEvent(json) {
+			let saveDialog = document.querySelector('.ajax-save-done');
+			var noticeLine = saveDialog.querySelector('.after-save-notices');
+			this.save_in_progress = false;
 
-		var saveButtons = this.root.querySelector('.setting-tab.active .save-buttons');
+			if (typeof json.key_verified !== 'undefined') {
+				this.SetApiKeyValidationState(json.key_verified === true);
+			}
+
+			var saveButtons = this.root.querySelector('.setting-tab.active .save-buttons');
 		if (saveButtons !== null) {
 			saveButtons.classList.remove('saving');
 		}
@@ -2044,21 +2064,34 @@ console.log(demon.selectedIndex);
 		//his.ShowExclusionSaveWarning();
 	}
 
-	ToggleApiFieldEvent(event) {
-		event.preventDefault();
+		ToggleApiFieldEvent(event) {
+			event.preventDefault();
 
 		var apiKeyField = this.root.querySelector('input[name="apiKey"]');
 		if (apiKeyField.type == 'password') {
 			apiKeyField.type = 'text';
 		}
-		else {
-			apiKeyField.type = 'password';
+			else {
+				apiKeyField.type = 'password';
+			}
+
 		}
 
-	}
+		ApiKeyChangedEvent() {
+			this.SetApiKeyValidationState(false);
+		}
+
+		SetApiKeyValidationState(isValid) {
+			var validBadge = this.root.querySelector('.shortpixel-key-valid');
+			if (validBadge === null) {
+				return;
+			}
+
+			validBadge.style.display = isValid ? '' : 'none';
+		}
 
 
-} // SPSettings  class
+	} // SPSettings  class
 
 
 document.addEventListener("DOMContentLoaded", function () {

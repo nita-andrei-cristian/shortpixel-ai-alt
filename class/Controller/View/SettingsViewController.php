@@ -52,7 +52,7 @@ class SettingsViewController extends \SPAATG\ViewController
      );
 
      protected $display_part = 'ai';
-     protected $all_display_parts = array('optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
+     protected $all_display_parts = array('overview', 'optimisation','exclusions', 'processing', 'webp','ai', 'integrations', 'debug', 'tools', 'help');
      protected $form_action = 'save-settings';
      protected $view_mode = 'simple'; // advanced or simple
 		 protected $is_ajax_save = false; // checker if saved via ajax ( aka no redirect / json return )
@@ -546,10 +546,6 @@ class SettingsViewController extends \SPAATG\ViewController
 					 	$view_mode = 'onboarding';
 						$this->display_part = 'nokey';
 				 }
-         elseif($this->view->data->redirectedSettings < 3 && $this->view->key->is_verifiedkey)
-         {
-            $view_mode = 'page-quick-tour';
-         }
 				 else {
 					 $view_mode = get_user_option('spaatg-settings-mode');
 	         if (false === $view_mode)
@@ -1111,12 +1107,13 @@ class SettingsViewController extends \SPAATG\ViewController
 						$json->result = true;
 
 
-						$noticeController = Notice::getInstance();
+							$noticeController = Notice::getInstance();
 
-						$json->notices = $noticeController->getNewNotices();
-						if(count($json->notices) > 0)
-						{
-							$json->display_notices = [];
+							$json->notices = $noticeController->getNewNotices();
+              $json->key_verified = $this->keyModel->is_verified();
+							if(count($json->notices) > 0)
+							{
+								$json->display_notices = [];
 							foreach($json->notices as $notice)
 							{
 								$json->display_notices[] = $notice->getForDisplay(['class' => 'is_ajax', 'is_removable' => false]);

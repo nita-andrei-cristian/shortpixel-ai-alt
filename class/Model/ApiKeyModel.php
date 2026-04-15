@@ -169,12 +169,9 @@ class ApiKeyModel extends \SPAATG\Model
       {
         $this->NoticeApiKeyLength($key);
         Log::addDebug('Key Wrong Length: ' . $key);
-
-				// Don't validate is wrong key is constant.
-				if (false === $this->key_is_constant)
-				{
-        	$valid = $this->verifiedKey; // if we already had a verified key, and a wrong new one is giving keep status.
-				}
+        $this->key_is_verified = false;
+        $this->apiKeyTried = $key;
+        return false;
       }
       elseif( ($key != $this->apiKey || ! $this->verifiedKey) && $key != $this->apiKeyTried)
       {
@@ -189,6 +186,10 @@ class ApiKeyModel extends \SPAATG\Model
       // if key is not valid on load, means not valid at all
       if (false === $valid)
       {
+        if (false === $this->key_is_constant && ! is_null($key) && strlen($key) > 0)
+        {
+          $this->apiKey = trim($key);
+        }
         $this->verifiedKey = false;
         $this->key_is_verified = false;
         $this->apiKeyTried = $key;
