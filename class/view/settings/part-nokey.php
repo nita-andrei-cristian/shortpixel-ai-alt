@@ -57,8 +57,7 @@ $disabled = ($view->key->is_editable) ? '' : 'disabled';
 	<h2><?php esc_html_e('Create account','shortpixel-image-optimiser');?></h2>
 	<p><?php esc_html_e('If you don\'t have an API Key, you can request one for free. Just press the "Request Key" button after checking that the e-mail is correct.','shortpixel-image-optimiser');?></p>
 
-  <form method="POST" action="<?php echo esc_url(add_query_arg(array('noheader' => 'true', 'sp-action' => 'action_request_new_key'))) ?>"
-      id="shortpixel-form-request-key">
+  <div id="shortpixel-form-request-key">
 
   <setting>
       <content>
@@ -101,6 +100,8 @@ $disabled = ($view->key->is_editable) ? '' : 'disabled';
               </info>
       </content>
   </setting>
+
+  </div>
 
 </settinglist>
 

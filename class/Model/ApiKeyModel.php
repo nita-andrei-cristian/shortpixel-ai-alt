@@ -170,8 +170,7 @@ class ApiKeyModel extends \SPAATG\Model
         $this->NoticeApiKeyLength($key);
         Log::addDebug('Key Wrong Length: ' . $key);
         $this->key_is_verified = false;
-        $this->apiKeyTried = $key;
-        return false;
+        $valid = false;
       }
       elseif( ($key != $this->apiKey || ! $this->verifiedKey) && $key != $this->apiKeyTried)
       {

@@ -31,6 +31,13 @@ class SPAATGOnboarding
          var addButton = this.root.querySelector('button[name="add-key"]');
          addButton.addEventListener('click', this.AddKeyEvent.bind(this));
 
+         var loginApiKey = this.root.querySelector('input[name="login_apiKey"]');
+         if (loginApiKey !== null)
+         {
+            loginApiKey.addEventListener('input', this.SyncExistingCustomerKeyEvent.bind(this));
+            loginApiKey.addEventListener('change', this.SyncExistingCustomerKeyEvent.bind(this));
+         }
+
          let inputs = ['pluginemail', 'new-key']; 
          for (let i = 0; i < inputs.length; i++)
          {
@@ -93,6 +100,22 @@ class SPAATGOnboarding
 
     }
 
+    SyncMainApiKey(value)
+    {
+       var mainApiKey = this.root.querySelector('input[name="apiKey"]');
+       if (mainApiKey !== null && ! mainApiKey.disabled)
+       {
+          mainApiKey.value = value;
+       }
+
+       this.settings.SetApiKeyValidationState(false);
+    }
+
+    SyncExistingCustomerKeyEvent(event)
+    {
+       this.SyncMainApiKey(event.target.value);
+    }
+
     AddKeyEvent(event)
     {
        event.preventDefault();
@@ -134,6 +157,7 @@ class SPAATGOnboarding
        else if(activePanel.classList.contains('existing-customer'))
        {
            let apiKey = activePanel.querySelector('input[name="login_apiKey"]');
+           this.SyncMainApiKey(apiKey.value);
            formData.append('apiKey', apiKey.value);
            formData.append('screen_action', 'action_addkey');
        }

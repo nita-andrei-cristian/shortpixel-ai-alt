@@ -110,10 +110,18 @@ class SettingsViewController extends \SPAATG\ViewController
 
         $this->checkPost(false);
 
-        if ($this->is_form_submit && isset($_POST['apiKey']))
+        $apiKey = null;
+        if (isset($_POST['apiKey']))
         {
             $apiKey = sanitize_text_field($_POST['apiKey']);
+        }
+        elseif (isset($_POST['login_apiKey']))
+        {
+            $apiKey = sanitize_text_field($_POST['login_apiKey']);
+        }
 
+        if ($this->is_form_submit && ! is_null($apiKey))
+        {
             if (strlen(trim($apiKey)) == 0) // display notice when submitting empty API key
             {
               Notice::addError(sprintf(__("The key you provided has %s characters. The API key should have 20 characters, letters and numbers only.",'shortpixel-image-optimiser'), strlen($apiKey) ));
@@ -827,6 +835,20 @@ class SettingsViewController extends \SPAATG\ViewController
         //  $post = $this->processCloudFlare($post);
 
 					$check_key = false;
+
+          if (false === $this->keyModel->is_constant())
+          {
+              $currentKey = $this->keyModel->getKey();
+              $postedApiKey = isset($post['apiKey']) ? sanitize_text_field($post['apiKey']) : null;
+              $postedLoginApiKey = isset($post['login_apiKey']) ? sanitize_text_field($post['login_apiKey']) : null;
+
+              // When the onboarding field is changed, the main settings form still carries the stored API key.
+              if (! is_null($postedLoginApiKey) && $postedLoginApiKey !== $currentKey
+                  && (is_null($postedApiKey) || $postedApiKey === $currentKey))
+              {
+                  $post['apiKey'] = $postedLoginApiKey;
+              }
+          }
 
           if (isset($post['apiKey']) && false === $this->keyModel->is_constant())
 					{
