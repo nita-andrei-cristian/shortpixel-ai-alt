@@ -176,7 +176,7 @@ class BulkViewController extends \SPAATG\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start the optimization process, you need to validate your API Key on the '
+		$message = "<p>" . __('In order to start generating AI image SEO data, you need to validate your API Key on the '
 						. '<a href="options-general.php?page=wp-spaatg-settings">ShortPixel AI Alt Text Generator</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";

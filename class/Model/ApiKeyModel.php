@@ -280,14 +280,14 @@ class ApiKeyModel extends \SPAATG\Model
     //display notification
     $urlParts = explode("/", get_site_url());
     if( $quotaData['DomainCheck'] == 'NOT Accessible'){
-        $notice = array("status" => "warn", "msg" => __("API Key is valid but your site is not accessible from our servers. Please make sure that your server is accessible from the Internet before using the API or otherwise we won't be able to optimize them.",'shortpixel-image-optimiser'));
+        $notice = array("status" => "warn", "msg" => __("API Key is valid but your site is not accessible from our servers. Please make sure that your server is accessible from the Internet before using the API; otherwise we won't be able to generate image SEO data for your images.",'shortpixel-image-optimiser'));
         Notice::addWarning($notice);
     } else {
         if ( function_exists("is_multisite") && is_multisite() && !defined("SPAATG_API_KEY"))
             $notice = __("Great, your API Key is valid! <br>You seem to be running a multisite, please note that API Key can also be configured in wp-config.php like this:",'shortpixel-image-optimiser')
                 . "<BR> <b>define('SPAATG_API_KEY', '". $this->apiKey ."');</b>";
         else
-            $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before starting to optimize your images.','shortpixel-image-optimiser');
+            $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before generating image SEO data.','shortpixel-image-optimiser');
 
         Notice::addSuccess($notice);
     }

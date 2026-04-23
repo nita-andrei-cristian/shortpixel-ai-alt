@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class='bulk-summary' data-check-visibility="false" data-control='data-check-total-customOperation'>
 		<p class='finished-paragraph'>
-			<?php printf(__('Congratulations, ShortPixel has optimized %s %s images and thumbs %s for your website! Yay to faster loading websites! %s', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
+			<?php printf(__('Congratulations, ShortPixel has generated AI Image SEO data for %s %s images and thumbs %s for your website! Yay to better SEO and rankings! %s', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
 			?>
 		</p>
 	</div>

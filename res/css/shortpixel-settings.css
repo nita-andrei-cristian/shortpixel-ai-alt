@@ -1115,45 +1115,115 @@ div.spio-modal-title {
   dominant-baseline: middle;
   text-anchor: middle;
 }
-.wrap.is-spaatg-settings-page #tab-help .help-center {
-  background: #F4FBFC;
-  border-radius: 8px;
-  width: 100%;
+.wrap.is-spaatg-settings-page #tab-help .help-center-wrap .help-center-stack {
   display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-@media (max-width: 768px) {
+.wrap.is-spaatg-settings-page #tab-help .help-center {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+  align-items: stretch;
+  background: transparent;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center.help-center-row-top, .wrap.is-spaatg-settings-page #tab-help .help-center.help-center-row-bottom {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card {
+  background: #F4FBFC;
+  border: 0;
+  border-radius: 18px;
+  display: grid;
+  padding: 22px 22px 20px;
+  grid-template-rows: auto auto auto auto;
+  justify-items: center;
+  align-content: center;
+  row-gap: 14px;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 264px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  transform: translateZ(0);
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card:hover {
+  transform: scale(1.015);
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card .main-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card .main-icon .icon {
+  display: block;
+  width: 38px !important;
+  height: 38px !important;
+  max-width: 38px;
+  max-height: 38px;
+  object-fit: contain;
+  border: none;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card h4 {
+  font-size: 15px;
+  line-height: 1.35;
+  margin: 0;
+  display: block;
+  font-weight: 600;
+  color: #116C7E;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  display: block;
+  color: #245b66;
+  max-width: 270px;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center .shortpixel-button-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1ABDCA;
+  padding: 7px 12px;
+  border: 0;
+  margin: 0;
+  border-radius: 6px;
+  transition: all 0.1s ease-in-out;
+  min-height: 34px;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center .shortpixel-button-container:hover {
+  background: #49d8e3;
+}
+.wrap.is-spaatg-settings-page #tab-help .help-center .button-setting {
+  color: #fff;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: none;
+}
+@media (max-width: 960px) {
   .wrap.is-spaatg-settings-page #tab-help .help-center {
-    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.wrap.is-spaatg-settings-page #tab-help .help-center > div {
-  border-right: 2px solid #92D5E3;
-  margin: 16px 10px;
-  display: flex;
-  padding: 0 4px;
-  flex-direction: column;
-  align-items: center;
-  width: 33%;
-  text-align: center;
-  justify-content: flex-end;
-}
-.wrap.is-spaatg-settings-page #tab-help .help-center > div .main-icon .icon {
-  width: 40px;
-}
-.wrap.is-spaatg-settings-page #tab-help .help-center > div p {
-  min-height: 60px;
-}
-.wrap.is-spaatg-settings-page #tab-help .help-center > div:last-child {
-  border: 0;
-}
-@media (max-width: 768px) {
-  .wrap.is-spaatg-settings-page #tab-help .help-center > div {
-    width: 98%;
-    margin: 20px 0;
-    padding-bottom: 20px;
-    border-right: 0;
-    border-bottom: 2px solid #92D5E3;
-    position: relative;
+@media (max-width: 782px) {
+  .wrap.is-spaatg-settings-page #tab-help .help-center {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wrap.is-spaatg-settings-page #tab-help .help-center.help-center-row-top, .wrap.is-spaatg-settings-page #tab-help .help-center.help-center-row-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wrap.is-spaatg-settings-page #tab-help .help-center > .help-center-card {
+    min-height: 0;
+    padding: 20px 18px;
+    border-radius: 16px;
   }
 }
 .wrap.is-spaatg-settings-page #tab-overview {
@@ -1473,6 +1543,59 @@ div.spio-modal-title {
   background: #F4FBFC;
   border-radius: 6px;
 }
+.wrap.is-spaatg-settings-page #tab-ai .ai-top-panels {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+.wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > settinglist.ai-api-key-setting {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+.wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > .ai-credit-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0 210px;
+  min-width: 190px;
+  margin-bottom: 0;
+  padding: 18px 16px;
+  background: #1ABDCA;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: #fff;
+  font-family: Roboto, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > .ai-credit-panel span {
+  font-size: 11px;
+  font-weight: inherit;
+  text-transform: uppercase;
+}
+.wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > .ai-credit-panel strong {
+  margin-top: 3px;
+  font-size: 18px;
+  color: #fff;
+  font-weight: inherit;
+  white-space: nowrap;
+}
+@media (max-width: 782px) {
+  .wrap.is-spaatg-settings-page #tab-ai .ai-top-panels {
+    flex-direction: column;
+  }
+  .wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > settinglist.ai-api-key-setting,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-top-panels > .ai-credit-panel {
+    width: 100%;
+    min-width: 0;
+    flex-basis: auto;
+  }
+}
 .wrap.is-spaatg-settings-page #tab-overview settinglist,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting {
   background: #F4FBFC;
@@ -1532,6 +1655,33 @@ div.spio-modal-title {
   transition: transform 0.3s ease;
   margin-left: 5px;
 }
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .ai-credit-panel,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .ai-credit-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 150px;
+  margin: 10px 10px 0 auto;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #92D5E3;
+  border-radius: 6px;
+  color: #0f6a7d;
+  font-family: Roboto, sans-serif;
+  line-height: 1.2;
+}
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .ai-credit-panel span,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .ai-credit-panel span {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .ai-credit-panel strong,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .ai-credit-panel strong {
+  margin-top: 3px;
+  font-size: 18px;
+  color: #00C898;
+}
 @media (max-width: 782px) {
   .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown,
   .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown {
@@ -1540,6 +1690,11 @@ div.spio-modal-title {
   .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown info,
   .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown info {
     margin-left: 15px;
+  }
+  .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown .ai-credit-panel,
+  .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown .ai-credit-panel {
+    margin: 12px 15px 0 15px;
+    width: calc(100% - 54px);
   }
 }
 .wrap.is-spaatg-settings-page #tab-overview .toggle-link,
@@ -1554,6 +1709,10 @@ div.spio-modal-title {
   text-align: right;
   margin-top: 20px;
   margin-right: 10px;
+}
+.wrap.is-spaatg-settings-page #tab-overview .ai-credit-panel + .toggle-link,
+.wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting .ai-credit-panel + .toggle-link {
+  margin-left: 8px;
 }
 .wrap.is-spaatg-settings-page #tab-overview closed-apikey-dropdown + hr,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting closed-apikey-dropdown + hr {
@@ -1577,11 +1736,14 @@ div.spio-modal-title {
 .wrap.is-spaatg-settings-page #tab-overview content input,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content input {
   border: 1px solid #1ABDCA;
-  background: url("../images/icon/key.svg") 5% center no-repeat;
+  background: url("../images/icon/key.svg") 12px center no-repeat;
+  background-size: 16px 16px;
   background-color: #fff;
   padding-left: 35px;
+  padding-right: 36px;
   height: 36px;
-  width: 240px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .wrap.is-spaatg-settings-page #tab-overview content input:focus,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content input:focus {
@@ -1601,6 +1763,8 @@ div.spio-modal-title {
 .wrap.is-spaatg-settings-page #tab-overview content .apifield,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content .apifield {
   position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .wrap.is-spaatg-settings-page #tab-overview content .apifield i,
 .wrap.is-spaatg-settings-page #tab-ai .ai-api-key-setting content .apifield i {

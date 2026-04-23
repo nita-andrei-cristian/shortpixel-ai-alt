@@ -798,6 +798,7 @@ class SettingsViewController extends \SPAATG\ViewController
         $remainingImages = $quotaData->total->remaining; // $quotaData['APICallsRemaining'];
         $remainingImages = ( $remainingImages < 0 ) ? 0 : $this->formatNumber($remainingImages, 0);
 
+        $this->view->quotaData = $quotaData;
         $this->view->remainingImages = $remainingImages;
 
       }

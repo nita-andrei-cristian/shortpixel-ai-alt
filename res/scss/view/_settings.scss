@@ -440,52 +440,134 @@
 
 	#tab-help
 	{
-		  	.help-center
-				{
-					background: $blue_background;
-					border-radius: 8px;
-					width: 100%;
-					//padding: 18px;
-					display: flex;
-					//flex-wrap: wrap;
-					//margin-top: 16px;
+		.help-center-wrap .help-center-stack {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
 
-					@include breakpoint(0, 768px) {
-						flex-direction: column;
-					}
+		.help-center {
+			display: grid;
+			gap: 20px;
+			width: 100%;
+			align-items: stretch;
+			background: transparent;
 
-						> div {
-							//	background: $blue_background;
-								border-right: 2px solid $blue_light;
-								margin: 16px 10px;
-								display: flex;
-								padding: 0 4px;
+			&.help-center-row-top,
+			&.help-center-row-bottom {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
 
-								flex-direction: column;
-								align-items: center;
-								width: 33%;
-							//	min-width: 250px;
-								text-align: center;
-								justify-content: flex-end;
-								.main-icon .icon {
-									 width: 40px;
+			> .help-center-card {
+				background: $blue_background;
+				border: 0;
+				border-radius: 18px;
+				display: grid;
+				padding: 22px 22px 20px;
+				grid-template-rows: auto auto auto auto;
+				justify-items: center;
+				align-content: center;
+				row-gap: 14px;
+				text-align: center;
+				box-sizing: border-box;
+				min-height: 264px;
+				transition: transform 0.16s ease, box-shadow 0.16s ease;
+				transform: translateZ(0);
 
-								}
-								p { min-height: 60px; }
-								&:last-child
-								{
-									 border: 0;
-								}
-							@include breakpoint(0, 768px) {
-								width: 98%;
-								margin: 20px 0;
-								padding-bottom: 20px;
-								border-right: 0;
-								border-bottom: 2px solid $blue_light;
-								position: relative;
-							}
-						}
+				&:hover {
+					transform: scale(1.015);
 				}
+
+				.main-icon {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					width: 46px;
+					height: 46px;
+
+					.icon {
+						display: block;
+						width: 38px !important;
+						height: 38px !important;
+						max-width: 38px;
+						max-height: 38px;
+						object-fit: contain;
+						border: none;
+					}
+				}
+
+				h4 {
+					font-size: 15px;
+					line-height: 1.35;
+					margin: 0;
+					display: block;
+					font-weight: 600;
+					color: $blue_dark;
+				}
+
+				p {
+					font-size: 13px;
+					line-height: 1.5;
+					margin: 0;
+					display: block;
+					color: #245b66;
+					max-width: 270px;
+				}
+			}
+
+			.shortpixel-button-container {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: $blue_default;
+				padding: 7px 12px;
+				border: 0;
+				margin: 0;
+				border-radius: 6px;
+				transition: all 0.1s ease-in-out;
+				min-height: 34px;
+
+				&:hover {
+					background: lighten($blue_default, 10%);
+				}
+			}
+
+			.button-setting {
+				color: #fff;
+				background: transparent;
+				border: 0;
+				padding: 0;
+				margin: 0;
+				font-size: 13px;
+				font-weight: 700;
+				line-height: 1.2;
+				text-decoration: none;
+				box-shadow: none;
+			}
+		}
+
+		@include breakpoint(0, 960px) {
+			.help-center {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+
+		@include breakpoint(0, $wordpress-mobile) {
+			.help-center {
+				grid-template-columns: minmax(0, 1fr);
+
+				&.help-center-row-top,
+				&.help-center-row-bottom {
+					grid-template-columns: minmax(0, 1fr);
+				}
+
+				> .help-center-card {
+					min-height: 0;
+					padding: 20px 18px;
+					border-radius: 16px;
+				}
+			}
+		}
 
 
 	} // tab-help

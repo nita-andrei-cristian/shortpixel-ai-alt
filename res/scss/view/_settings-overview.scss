@@ -356,6 +356,62 @@
     }
   }
 
+  .ai-top-panels {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: stretch;
+    margin-bottom: 10px;
+
+    > settinglist.ai-api-key-setting {
+      flex: 1 1 0;
+      width: auto;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    > .ai-credit-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 0 0 280px;
+      min-width: 250px;
+      margin-bottom: 0;
+      padding: 18px 16px;
+      background: $blue_background;
+      border-radius: 6px;
+      box-sizing: border-box;
+      color: $color-darkest;
+      font-family: Roboto, sans-serif;
+      line-height: 1.2;
+
+      span {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      strong {
+        margin-top: 3px;
+        font-size: 18px;
+        color: $green_highlight;
+        white-space: nowrap;
+      }
+    }
+
+    @include breakpoint(0, $wordpress-mobile) {
+      flex-direction: column;
+
+      > settinglist.ai-api-key-setting,
+      > .ai-credit-panel {
+        width: 100%;
+        min-width: 0;
+        flex-basis: auto;
+      }
+    }
+  }
+
       closed-apikey-dropdown{
             display: flex;
             flex-direction: row;
@@ -389,6 +445,7 @@
           transition: transform 0.3s ease;
           margin-left: 5px;
         }
+
         @include breakpoint(0, $wordpress-mobile)
         {
            flex-direction: column;
@@ -442,11 +499,14 @@
 
       content input {
         border: 1px solid $blue_default;
-        background: url('../images/icon/key.svg') 5% center no-repeat;
+        background: url('../images/icon/key.svg') 12px center no-repeat;
+        background-size: 16px 16px;
         background-color: #fff;
         padding-left: 35px;
+        padding-right: 36px;
         height: 36px;
-        width: 240px;
+        width: 100%;
+        box-sizing: border-box;
 	&:focus {
 	  outline: none;
 	  box-shadow: none;
@@ -466,6 +526,8 @@
 
       content .apifield {
         position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
       }
 
       content .apifield i {

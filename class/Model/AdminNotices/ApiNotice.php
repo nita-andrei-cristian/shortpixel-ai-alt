@@ -52,7 +52,7 @@ class ApiNotice extends \SPAATG\Model\AdminNoticeModel
 
 	protected function getMessage()
 	{
-		$message = "<p>" . __('To start the optimization process, you need to validate your API key on the '
+		$message = "<p>" . __('To start generating AI image SEO data, you need to validate your API key on the '
 						. '<a href="options-general.php?page=wp-spaatg-settings">ShortPixel AI Alt Text Generator</a> page in your WordPress admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you do not have an API key yet, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
