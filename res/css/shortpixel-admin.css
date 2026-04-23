@@ -382,7 +382,7 @@
   background: #d6d8d9;
 }
 .sp-column-info .thumbnails.optimized .thumb-wrapper .thumb .optimize-bar .point.checked {
-  background: #1ABDCA;
+  background: #92D5E3;
 }
 .sp-column-info .thumbnails.optimized .thumb-wrapper .thumb .cutoff {
   float: right;
@@ -799,6 +799,33 @@ body.debug-model-active {
   line-height: 1;
   margin: 8px 0;
 }
+.shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 34px;
+  height: auto;
+  max-width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #F4FBFC;
+  color: #116C7E;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  box-shadow: none;
+  transition: background 0.1s ease-in-out;
+}
+.shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary:hover, .shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary:focus {
+  background: #D9F9FF;
+  color: #116C7E;
+  border: 0;
+  box-shadow: none;
+}
 .shortpixel-ai-interface .shortpixel-ai-icon {
   vertical-align: middle;
   height: 20px;
@@ -811,6 +838,16 @@ body.debug-model-active {
 .shortpixel-ai-interface span {
   vertical-align: middle;
   margin: 0 4px;
+}
+.shortpixel-ai-interface .shortpixel-ai-generate-button span {
+  margin: 0;
+}
+.shortpixel-ai-interface .shortpixel-ai-generate-button img.shortpixel-ai-icon {
+  flex: 0 0 auto;
+  width: 23px;
+  height: 23px;
+  margin: 0;
+  float: none;
 }
 .shortpixel-ai-interface .shortpixel-alt-messagebox {
   margin: 4px 0;
@@ -832,6 +869,36 @@ body.debug-model-active {
 }
 .media-sidebar .shortpixel-ai-interface img.shortpixel.shortpixel-ai-caption {
   margin-right: 0px;
+}
+.shortpixel-ai-interface.attachment-details-two-column-alt-text .shortpixel-ai-generate-button img.shortpixel-ai-icon, .shortpixel-ai-interface.attachment-details-alt-text .shortpixel-ai-generate-button img.shortpixel-ai-icon {
+  margin: 0;
+  float: none;
+}
+
+.shortpixel-ai-generate-button.button.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 34px;
+  height: auto;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #F4FBFC;
+  color: #116C7E;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.shortpixel-ai-generate-button.button.button-secondary:hover,
+.shortpixel-ai-generate-button.button.button-secondary:focus {
+  background: #D9F9FF;
+  color: #116C7E;
+  border: 0;
+  box-shadow: none;
 }
 
 /*# sourceMappingURL=spaatg-admin.css.map */

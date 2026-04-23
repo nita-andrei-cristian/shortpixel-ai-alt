@@ -72,7 +72,7 @@ class EditMediaViewController extends \SPAATG\ViewController
           $fields['aibutton'] = [
               'label' => __('ShortPixel AI Data', 'shortpixel-image-optimiser'), 
               'input' => 'html', 
-              'html' => "<a href='javascript:window.SPAATGProcessor.screen.RequestAlt($post_id)' class='button button-secondary'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
+              'html' => "<a href='javascript:window.SPAATGProcessor.screen.RequestAlt($post_id)' class='button button-secondary shortpixel-ai-generate-button'>" . __('Generate', 'shortpixel-image-optimiser') . "</a>
                  <div class='shortpixel-alt-messagebox' id='shortpixel-ai-messagebox-$post_id'>&nbsp;</div>
                ",
           ];
