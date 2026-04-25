@@ -373,11 +373,11 @@ class SPAATGSettings {
 
 			var self = this;
 
-			var triggerLoadEvent = new CustomEvent('spaatg.ui.settingsTabLoad', { detail: { 
-				'tabName' : 'ai', 
+			var triggerLoadEvent = new CustomEvent('spaatg.ui.settingsTabLoad', { detail: {
+				'tabName' : 'preview',
 			}});
 
-			if (this.current_tab == 'ai')
+			if (this.current_tab == 'preview')
 			{
 				window.dispatchEvent(triggerLoadEvent);		
 			}
@@ -387,7 +387,7 @@ class SPAATGSettings {
 				button.addEventListener('click', function () {
 
 				 var attach_id = document.querySelector('input[name="ai_preview_image_id"]').value; 
-				 var inputs = document.querySelectorAll('#tab-ai input, #tab-ai select, #tab-ai textarea'); 
+				 var inputs = document.querySelectorAll('#tab-account input[name="autoAI"], #tab-account input[name="aiPreserve"], #tab-ai input, #tab-ai select, #tab-ai textarea');
 
 				 var previewResult = document.querySelector('.preview_wrapper .preview_result'); 
 
@@ -508,7 +508,7 @@ class SPAATGSettings {
 
 	AiWindowLoadEvent(event)
 	{
-		if (event.detail.tabName !== 'ai')
+		if (event.detail.tabName !== 'preview')
 		{
 			return;
 		}		 

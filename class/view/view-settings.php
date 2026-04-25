@@ -38,32 +38,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     <span class='open'><?php echo UIHelper::getIcon('res/images/icon/accordion.svg'); ?></span>
     <span class='close'><?php echo UIHelper::getIcon('res/images/icon/close.svg'); ?></span>
     <input type='checkbox'></label>
-  <menu>
+ <menu>
 			<ul>
-				<li class='is-hidden-visual'>
+				<li>
           <?php echo $this->settingLink([
-            'part' => 'optimisation',
-            'title' => __("Image Optimization", "shortpixel-image-optimiser"),
-            'icon' => 'shortpixel-icon optimization']); ?>
-        </li>
-        <li class='is-advanced'>
-          <?php echo $this->settingLink([
-              'part' => 'exclusions',
-              'title' => __("Exclusions", "shortpixel-image-optimiser"),
-              'icon' => 'shortpixel-icon exclusions']); ?>
-        </li>
-
-        <li class='is-advanced'>
-          <?php echo $this->settingLink([
-            'part' => 'processing',
-            'title' => __("Processing", "shortpixel-image-optimiser"),
-            'icon' => 'shortpixel-icon processing']); ?>
-        </li>
-        <li class='is-hidden-visual'>
-					<?php echo $this->settingLink([
-            'part' => 'webp',
-            'title' => __("WebP/AVIF & CDN", "shortpixel-image-optimiser"),
-            'icon' => 'shortpixel-icon webp_avif']); ?>
+            'part' => 'account',
+            'title' => __("Account & Settings", "shortpixel-image-optimiser"),
+            'icon' => 'shortpixel-icon user']); ?>
         </li>
         <li>
             <?php echo $this->settingLink([
@@ -72,21 +53,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                 'icon' => 'shortpixel-icon ai'
             ]); ?>
         </li>
-
-				<li class='is-advanced'>
-					<?php echo $this->settingLink([
-            'part' => 'integrations',
-            'title' => __("Integrations", "shortpixel-image-optimiser"),
-            'icon' => 'shortpixel-icon integrations']); ?>
-        </li>
-
-				<li class='is-advanced'>
+        <li>
           <?php echo $this->settingLink([
-            'part' => 'tools',
-            'title' => __("Tools", "shortpixel-image-optimiser"),
-            'icon' => 'shortpixel-icon tools']); ?>
+            'part' => 'preview',
+            'title' => __("Preview/Testing", "shortpixel-image-optimiser"),
+            'icon' => 'shortpixel-icon eye']); ?>
         </li>
-
         <li>
           <?php echo $this->settingLink([
             'part' => 'help',
@@ -97,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php
           if (Log::debugIsActive())
           { ?>
-  			<li>
+        <li class='is-advanced'>
           <?php echo $this->settingLink([
               'part' => 'debug',
               'title' => __("Debug", "shortpixel-image-optimiser"),
@@ -158,14 +130,16 @@ if ( ! defined( 'ABSPATH' ) ) {
         <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
         <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
 
+          <?php $this->loadView('settings/part-account'); ?>
+          <?php $this->loadView('settings/part-ai'); ?>
+          <?php $this->loadView('settings/part-preview'); ?>
+          <?php $this->loadView('settings/part-help'); ?>
           <?php $this->loadView('settings/part-overview'); ?>
           <?php $this->loadView('settings/part-optimisation'); ?>
           <?php $this->loadView('settings/part-processing'); ?>
           <?php $this->loadView('settings/part-webp'); ?>
-          <?php $this->loadView('settings/part-ai'); ?>
           <?php $this->loadView('settings/part-integrations'); ?>
           <?php $this->loadView('settings/part-exclusions'); ?>
-          <?php $this->loadView('settings/part-help'); ?>
 
 					<?php $this->loadView('settings/part-nokey'); ?>
       </form>
