@@ -124,6 +124,11 @@ $disabled = ($view->key->is_editable) ? '' : 'disabled';
       </name>
         <input name="login_apiKey" type="text" id="new-key" value="<?php echo esc_attr( $view->key->apiKey );?>"
            class="regular-text" <?php echo $disabled ?>>
+        <?php if (! empty($view->key->validation_error_message) && ! $view->key->is_verifiedkey) { ?>
+        <p class="shortpixel-key-error">
+          <?php echo wp_kses_post($view->key->validation_error_message); ?>
+        </p>
+        <?php } ?>
 
               <input type="hidden" name="validate" id="valid" value="validate"/>
               <span class="spinner" id="pluginemail_spinner" style="float:none;"></span>

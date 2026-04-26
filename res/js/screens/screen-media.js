@@ -769,12 +769,19 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 			wrapper.remove();
 		}
 
+		var editMediaActions = document.querySelector('[data-spaatg-ai-actions="' + item_id + '"]');
+
+		if (editMediaActions !== null && typeof data.snippet === 'string')
+		{
+			editMediaActions.innerHTML = this.PrepareAiSnippet(data.snippet, item_id, 'metabox');
+		}
+
 		if (typeof data.snippet === 'string' && data.snippet.length > 0)
 		{
 			wrapper = document.createElement('div');
 			wrapper.id = 'spaatg-ai-wrapper-' + item_id;
 			wrapper.classList.add('shortpixel-ai-interface', element.getAttribute('id'));
-			wrapper.innerHTML = data.snippet;
+			wrapper.innerHTML = this.PrepareAiSnippet(data.snippet, item_id, 'inline');
 			element.after(wrapper);
 		}
 
@@ -784,6 +791,16 @@ class SPAATGScreen extends SPAATGScreenItemBase //= function (MainScreen, proces
 		if (data.generated && typeof data.generated.alt !== 'undefined')
 			element.value = data.generated.alt;
 
+	}
+
+	PrepareAiSnippet(snippet, item_id, context)
+	{
+		var originalId = 'shortpixel-ai-messagebox-' + item_id;
+		var replacementId = ('metabox' === context) ? 'shortpixel-ai-messagebox-box-' + item_id : originalId;
+		var replacement = 'id="' + replacementId + '" data-spaatg-ai-messagebox="' + item_id + '"';
+		var idPattern = new RegExp('id=([\\\'"])' + originalId + '\\1');
+
+		return snippet.replace(idPattern, replacement);
 	}
 
 	GetAttachmentAltValue(item_id)

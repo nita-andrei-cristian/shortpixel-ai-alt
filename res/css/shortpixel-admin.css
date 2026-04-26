@@ -93,6 +93,21 @@
   color: #646970;
   font-style: italic;
 }
+.view-edit-media .spaatg-edit-media-ai-interface {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #dcdcde;
+  line-height: 1.4;
+}
+.view-edit-media .spaatg-edit-media-ai-interface p {
+  margin: 0 0 10px;
+}
+.view-edit-media .spaatg-edit-media-ai-interface .button {
+  margin: 0 6px 6px 0;
+}
+.view-edit-media .spaatg-edit-media-ai-interface .shortpixel-alt-messagebox {
+  margin-top: 6px;
+}
 
 .spio-message img {
   animation: cssload-spin 5000ms infinite linear;
@@ -678,6 +693,13 @@ body.debug-model-active {
   display: none !important;
 }
 
+.sp-column-info a.disabled,
+.shortpixel-ai-interface .button.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .button-primary.optimize {
   margin-bottom: 16px;
 }
@@ -799,7 +821,7 @@ body.debug-model-active {
   line-height: 1;
   margin: 8px 0;
 }
-.shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary {
+.shortpixel-ai-interface .shortpixel-ai-action-button.button.button-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -820,7 +842,7 @@ body.debug-model-active {
   box-shadow: none;
   transition: background 0.1s ease-in-out;
 }
-.shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary:hover, .shortpixel-ai-interface .shortpixel-ai-generate-button.button.button-secondary:focus {
+.shortpixel-ai-interface .shortpixel-ai-action-button.button.button-secondary:hover, .shortpixel-ai-interface .shortpixel-ai-action-button.button.button-secondary:focus {
   background: #D9F9FF;
   color: #116C7E;
   border: 0;
@@ -852,6 +874,19 @@ body.debug-model-active {
 .shortpixel-ai-interface .shortpixel-alt-messagebox {
   margin: 4px 0;
 }
+.shortpixel-ai-interface .shortpixel-alt-messagebox.has-message {
+  padding: 8px 10px;
+  border-left: 4px solid #72aee6;
+  border-radius: 2px;
+  background: #f0f6fc;
+  color: #1d2327;
+  line-height: 1.4;
+}
+.shortpixel-ai-interface .shortpixel-alt-messagebox.error {
+  border-left-color: #d63638;
+  background: #fcf0f1;
+  color: #8a2424;
+}
 .shortpixel-ai-interface.attachment-details-two-column-alt-text, .shortpixel-ai-interface.attachment-details-alt-text {
   float: right;
   width: 65%;
@@ -875,7 +910,7 @@ body.debug-model-active {
   float: none;
 }
 
-.shortpixel-ai-generate-button.button.button-secondary {
+.shortpixel-ai-action-button.button.button-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -893,8 +928,8 @@ body.debug-model-active {
   box-shadow: none;
 }
 
-.shortpixel-ai-generate-button.button.button-secondary:hover,
-.shortpixel-ai-generate-button.button.button-secondary:focus {
+.shortpixel-ai-action-button.button.button-secondary:hover,
+.shortpixel-ai-action-button.button.button-secondary:focus {
   background: #D9F9FF;
   color: #116C7E;
   border: 0;

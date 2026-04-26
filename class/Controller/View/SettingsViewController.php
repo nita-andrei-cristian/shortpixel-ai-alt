@@ -646,6 +646,7 @@ class SettingsViewController extends \SPAATG\ViewController
 				 $keyObj->is_constant_key = $this->keyModel->is_constant();
 				 $keyObj->hide_api_key = $this->keyModel->is_hidden();
 				 $keyObj->apiKey = $keyController->getKeyForDisplay();
+         $keyObj->validation_error_message = $this->keyModel->getValidationErrorMessage();
         // $keyObj->redirectedSettings =
 
 				 $showApiKey = false;

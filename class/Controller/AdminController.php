@@ -83,22 +83,28 @@ class AdminController extends \SPAATG\Controller
 			}
 
 			$actions['spaatg-generateai'] = __('Generate image SEO data', 'shortpixel-image-optimiser');
+			$actions['spaatg-revertai'] = __('Revert AI SEO data', 'shortpixel-image-optimiser');
 
 			return $actions;
 		}
 
 		public function handleMediaBulkActions($redirect_to, $doaction, $post_ids)
 		{
-			if ('spaatg-generateai' !== $doaction)
+			if ('spaatg-generateai' !== $doaction && 'spaatg-revertai' !== $doaction)
 			{
 				return $redirect_to;
 			}
 
 			$fs = \wpSPAATG()->filesystem();
-			$queueController = new QueueController();
 			$accessModel = AccessModel::getInstance();
 			$queued = 0;
+			$reverted = 0;
 			$skipped = 0;
+
+			if ('spaatg-generateai' === $doaction)
+			{
+				$queueController = new QueueController();
+			}
 
 			foreach ((array) $post_ids as $post_id)
 			{
@@ -111,6 +117,22 @@ class AdminController extends \SPAATG\Controller
 				}
 
 				$aiDataModel = AiDataModel::getModelByAttachment($mediaItem->get('id'));
+				if ('spaatg-revertai' === $doaction)
+				{
+					if (true === $aiDataModel->isSomeThingGenerated())
+					{
+						$aiDataModel->revert();
+						AiDataModel::flushModelCache($mediaItem->get('id'));
+						$reverted++;
+					}
+					else
+					{
+						$skipped++;
+					}
+
+					continue;
+				}
+
 				if (false === $aiDataModel->isProcessable())
 				{
 					$skipped++;
@@ -140,17 +162,19 @@ class AdminController extends \SPAATG\Controller
 				}
 			}
 
-			$redirect_to = remove_query_arg(['spaatg_bulk_ai_queued', 'spaatg_bulk_ai_skipped'], $redirect_to);
+			$redirect_to = remove_query_arg(['spaatg_bulk_ai_action', 'spaatg_bulk_ai_queued', 'spaatg_bulk_ai_reverted', 'spaatg_bulk_ai_skipped'], $redirect_to);
 
 			return add_query_arg([
+				'spaatg_bulk_ai_action' => ('spaatg-revertai' === $doaction) ? 'revert' : 'generate',
 				'spaatg_bulk_ai_queued' => $queued,
+				'spaatg_bulk_ai_reverted' => $reverted,
 				'spaatg_bulk_ai_skipped' => $skipped,
 			], $redirect_to);
 		}
 
 		public function displayMediaBulkActionNotice()
 		{
-			if (! isset($_GET['spaatg_bulk_ai_queued']) && ! isset($_GET['spaatg_bulk_ai_skipped']))
+			if (! isset($_GET['spaatg_bulk_ai_queued']) && ! isset($_GET['spaatg_bulk_ai_reverted']) && ! isset($_GET['spaatg_bulk_ai_skipped']))
 			{
 				return;
 			}
@@ -162,7 +186,9 @@ class AdminController extends \SPAATG\Controller
 			}
 
 			$queued = isset($_GET['spaatg_bulk_ai_queued']) ? absint(wp_unslash($_GET['spaatg_bulk_ai_queued'])) : 0;
+			$reverted = isset($_GET['spaatg_bulk_ai_reverted']) ? absint(wp_unslash($_GET['spaatg_bulk_ai_reverted'])) : 0;
 			$skipped = isset($_GET['spaatg_bulk_ai_skipped']) ? absint(wp_unslash($_GET['spaatg_bulk_ai_skipped'])) : 0;
+			$action = isset($_GET['spaatg_bulk_ai_action']) ? sanitize_key(wp_unslash($_GET['spaatg_bulk_ai_action'])) : '';
 
 			if ($queued > 0)
 			{
@@ -173,12 +199,31 @@ class AdminController extends \SPAATG\Controller
 				printf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html($message));
 			}
 
-			if ($skipped > 0)
+			if ($reverted > 0)
 			{
 				$message = sprintf(
-					_n('%s image was skipped because it already has SEO data, is already queued, or cannot be processed.', '%s images were skipped because they already have SEO data, are already queued, or cannot be processed.', $skipped, 'shortpixel-image-optimiser'),
-					number_format_i18n($skipped)
+					_n('%s image had its AI SEO data reverted.', '%s images had their AI SEO data reverted.', $reverted, 'shortpixel-image-optimiser'),
+					number_format_i18n($reverted)
 				);
+				printf('<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html($message));
+			}
+
+			if ($skipped > 0)
+			{
+				if ('revert' === $action)
+				{
+					$message = sprintf(
+						_n('%s image was skipped because it has no AI SEO data to revert or cannot be edited.', '%s images were skipped because they have no AI SEO data to revert or cannot be edited.', $skipped, 'shortpixel-image-optimiser'),
+						number_format_i18n($skipped)
+					);
+				}
+				else
+				{
+					$message = sprintf(
+						_n('%s image was skipped because it already has SEO data, is already queued, or cannot be processed.', '%s images were skipped because they already have SEO data, are already queued, or cannot be processed.', $skipped, 'shortpixel-image-optimiser'),
+						number_format_i18n($skipped)
+					);
+				}
 				printf('<div class="notice notice-info is-dismissible"><p>%s</p></div>', esc_html($message));
 			}
 		}

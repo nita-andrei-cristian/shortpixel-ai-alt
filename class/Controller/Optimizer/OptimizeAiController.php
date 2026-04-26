@@ -712,6 +712,8 @@ public function getAltData(QueueItem $qItem)
     $generated = $aiModel->getGeneratedData(); 
     $original = $aiModel->getOriginalData();
     $current = $aiModel->getCurrentData();
+    $queueController = new \SPAATG\Controller\QueueController();
+    $isInQueue = $queueController->isItemInQueue($qItem->imageModel);
 
     $image_url = $qItem->imageModel->getUrl();
 
@@ -733,6 +735,7 @@ public function getAltData(QueueItem $qItem)
       //      'isSupported' => $this->isSupported($qItem),
             'dataItems' => $dataItems,  // This seems not used(?)
             'isDifferent' =>  $aiModel->currentIsDifferent(),
+            'is_in_queue' => $isInQueue,
         ]);
 
 
@@ -755,6 +758,7 @@ public function getAltData(QueueItem $qItem)
     $metadata['action'] = $qItem->data()->action;
     $metadata['item_id'] = $item_id;
     $metadata['labels']  = $dataItems; // Used in bulk JS 
+    $metadata['is_in_queue'] = $isInQueue;
 
     return $metadata; 
 }

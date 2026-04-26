@@ -66,7 +66,8 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 			if (null !== element)
 			{
 				var fileStatus = this.processor.fStatus[resultItem.fileStatus];
-				if (fileStatus == 'FILE_DONE' || true == resultItem.is_done)
+				var isAttachmentEditScreen = (typeof this.settings !== 'undefined' && this.settings.wp_screen_id == 'attachment');
+				if ((fileStatus == 'FILE_DONE' || true == resultItem.is_done) && false === isAttachmentEditScreen)
 				{
 					this.processor.LoadItemView({ id: item_id, type: type });
 
@@ -85,30 +86,59 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		{	
 			// Not all interface get passed resultItem. Adapt.
 			 resultItem = {
-				'id': resultItem, 
+				'id': resultItem,
+				'item_id': resultItem,
 			 }
 			 console.error('updatemessge ref wrong');
 		}
 
 		var element = this.GetElement(resultItem, 'message');
+		var elements = this.GetMessageElements(resultItem, element);
 
 		if (typeof isError === 'undefined')
 			isError = false;
 
 		this.currentMessage = message;
 
-		if (element !== null) {
-			if (element.classList.contains('error'))
-				element.classList.remove('error');
+		if (elements.length > 0) {
+			elements.forEach(function (messageElement) {
+				if (messageElement.classList.contains('error'))
+					messageElement.classList.remove('error');
 
-			element.innerHTML = message;
+				messageElement.innerHTML = message;
+				var visibleMessage = String(message).replace(/&nbsp;/g, '').trim();
 
-			if (isError)
-				element.classList.add('error');
+				if (visibleMessage.length > 0)
+					messageElement.classList.add('has-message');
+				else
+					messageElement.classList.remove('has-message');
+
+				if (isError)
+					messageElement.classList.add('error');
+			});
 		}
 		else {
 			this.processor.Debug('Update Message Column not found - ' + resultItem.id);
 		}
+	}
+
+	GetMessageElements(resultItem, fallbackElement)
+	{
+		var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize';
+		var id = (typeof resultItem.item_id !== 'undefined') ? resultItem.item_id : resultItem.id;
+		var elements = [];
+
+		if (apiName == 'ai' && typeof id !== 'undefined')
+		{
+			elements = Array.prototype.slice.call(document.querySelectorAll('[data-spaatg-ai-messagebox="' + id + '"]'));
+		}
+
+		if (elements.length === 0 && fallbackElement !== null)
+		{
+			elements.push(fallbackElement);
+		}
+
+		return elements;
 	}
 
 	/**
@@ -118,7 +148,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 	 */
 	GetElement(resultItem, dataType)
 	{
-		 var id = resultItem.item_id; 
+		 var id = (typeof resultItem.item_id !== 'undefined') ? resultItem.item_id : resultItem.id; 
 		 var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize'; 
 		 var createIfMissing = false; 
 
@@ -130,6 +160,12 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 
 			if (null == element) // List-view
 			{
+				var aiMessageBoxes = document.querySelectorAll('[data-spaatg-ai-messagebox="' + id + '"]');
+				if (aiMessageBoxes.length > 0)
+				{
+					return aiMessageBoxes[0];
+				}
+
 				var elementName = 'shortpixel-message-' + id;  // see if this works better
 				createIfMissing = true; 
 			}
@@ -173,6 +209,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 
 	// Show a message that an action has started.
 	SetMessageProcessing(id, apiName) {
+		this.DisableItemActions(id);
 
 		if (typeof apiName === 'undefined')
 			{
@@ -200,6 +237,20 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 			apiName: apiName,
 		};
 		this.UpdateMessage(item, message);
+	}
+
+	DisableItemActions(id)
+	{
+		var actions = document.querySelectorAll('[data-spaatg-action-id="' + id + '"], [data-spaatg-ai-action-id="' + id + '"]');
+
+		for (var i = 0; i < actions.length; i++)
+		{
+			actions[i].classList.add('disabled');
+			actions[i].setAttribute('aria-disabled', 'true');
+			actions[i].setAttribute('tabindex', '-1');
+			actions[i].setAttribute('href', 'javascript:void(0)');
+			actions[i].dataset.spaatgDisabled = 'queue';
+		}
 	}
 
 	UpdateStats(stats, type) {
@@ -363,6 +414,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 			data.callback = 'spaatg.' + this.type + '.resumeprocessing'; */
 
 		//this.SetMessageProcessing(id, 'ai');
+		this.DisableItemActions(id);
 		this.processor.AjaxRequest(data);
 	}
 

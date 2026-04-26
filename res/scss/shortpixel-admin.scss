@@ -19,6 +19,13 @@
     display: none !important;
 }
 
+.sp-column-info a.disabled,
+.shortpixel-ai-interface .button.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 // Reserve some space for the processing text on bottom.
 .button-primary.optimize
 {
@@ -171,7 +178,7 @@
   line-height: 1; 
   margin: 8px 0; 
 
-  .shortpixel-ai-generate-button.button.button-secondary {
+  .shortpixel-ai-action-button.button.button-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -233,6 +240,21 @@
   .shortpixel-alt-messagebox
   {
      margin: 4px 0;
+
+     &.has-message {
+       padding: 8px 10px;
+       border-left: 4px solid #72aee6;
+       border-radius: 2px;
+       background: #f0f6fc;
+       color: #1d2327;
+       line-height: 1.4;
+     }
+
+     &.error {
+       border-left-color: #d63638;
+       background: #fcf0f1;
+       color: #8a2424;
+     }
   }
 
   &.attachment-details-two-column-alt-text, &.attachment-details-alt-text
@@ -266,7 +288,7 @@
 
 }
 
-.shortpixel-ai-generate-button.button.button-secondary {
+.shortpixel-ai-action-button.button.button-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -284,8 +306,8 @@
   box-shadow: none;
 }
 
-.shortpixel-ai-generate-button.button.button-secondary:hover,
-.shortpixel-ai-generate-button.button.button-secondary:focus {
+.shortpixel-ai-action-button.button.button-secondary:hover,
+.shortpixel-ai-action-button.button.button-secondary:focus {
   background: $blue_extralight;
   color: $blue_dark;
   border: 0;

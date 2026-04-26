@@ -42,12 +42,44 @@ class UiHelper
 
     foreach($actions as $actionName => $actionData)
     {
-        $link = ($actionData['type'] == 'js') ? 'javascript:' . $actionData['function'] : $actionData['function'];
-        $output .= "<a href='" . $link . "' class='" . esc_attr($actionName) . "' >" . esc_html($actionData['text']) . "</a>";
+        $disabled = ! empty($actionData['disabled']);
+        $link = ($disabled) ? 'javascript:void(0)' : (($actionData['type'] == 'js') ? 'javascript:' . $actionData['function'] : $actionData['function']);
+        $classes = $actionName . ($disabled ? ' disabled' : '');
+        $disabledAttrs = $disabled ? " aria-disabled='true' tabindex='-1'" : '';
+        $title = isset($actionData['title']) ? " title='" . esc_attr($actionData['title']) . "'" : '';
+        $actionAttrs = " data-spaatg-action-id='" . esc_attr($id) . "' data-spaatg-action-name='" . esc_attr($actionName) . "'";
+
+        if (! empty($actionData['ai-action']))
+        {
+            $actionAttrs .= " data-spaatg-ai-action-id='" . esc_attr($id) . "'";
+        }
+
+        $output .= "<a href='" . esc_attr($link) . "' class='" . esc_attr($classes) . "'$title$disabledAttrs$actionAttrs>" . esc_html($actionData['text']) . "</a>";
     }
 
     $output .= "</div> <!--sp-dropdown-content--> </div> <!--sp-dropdown--> </div> <!--sp-column-actions--> ";
     return $output;
+  }
+
+  private static function disableAction($action, $message = null)
+  {
+      $action['disabled'] = true;
+      $action['function'] = 'void(0)';
+      $action['title'] = is_null($message)
+        ? __('This image is already waiting in queue.', 'shortpixel-image-optimiser')
+        : $message;
+
+      return $action;
+  }
+
+  private static function disableActions($actions, $message = null)
+  {
+      foreach($actions as $actionName => $action)
+      {
+          $actions[$actionName] = self::disableAction($action, $message);
+      }
+
+      return $actions;
   }
 
   public static function renderSuccessText($imageObj)
@@ -332,6 +364,9 @@ class UiHelper
 				return [];
       }
 
+      $queueController = new QueueController();
+      $isItemInQueue = $queueController->isItemInQueue($mediaItem);
+
       if ($mediaItem->isSomethingOptimized() )
       {
 						list($u, $optimizable) = $mediaItem->getCountOptimizeData('thumbnails');
@@ -448,6 +483,11 @@ class UiHelper
          $list_actions = array_diff_key($list_actions, $remove);
 
       }
+      if (true === $isItemInQueue)
+      {
+          $list_actions = self::disableActions($list_actions);
+      }
+
       return $list_actions;
   }
 
@@ -482,12 +522,14 @@ class UiHelper
       true === $optimizeAiController->isAiEnabled()
     );
 
+    $isItemInQueue = $queueController->isItemInQueue($mediaItem);
+
     if(! $quotaControl->hasQuota())
     {
        $actions['extendquota'] = self::getAction('extendquota', $id);
        $actions['checkquota'] = self::getAction('checkquota', $id);
     }
-    elseif ($isAiOnlyMediaAction && ! $queueController->isItemInQueue($mediaItem))
+    elseif ($isAiOnlyMediaAction)
     {
       $aiDataModel = AiDataModel::getModelByAttachment($id);
 
@@ -496,16 +538,20 @@ class UiHelper
         $actions['optimize'] = self::getAction('optimize', $id);
       }
     }
-    elseif($mediaItem->isProcessable() && false === $mediaItem->isSomethingOptimized() && ! $mediaItem->isOptimizePrevented() && ! $queueController->isItemInQueue($mediaItem))
+    elseif($mediaItem->isProcessable() && false === $mediaItem->isSomethingOptimized() && ! $mediaItem->isOptimizePrevented())
     {
        $actions['optimize'] = self::getAction('optimize', $id);
        $actions['markCompleted']  = self::getAction('markCompleted', $id);
     }
-    elseif ($mediaItem->isUserExcluded() && false === $mediaItem->isSomethingOptimized() && ! $queueController->isItemInQueue($mediaItem))
+    elseif ($mediaItem->isUserExcluded() && false === $mediaItem->isSomethingOptimized())
     {
       $actions['optimize'] = self::getAction('forceOptimize', $id);
     }
 
+    if (true === $isItemInQueue)
+    {
+        $actions = self::disableActions($actions);
+    }
 
     return $actions;
   }
@@ -668,6 +714,7 @@ class UiHelper
      $keyControl = ApiKeyController::getInstance();
 
 		 $compressionType = isset($args['compressionType']) ? $args['compressionType'] : null;
+     $disabled = ! empty($args['disabled']);
 
     switch($name)
     {
@@ -675,7 +722,8 @@ class UiHelper
          if (true === OptimizerBase::isImageOptimizationDisabled())
          {
            $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
-           $action['text'] = __('Generate Alt Text', 'shortpixel-image-optimiser');
+           $action['text'] = __('Generate AI SEO', 'shortpixel-image-optimiser');
+           $action['ai-action'] = true;
          }
          else
          {
@@ -795,7 +843,7 @@ class UiHelper
      case 'spaatg-generateai': 
       $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
       $action['type'] = 'js';
-      $action['text'] = __('Generate Alt Text','shortpixel-image-optimiser');
+      $action['text'] = __('Generate AI SEO','shortpixel-image-optimiser');
       $action['display'] = 'button';
       $action['ai-action'] = true;
       break; 
@@ -811,6 +859,11 @@ class UiHelper
         $action['display'] = 'button';
         $action['text'] = __('Check&nbsp;&nbsp;Quota','shortpixel-image-optimiser');
      break;
+   }
+
+   if (true === $disabled)
+   {
+      $action = self::disableAction($action, isset($args['disabled_message']) ? $args['disabled_message'] : null);
    }
 
    return $action;

@@ -34,6 +34,7 @@ class EditMediaViewController extends \SPAATG\ViewController
 
       protected function loadHooks()
       {
+            add_action( 'add_meta_boxes_attachment', array( $this, 'addMetaBox') );
           //  add_action( 'attachment_fields_to_edit', [ $this, 'addAIAlter'], 10, 2);
             $this->hooked = true;
       }
@@ -51,8 +52,8 @@ class EditMediaViewController extends \SPAATG\ViewController
       public function addMetaBox()
       {
           add_meta_box(
-              'shortpixel_info_box',          // this is HTML id of the box on edit screen
-              __('Alt Text', 'shortpixel-image-optimiser'),    // title of the box
+              'spaatg_ai_seo_box',          // this is HTML id of the box on edit screen
+              __('ShortPixel AI SEO', 'shortpixel-image-optimiser'),    // title of the box
               array( $this, 'doMetaBox'),   // function to be called to display the info
               null,//,        // on which edit screen the box should appear
               'side'//'normal',      // part of page where the box should appear
@@ -114,11 +115,13 @@ class EditMediaViewController extends \SPAATG\ViewController
           $this->view->stats = $this->getStatistics();
           $this->view->altText = $this->getAltText();
           $this->view->hasAltText = (strlen(trim($this->view->altText)) > 0);
+          $this->view->aiSnippet = $this->getAiSnippet();
 
           if (! $this->userIsAllowed)
           {
             $this->view->actions = array();
             $this->view->list_actions = '';
+            $this->view->aiSnippet = '';
           }
 
           if(true === \wpSPAATG()->env()->is_debug )
@@ -127,6 +130,38 @@ class EditMediaViewController extends \SPAATG\ViewController
           }
 
           $this->loadView();
+      }
+
+      protected function getAiSnippet()
+      {
+          $optimizeAiController = OptimizeAiController::getInstance();
+
+          if (false === $optimizeAiController->isAiEnabled()) {
+              return '';
+          }
+
+          $item = QueueItems::getImageItem($this->imageModel);
+          $item->getAltDataAction();
+
+          $aiData = $optimizeAiController->getAltData($item);
+
+          if (! is_array($aiData) || ! isset($aiData['snippet'])) {
+              return '';
+          }
+
+          return $this->prepareAiSnippetForMetaBox($aiData['snippet']);
+      }
+
+      protected function prepareAiSnippetForMetaBox($snippet)
+      {
+          $messageId = 'shortpixel-ai-messagebox-' . $this->post_id;
+          $metaBoxMessageId = 'shortpixel-ai-messagebox-box-' . $this->post_id;
+
+          return str_replace(
+              'id="' . $messageId . '"',
+              'id="' . $metaBoxMessageId . '" data-spaatg-ai-messagebox="' . $this->post_id . '"',
+              $snippet
+          );
       }
 
       protected function getAltText()

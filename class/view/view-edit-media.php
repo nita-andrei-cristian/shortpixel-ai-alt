@@ -52,6 +52,12 @@ if (! is_null($view->debugInfo) && is_array($view->debugInfo) && count($view->de
     </p>
   </div>
 
+  <?php if (property_exists($view, 'aiSnippet') && strlen($view->aiSnippet) > 0): ?>
+  <div class='spaatg-edit-media-ai-interface shortpixel-ai-interface' data-spaatg-ai-actions="<?php echo esc_attr($view->id); ?>">
+    <?php echo $view->aiSnippet; ?>
+  </div>
+  <?php endif; ?>
+
 </div>
 
   <div id="sp-message-<?php echo( esc_attr($this->view->id) ); ?>" class='spio-message'>

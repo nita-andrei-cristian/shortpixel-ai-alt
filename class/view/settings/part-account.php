@@ -24,6 +24,11 @@ if (! defined('ABSPATH')) {
           <span class="shortpixel-key-valid" <?php echo $view->key->is_verifiedkey ? '' : 'style="display:none;"' ?>>
             <?php esc_html_e('Yay! Your API Key is Valid ', 'shortpixel-image-optimiser'); ?><i class="shortpixel-icon ok"></i>
           </span>
+          <?php if (! empty($view->key->validation_error_message) && ! $view->key->is_verifiedkey) { ?>
+          <span class="shortpixel-key-error">
+            <?php echo wp_kses_post($view->key->validation_error_message); ?>
+          </span>
+          <?php } ?>
         </info>
         <?php if (! $view->key->hide_api_key) { ?>
         <label for="toggle-content" class="toggle-link">

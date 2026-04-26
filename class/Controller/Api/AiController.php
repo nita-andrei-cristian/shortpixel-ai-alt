@@ -29,6 +29,39 @@ class AiController extends RequestManager
      $this->main_url = 'https://capi-gpt.shortpixel.com/';
     }
 
+    protected function getPricingUrl()
+    {
+      $keyControl = ApiKeyController::getInstance();
+      $apiKey = $keyControl->forceGetApiKey();
+      $path = ($apiKey) ? 'login/' . rawurlencode($apiKey) . '/pricing' : 'pricing';
+
+      return esc_url('https://shortpixel.com/' . $path);
+    }
+
+    protected function maybeAddPricingLink($message)
+    {
+      if (! is_string($message) || strpos($message, 'href=') !== false)
+      {
+        return $message;
+      }
+
+      $matchesFeatureError =
+        stripos($message, 'does not include the ai feature') !== false ||
+        stripos($message, 'upgrade to the unlimited ai plan') !== false;
+
+      if (! $matchesFeatureError)
+      {
+        return $message;
+      }
+
+      return sprintf(
+        '%1$s <a href="%2$s" target="_blank">%3$s</a>.',
+        $message,
+        $this->getPricingUrl(),
+        esc_html__('See pricing and upgrade options', 'shortpixel-image-optimiser')
+      );
+    }
+
     public function processMediaItem(QueueItem $qItem)
     {
       $imageObj = $qItem->imageModel; 
@@ -166,7 +199,7 @@ class AiController extends RequestManager
             }
             else
             {
-               return $this->returnFailure(RequestManager::STATUS_ERROR, $error);
+               return $this->returnFailure(RequestManager::STATUS_ERROR, $this->maybeAddPricingLink($error));
             }
 
         }
@@ -187,12 +220,12 @@ class AiController extends RequestManager
               {
                   case '-1':  // Error of some kind 
                     $apiStatus = RequestManager::STATUS_FAIL; 
-                    return $this->returnFailure($apiStatus, $error); 
+                    return $this->returnFailure($apiStatus, $this->maybeAddPricingLink($error));
                   break; 
                   case '0': // queued
                       if (false !== $is_error)
                       {
-                         return $this->returnFailure(RequestManager::STATUS_FAIL, $error);
+                         return $this->returnFailure(RequestManager::STATUS_FAIL, $this->maybeAddPricingLink($error));
                       }
                   case '1':
                  

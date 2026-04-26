@@ -81,9 +81,9 @@ class SPAATGSettings {
 				keyField.addEventListener('click', self.ToggleApiFieldEvent.bind(self));
 			}
 
-			var apiKeyField = this.root.querySelector('input[name="apiKey"]');
-			if (apiKeyField !== null) {
-				apiKeyField.addEventListener('input', self.ApiKeyChangedEvent.bind(self));
+			var apiKeyFields = this.root.querySelectorAll('input[name="apiKey"], input[name="login_apiKey"]');
+			for (var i = 0; i < apiKeyFields.length; i++) {
+				apiKeyFields[i].addEventListener('input', self.ApiKeyChangedEvent.bind(self));
 			}
 
 			var compressionRadios = this.root.querySelectorAll('.shortpixel-compression-options input[type="radio"]');
@@ -370,6 +370,7 @@ class SPAATGSettings {
 	{
 			window.addEventListener('spaatg.ui.settingsTabLoad', this.AiWindowLoadEvent.bind(this));
 			window.addEventListener('shortpixelSettings.UpdateAiExampleEvent', this.UpdateAiExampleEvent.bind(this));
+			window.addEventListener('resize', this.SyncAiPreviewImageSize.bind(this));
 
 			var self = this;
 
@@ -504,6 +505,11 @@ class SPAATGSettings {
 				});
 			}
 
+			var previewImage = document.querySelector('.preview_wrapper img.image_preview');
+			if (previewImage !== null) {
+				previewImage.addEventListener('load', this.SyncAiPreviewImageSize.bind(this));
+			}
+
 	}
 
 	AiWindowLoadEvent(event)
@@ -597,6 +603,19 @@ class SPAATGSettings {
 						
 				}
 			}
+
+			this.SyncAiPreviewImageSize();
+	}
+
+	SyncAiPreviewImageSize() {
+		var previewImage = document.querySelector('.preview_wrapper img.image_preview');
+		var previewInfo = document.querySelector('.preview_wrapper .ai_preview gridbox.width_half > span:last-child');
+
+		if (previewImage === null || previewInfo === null) {
+			return;
+		}
+
+		previewImage.style.maxHeight = '240px';
 	}
 
 	PurgeCacheEvent(event) {
@@ -1023,7 +1042,7 @@ class SPAATGSettings {
 			formData.set('apiKey', apiKeyField.value);
 		}
 
-		if (formData.has('apiKey')) {
+		if (formData.has('apiKey') || formData.has('login_apiKey')) {
 			this.SetApiKeyValidationState(false);
 		}
 
@@ -2079,6 +2098,11 @@ console.log(demon.selectedIndex);
 
 		ApiKeyChangedEvent() {
 			this.SetApiKeyValidationState(false);
+
+			var errorBadge = this.root.querySelector('.shortpixel-key-error');
+			if (errorBadge !== null) {
+				errorBadge.style.display = 'none';
+			}
 		}
 
 		SetApiKeyValidationState(isValid) {

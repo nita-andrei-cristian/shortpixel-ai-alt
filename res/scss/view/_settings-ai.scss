@@ -104,11 +104,29 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                align-self: stretch;
+                height: 100%;
+                min-height: 0;
+                min-width: 0;
+                overflow: hidden;
+            }
+
+            gridbox.width_half > span:last-child {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
 
             .image_preview {
-                width: 200px;
+                display: block;
+                width: auto;
+                max-width: 100%;
                 height: auto;
+                max-height: 240px;
+                min-width: 0;
+                border-radius: 13px;
+                object-fit: contain;
             }
 
             button i {

@@ -128,7 +128,7 @@ class ListMediaViewController extends \SPAATG\ViewController
       0 === strlen(trim(wp_strip_all_tags((string) $this->view->text)))
     ) {
       if (true === $aiDataModel->isSomeThingGenerated()) {
-        $this->view->text = '<p>' . esc_html__('AI-generated SEO data available', 'shortpixel-image-optimiser') . '<!-- eofsngline --></p>';
+        $this->view->text = '<p>' . $this->getAiGeneratedEditLink($id) . '<!-- eofsngline --></p>';
       } elseif (count($actions) > 0) {
         $this->view->text = '<p>' . esc_html__('No AI-generated SEO data yet', 'shortpixel-image-optimiser') . '<!-- eofsngline --></p>';
       } else {
@@ -184,6 +184,24 @@ class ListMediaViewController extends \SPAATG\ViewController
       $this->view->list_actions = '';
     }
 
+  }
+
+  protected function getAiGeneratedEditLink($item_id)
+  {
+    $text = esc_html__('AI-generated SEO data available', 'shortpixel-image-optimiser');
+    $editUrl = get_edit_post_link($item_id, 'raw');
+
+    if (empty($editUrl))
+    {
+      return $text;
+    }
+
+    return sprintf(
+      '<a href="%s" title="%s">%s</a>',
+      esc_url($editUrl),
+      esc_attr__('Edit this image to review the generated captions and SEO fields', 'shortpixel-image-optimiser'),
+      $text
+    );
   }
 
   protected function loadAiItem($item_id)

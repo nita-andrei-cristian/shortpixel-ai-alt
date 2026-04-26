@@ -18,6 +18,7 @@ class ApiKeyModel extends \SPAATG\Model
   protected $apiKey;
   protected $apiKeyTried;  // stop retrying the same key over and over if not valid.
   protected $verifiedKey;
+  protected $validationErrorMessage = '';
 
   // states
   // key is verified is set by checkKey *after* checks and validation
@@ -48,6 +49,8 @@ class ApiKeyModel extends \SPAATG\Model
        'apiKeyTried' => array('s' => 'string',
        ),
        'verifiedKey' => array('s' => 'boolean',
+       ),
+       'validationErrorMessage' => array('s' => 'string',
        ),
   );
 
@@ -89,6 +92,7 @@ class ApiKeyModel extends \SPAATG\Model
 		$this->apiKey = isset($apikeySettings['apiKey']) ? $apikeySettings['apiKey'] : '';
     $this->verifiedKey = isset($apikeySettings['verifiedKey']) ? $apikeySettings['verifiedKey'] : false; 
 		$this->apiKeyTried = $apikeySettings['apiKeyTried'];
+    $this->validationErrorMessage = isset($apikeySettings['validationErrorMessage']) ? $apikeySettings['validationErrorMessage'] : '';
 
 
     if ($this->key_is_constant)
@@ -114,6 +118,7 @@ class ApiKeyModel extends \SPAATG\Model
 					'apiKey' => trim($this->apiKey),
 					'verifiedKey' => $this->verifiedKey,
 					'apiKeyTried' => $this->apiKeyTried,
+          'validationErrorMessage' => $this->validationErrorMessage,
 			];
 
 
@@ -132,6 +137,7 @@ class ApiKeyModel extends \SPAATG\Model
       return; // if already null, no need for additional activity
     }
     $this->apiKeyTried = null;
+    $this->validationErrorMessage = '';
     $this->update();
     Log::addDebug('Reset Tried', $this->apiKeyTried);
   }
@@ -149,6 +155,7 @@ class ApiKeyModel extends \SPAATG\Model
 			$valid = false;
       if (is_null($key) || strlen($key) == 0)
       {
+        $this->validationErrorMessage = '';
         // first-timers, redirect to nokey screen
         $this->checkRedirect(); // this should be a one-time thing.
         if($this->key_is_hidden) // hidden empty keys shouldn't be checked
@@ -195,6 +202,7 @@ class ApiKeyModel extends \SPAATG\Model
         $this->update();
       }
       else {
+        $this->validationErrorMessage = '';
         $this->key_is_verified = true;
       }
 
@@ -221,6 +229,11 @@ class ApiKeyModel extends \SPAATG\Model
       return $this->apiKey;
   }
 
+  public function getValidationErrorMessage()
+  {
+      return $this->validationErrorMessage;
+  }
+
 	public function uninstall()
 	{
 		 $this->clearApiKey();
@@ -233,6 +246,7 @@ class ApiKeyModel extends \SPAATG\Model
     $this->verifiedKey = false;
     $this->apiKeyTried = '';
     $this->key_is_verified = false;
+    $this->validationErrorMessage = '';
 
     AdminNoticesController::resetAPINotices();
     AdminNoticesController::resetQuotaNotices();
@@ -254,12 +268,15 @@ class ApiKeyModel extends \SPAATG\Model
 
     $quotaData = $this->remoteValidate($key);
 
-    $checked_key = ($quotaData['APIKeyValid']) ? true : false;
+    $checked_key = (isset($quotaData['APIKeyValid']) && $quotaData['APIKeyValid']) ? true : false;
+    $message = isset($quotaData['Message']) ? sanitize_text_field($quotaData['Message']) : __('Unknown error during API key verification.', 'shortpixel-image-optimiser');
 
      if (! $checked_key)
      {
-			  Log::addError('Key is not validated', $quotaData['Message']);
-        Notice::addError(sprintf(__('Error during verifying API key: %s','shortpixel-image-optimiser'), $quotaData['Message'] ));
+			  Log::addError('Key is not validated', $message);
+        $this->verifiedKey = false;
+        $this->key_is_verified = false;
+        $this->validationErrorMessage = sprintf(__('Error during verifying API key: %s','shortpixel-image-optimiser'), $message);
      }
      elseif ($checked_key) {
         if (false === $this->is_constant())
@@ -267,10 +284,11 @@ class ApiKeyModel extends \SPAATG\Model
           $this->apiKey = $key;
         }
         $this->verifiedKey = $checked_key;
+        $this->validationErrorMessage = '';
         $this->processNewKey($quotaData);
         $this->update();
      }    
-      return $this->verifiedKey;
+      return $checked_key;
   }
 
   /** Process some things when key has been added. This is from original wp-short-pixel.php */
@@ -284,12 +302,11 @@ class ApiKeyModel extends \SPAATG\Model
         Notice::addWarning($notice);
     } else {
         if ( function_exists("is_multisite") && is_multisite() && !defined("SPAATG_API_KEY"))
+        {
             $notice = __("Great, your API Key is valid! <br>You seem to be running a multisite, please note that API Key can also be configured in wp-config.php like this:",'shortpixel-image-optimiser')
                 . "<BR> <b>define('SPAATG_API_KEY', '". $this->apiKey ."');</b>";
-        else
-            $notice = __('Great, your API Key is valid. Please take a few moments to review the plugin settings before generating image SEO data.','shortpixel-image-optimiser');
-
-        Notice::addSuccess($notice);
+            Notice::addSuccess($notice);
+        }
     }
 
     //test that the "uploads"  have the right rights and also we can create the backup dir for ShortPixel
@@ -318,7 +335,7 @@ class ApiKeyModel extends \SPAATG\Model
                . __(' or ','shortpixel-image-optimiser')
                . "<a href='https://shortpixel.com/contact' target='_blank'>" . __('here','shortpixel-image-optimiser') . "</a>.";
     self::$notified['apilength'] = true;
-    Notice::addError($notice);
+    $this->validationErrorMessage = $notice;
   }
 
   // Does remote Validation of key. In due time should be replaced with something more lean.
