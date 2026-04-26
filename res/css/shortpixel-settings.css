@@ -822,7 +822,8 @@ div.spio-modal-title {
   cursor: pointer;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner {
-  width: 220px;
+  width: 100%;
+  max-width: 220px;
   min-height: 305px;
   height: auto;
   box-sizing: border-box;
@@ -835,9 +836,10 @@ div.spio-modal-title {
 .wrap.is-spaatg-settings-page .upgrade-banner .robo-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 12px;
+  min-width: 0;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .robo-from-banner {
   flex: 0 0 auto;
@@ -855,6 +857,7 @@ div.spio-modal-title {
   font-size: 18px;
   line-height: 1.25;
   margin: 0;
+  min-width: 0;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .banner-line-container {
   display: flex;
@@ -870,6 +873,8 @@ div.spio-modal-title {
 .wrap.is-spaatg-settings-page .upgrade-banner .banner-line-container p {
   margin: 0;
   line-height: 1.35;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .shortpixel-icon.ok {
   flex: 0 0 auto;

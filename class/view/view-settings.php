@@ -89,7 +89,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php if (false == $view->is_unlimited && false === $view->hide_banner): ?>
           <div class='upgrade-banner'>
               <div class="robo-container">
-                  <div class="robo-from-banner"> <?php echo UIHelper::getIcon('res/img/robo-slider.png'); ?></div>
+                  <div class="robo-from-banner">
+                      <img src="<?php echo esc_url(wpSPAATG()->plugin_url('res/img/robo-slider.png')); ?>" alt="" aria-hidden="true">
+                  </div>
                   <h2><?php _e('Upgrade to ShortPixel Unlimited', 'shortpixel-image-optimiser'); ?> </h2>
               </div>
               <div class="banner-line-container">
