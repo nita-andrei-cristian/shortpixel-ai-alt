@@ -823,38 +823,59 @@ div.spio-modal-title {
 }
 .wrap.is-spaatg-settings-page .upgrade-banner {
   width: 220px;
-  height: 305px;
+  min-height: 305px;
+  height: auto;
+  box-sizing: border-box;
+  padding: 16px 12px;
   margin: 16px 9px 7px 2px;
   border-radius: 0.7rem;
   background-color: #F4FBFC;
+  overflow: visible;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .robo-container {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .robo-from-banner {
-  margin: 0 16px;
+  flex: 0 0 auto;
+  margin: 0;
+}
+.wrap.is-spaatg-settings-page .upgrade-banner .robo-from-banner img {
+  display: block;
+  width: 48px;
+  height: auto;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner h2 {
   font-family: Roboto, serif;
   font-weight: 700;
   color: #116C7E;
+  font-size: 18px;
+  line-height: 1.25;
+  margin: 0;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .banner-line-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  height: 30px;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 30px;
   font-family: Roboto, serif;
   font-weight: 400;
   color: #116C7E;
+  margin-bottom: 8px;
+}
+.wrap.is-spaatg-settings-page .upgrade-banner .banner-line-container p {
+  margin: 0;
+  line-height: 1.35;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .shortpixel-icon.ok {
+  flex: 0 0 auto;
   width: 17px;
   height: 18px;
-  margin-right: 8px;
-  margin-left: 10px;
+  margin: 1px 0 0 0;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .button {
   padding: 10px 12px;
@@ -862,9 +883,10 @@ div.spio-modal-title {
   flex-direction: row;
   align-items: center;
   width: max-content;
+  max-width: 100%;
   height: 40px;
   font-size: 14px;
-  margin: 13px auto;
+  margin: 13px auto 0;
   background: #cc0000;
 }
 .wrap.is-spaatg-settings-page .upgrade-banner .button:hover {

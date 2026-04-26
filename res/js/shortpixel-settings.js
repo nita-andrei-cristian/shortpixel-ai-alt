@@ -30,8 +30,6 @@ class SPAATGSettings {
 
 		this.InitAiEvents();
 		this.InitToggle(); // data- toggles 
-		this.InitExclusions(); // Exclusions 
-		this.InitWarnings(); // Settings warnings 
 		this.InitMenu(); // The menu 
 		this.InitModeSwitcher(); // Simple / Advanced mode 
 		this.InitActionEvents(); // Action events.
@@ -330,9 +328,12 @@ class SPAATGSettings {
 
 	InitModeSwitcher() {
 		var switcher = document.getElementById('viewmode-toggles');
-		var checkbox = switcher.querySelector('input[type="checkbox"]');
-
 		if (null == switcher) {
+			return;
+		}
+
+		var checkbox = switcher.querySelector('input[type="checkbox"]');
+		if (null == checkbox) {
 			return;
 		}
 		if (this.root.classList.contains('advanced') || checkbox.checked) {

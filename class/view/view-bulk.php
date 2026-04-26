@@ -1,6 +1,5 @@
 <?php
 namespace SPAATG;
-use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,11 +28,11 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div id="processPaused" class="processor-paused" data-action="ResumeBulk"><span class='dashicons dashicons-controls-pause' data-action="ResumeBulk"></span>
     <?php if (true === \wpSPAATG()->settings()->doBackgroundProcess)
     {
-        $title = esc_html__('Bulk Processing is paused in this browser and continues to run in the background as long as visitors are on the website','shortpixel-image-optimiser');
+        $title = esc_html__('Bulk AI SEO processing is paused in this browser and continues to run in the background as long as visitors are on the website','shortpixel-image-optimiser');
         $alt = __('Click here to continue processing in this browser, which may be faster', 'shortpixel-image-optimiser');
     }
     else {
-        $title = esc_html__('The Bulk Processing is paused, please click to resume','shortpixel-image-optimiser');
+        $title = esc_html__('The Bulk AI SEO processing is paused, please click to resume','shortpixel-image-optimiser');
         $alt = '';
     }
     ?>
@@ -42,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   </div>
 
   <div id="processorOverQuota" class="processor-overquota">
-			<h3><?php esc_html_e('There are no credits left. The Bulk Processing is paused.','shortpixel-image-optimiser'); ?></h3>
+			<h3><?php esc_html_e('There are no credits left. The Bulk AI SEO processing is paused.','shortpixel-image-optimiser'); ?></h3>
 			<p><a href="javascript:window.location.reload()"><?php esc_html_e('Click to reload page after adding credits','shortpixel-image-optimiser'); ?></a></p>
 	</div>
 

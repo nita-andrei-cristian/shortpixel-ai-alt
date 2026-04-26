@@ -32,47 +32,32 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		
 		// This is the reporting element ( all the data, via getItemView? )
 		var element = this.GetElement(resultItem, 'data');
-		var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize'; 
+		var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'ai';
+		if (apiName !== 'ai')
+		{
+			return false;
+		}
 
 		var isError = false;
 		if (resultItem.is_error == true)
 			isError = true;
 
-		if (typeof message !== 'undefined' && apiName !== 'ai') {
-
-			this.UpdateMessage(resultItem, message, isError);
-		}
-		else if ('ai' == apiName && null !== element)
+		if (typeof message !== 'undefined' && null !== element)
 		{
 			this.UpdateMessage(resultItem, message, isError);
 		}
 
-		if (element !== null && apiName !== 'ai')  {
-			element.innerHTML = '';
-			//  var event = new CustomEvent('spaatg.loadItemView', {detail: {'type' : type, 'id': result.id }}); // send for new item view.
+		if (element !== null) {
 			var fileStatus = this.processor.fStatus[resultItem.fileStatus];
-
-			if (fileStatus == 'FILE_DONE' || fileStatus == 'FILE_RESTORED' || resultItem.is_done == true) {
+			var isAttachmentEditScreen = (typeof this.settings !== 'undefined' && this.settings.wp_screen_id == 'attachment');
+			if ((fileStatus == 'FILE_DONE' || true == resultItem.is_done) && false === isAttachmentEditScreen)
+			{
 				this.processor.LoadItemView({ id: item_id, type: type });
 			}
-			else if (fileStatus == 'FILE_PENDING') {
-				element.style.display = 'none';
-			}
 		}
 
-		// Not optimal
-		if ('ai' === apiName && typeof resultItem.aiData !== 'undefined')
+		if (typeof resultItem.aiData !== 'undefined')
 		{
-			if (null !== element)
-			{
-				var fileStatus = this.processor.fStatus[resultItem.fileStatus];
-				var isAttachmentEditScreen = (typeof this.settings !== 'undefined' && this.settings.wp_screen_id == 'attachment');
-				if ((fileStatus == 'FILE_DONE' || true == resultItem.is_done) && false === isAttachmentEditScreen)
-				{
-					this.processor.LoadItemView({ id: item_id, type: type });
-
-				}
-			}
 			 this.FetchAltView(resultItem.aiData, item_id);
 		}
 
@@ -124,7 +109,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 
 	GetMessageElements(resultItem, fallbackElement)
 	{
-		var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize';
+		var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'ai';
 		var id = (typeof resultItem.item_id !== 'undefined') ? resultItem.item_id : resultItem.id;
 		var elements = [];
 
@@ -149,7 +134,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 	GetElement(resultItem, dataType)
 	{
 		 var id = (typeof resultItem.item_id !== 'undefined') ? resultItem.item_id : resultItem.id; 
-		 var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize'; 
+		 var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'ai';
 		 var createIfMissing = false; 
 
 		 if (apiName == 'ai')
@@ -169,21 +154,7 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 				var elementName = 'shortpixel-message-' + id;  // see if this works better
 				createIfMissing = true; 
 			}
-
-		}	
-		 if (apiName == 'optimize')
-		 {
-			 if ('message' == dataType)
-			 {
-				 var elementName = 'shortpixel-message-' + id; 
-				 createIfMissing = true; 
-			 }
-			 else
-			 {
-				var elementName = 'spaatg-data-' + id; 
-				
-			 }
-		 }
+		}
 			
 		 var element = document.getElementById(elementName);
 		 if (element === null)
@@ -212,24 +183,14 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		this.DisableItemActions(id);
 
 		if (typeof apiName === 'undefined')
-			{
-				var apiName = 'optimize'; 
-			}
+		{
+			var apiName = 'ai';
+		}
 
 		if (apiName == 'ai')
 		{
 			var message = this.strings.startActionAI;
-		}	
-		else {
-			var message = this.strings.startAction;
-			var loading = document.createElement('img');
-			loading.width = 20;
-			loading.height = 20;
-			loading.src = this.processor.GetPluginUrl() + '/res/img/bulk/loading-hourglass.svg';
-	
-			message += loading.outerHTML;
-	
-		}	
+		}
 
 		
 		var item = {
@@ -313,19 +274,6 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 			this.UpdateMessage(result, result.message, true);
 		}
 
-		if (typeof result.item_id !== 'undefined' && result.apiName !== 'ai') {
-			this.processor.LoadItemView({ id: result.item_id, type: 'media' });
-		}
-	}
-
-	RestoreItem(id) {
-		var data = {};
-		data.id = id;
-		data.type = this.type;
-		data.screen_action = 'restoreItem';
-		// AjaxRequest should return result, which will go through Handleresponse, then LoaditemView.
-		this.SetMessageProcessing(id);
-		this.processor.AjaxRequest(data);
 	}
 
 	CancelOptimizeItem(id) {
@@ -335,25 +283,6 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 		data.screen_action = 'cancelOptimize';
 		// AjaxRequest should return result, which will go through Handleresponse, then LoaditemView.
 
-		this.processor.AjaxRequest(data);
-	}
-
-	ReOptimize(id, compression, action) {
-		var data = {
-			id: id,
-			compressionType: compression,
-			type: this.type,
-			screen_action: 'reOptimizeItem'
-		};
-
-		if (typeof action !== 'undefined') {
-			data.actionType = action;
-		}
-
-		if (!this.processor.CheckActive())
-			data.callback = 'spaatg.' + this.type + '.resumeprocessing';
-
-		this.SetMessageProcessing(id);
 		this.processor.AjaxRequest(data);
 	}
 
@@ -415,46 +344,6 @@ class SPAATGScreenItemBase extends SPAATGScreenBase {
 
 		//this.SetMessageProcessing(id, 'ai');
 		this.DisableItemActions(id);
-		this.processor.AjaxRequest(data);
-	}
-
-	Optimize(id, force, compressionType) {
-		var data = {
-			id: id,
-			type: this.type,
-			screen_action: 'optimizeItem'
-		}
-
-		if (typeof force !== 'undefined' && true == force) {
-			data.flags = 'force';
-		}
-
-		if (typeof compressionType !== 'undefined')
-		{
-			data.compressionType = compressionType; 
-		}
-
-		if (!this.processor.CheckActive())
-			data.callback = 'spaatg.' + this.type + '.resumeprocessing';
-
-		this.SetMessageProcessing(id);
-		this.processor.AjaxRequest(data);
-	}
-
-	MarkCompleted(id) {
-		var data = {};
-		data.id = id;
-		data.type = this.type;
-		data.screen_action = 'markCompleted';
-
-		this.processor.AjaxRequest(data);
-	}
-	UnMarkCompleted(id) {
-		var data = {};
-		data.id = id;
-		data.type = this.type;
-		data.screen_action = 'unMarkCompleted';
-
 		this.processor.AjaxRequest(data);
 	}
 

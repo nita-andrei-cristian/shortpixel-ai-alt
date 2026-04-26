@@ -11,29 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
   
   <?php $this->loadView('bulk/part-progressbar', false, ['part' => 'finished']); ?>
 
-      <div class='average-optimization shortpixel-hide'>
-          <p><?php esc_html_e('Your images are now this much smaller on average: ','shortpixel-image-optimiser'); ?></p>
-          <svg class="opt-circle-average" viewBox="-10 0 130 100">
-                        <path class="trail" d="
-                            M 50,50
-                            m 0,-46
-                            a 46,46 0 1 1 0,92
-                            a 46,46 0 1 1 0,-92
-                            " stroke-width="10" fill-opacity="0">
-                        </path>
-                        <path class="path" d="
-                            M 50,50
-                            m 0,-46
-                            a 46,46 0 1 1 0,92
-                            a 46,46 0 1 1 0,-92
-                            " stroke-width="10" fill-opacity="0" style="stroke-dasharray: 289.027px, 289.027px; stroke-dashoffset: 180px;">
-                        </path>
-                        <text class="text" x="50" y="50"><?php esc_html_e('N/A', 'shortpixel-image-optimiser'); ?></text>
-            </svg>
-
-      </div>
     <h3 class="heading">
-       <?php esc_html_e('The ShortPixel AI Alt Text Generator bulk process is finished' ,'shortpixel-image-optimiser'); ?>
+       <?php esc_html_e('The ShortPixel AI SEO bulk process is finished' ,'shortpixel-image-optimiser'); ?>
     </h3>
 		<span class='hidden' data-check-media-total data-stats-media="total">0</span>
 
@@ -41,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class='bulk-summary' data-check-visibility="false" data-control='data-check-total-customOperation'>
 		<p class='finished-paragraph'>
-			<?php printf(__('Congratulations, ShortPixel has generated AI Image SEO data for %s %s images and thumbs %s for your website! Yay to better SEO and rankings! %s', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>', '&#x1F389;');
+			<?php printf(__('ShortPixel has generated AI SEO data for %s %s images %s on your website.', 'shortpixel-image-optimiser'), '<b>', '<span data-stats-total="total"></span>','</b>');
 			?>
 		</p>
 	</div>
@@ -96,51 +75,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			}
 			?>
 		</div>
-
-		<!-- ****** CUSTOM ********  --->
-		<span class='hidden' data-check-custom-total data-stats-custom="total">0</span>
-
-    <div class='bulk-summary hidden' data-check-visibility data-control="data-check-custom-total">
-      <div class='heading'>
-        <span><i class='dashicons dashicons-open-folder'>&nbsp;</i> <?php esc_html_e('Custom Media','shortpixel-image-optimiser'); ?>
-          <?php if (false !== $this->view->customOperationCustom) {
-             echo "</br><span class='special-op'>" . $this->view->customOperationCustom . "</span>";
-          } ?>
-        </span>
-        <span>
-              <span class='line-progressbar'>
-                <span class='done-text'><i data-stats-custom="percentage_done"></i> %</span>
-                <span class='done' data-stats-custom="percentage_done" data-presentation="css.width.percentage"></span>
-              </span>
-        </span>
-  			<span><?php esc_html_e('Processing','shortpixel-image-optimiser') ?>: <i data-stats-custom="in_process">-</i></span>
-
-      </div>
-      <div>
-        <span><?php esc_html_e('Processed','shortpixel-image-optimiser'); ?>: <i data-stats-custom="done">-</i></span>
-
-        <span><?php esc_html_e('Images Left', 'shortpixel-image-optimiser') ?>: <i data-stats-custom="in_queue">-</i></span>
-        <span><?php esc_html_e('Errors','shortpixel-image-optimiser') ?>: <i data-check-custom-fatalerrors  data-stats-custom="fatal_errors" class='error'>-</i>
-								<span class="display-error-box" data-check-visibility data-control="data-check-custom-fatalerrors" ><label title="<?php esc_html_e('Show Errors', 'shortpixel-image-optimiser'); ?>">
-									<input type="checkbox" name="show-errors" value="show" data-action='ToggleErrorBox' data-errorbox='custom' data-event='change'><?php esc_html_e('Show Errors','shortpixel-image-optimiser'); ?>
-            <span class='collap-arrow'><?php echo UIHelper::getIcon('res/images/icon/chevron.svg'); ?></span>
-
-				</label>
-							 </span>
-				</span>
-
-      </div>
-
-    </div>
-
-    <div data-error-custom="message" data-presentation="append" class='errorbox custom'>
-			<?php if(property_exists($this->view, 'customErrorLog') && $this->view->customErrorLog !== false)
-			{
-				echo $this->view->customErrorLog;
-			}
-			?>
-		</div>
-
 
     <nav>
       <button class='button finish' type="button" data-action="FinishBulk" id="FinishBulkButton"><?php esc_html_e('Finish Bulk Process','shortpixel-image-optimiser'); ?></button>

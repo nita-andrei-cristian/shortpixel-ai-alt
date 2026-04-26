@@ -1,8 +1,6 @@
 <?php
 namespace SPAATG;
 
-use PHPCSExtra\Universal\Sniffs\CodeAnalysis\NoEchoSprintfSniff;
-use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 use SPAATG\Helper\UiHelper as UiHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,14 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <section class='dashboard panel active' data-panel="dashboard" style='display: block'  >
   <div class="panel-container">
 
-  <!--
-  <div class="bulk-welcome">
-    <h3 class="heading">
-      <?php printf(esc_html__('ShortPixel Bulk Image Optimization', 'shortpixel-image-optimiser')); ?>
-    </h3>
-    <?php echo UIHelper::getIcon('res/images/illustration/bulk_welcome.svg'); ?>
-  </div>
--->
     <div class='bulk-wrapper'>
 
       <?php 
@@ -33,13 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
           <div class='the-circle' style='background-image: url("<?php echo $view->dashboard_icon ?>");'>&nbsp;</div>
       </a>
       <?php //if (false !== $view->dashboard_title): ?>
-       <h3 class='title-offer'><?php echo ( (false !== $view->dashboard_title) ? $view->dashboard_title : "Ready to start generating alt text?"); ?></h3>
+       <h3 class='title-offer'><?php echo ( (false !== $view->dashboard_title) ? $view->dashboard_title : "Ready to start generating AI SEO data?"); ?></h3>
       <?php //endif; ?>
 
 
 
         <button type="button" class="button-primary button start" id="start-optimize" data-action="open-panel" data-panel="selection" <?php echo ($this->view->error) ? "disabled" : ''; ?>  >
-            <?php esc_html_e('Start Alt Text Generation','shortpixel-image-optimiser'); ?>
+            <?php esc_html_e('Start AI SEO Generation','shortpixel-image-optimiser'); ?>
         </button>
 
 			<div class='dashboard-text'>

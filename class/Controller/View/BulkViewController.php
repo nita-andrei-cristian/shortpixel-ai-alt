@@ -5,19 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
-
 use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
 use SPAATG\Controller\ApiKeyController as ApiKeyController;
 use SPAATG\Controller\QuotaController as QuotaController;
 use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\Controller\BulkController as BulkController;
-use SPAATG\Controller\StatsController as StatsController;
-use SPAATG\Controller\OtherMediaController as OtherMediaController;
-use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Helper\UiHelper as UiHelper;
 
-use SPAATG\Model\AccessModel as AccessModel;
 use SPAATG\Model\AiDataModel;
 
 
@@ -28,8 +22,6 @@ class BulkViewController extends \SPAATG\ViewController
   protected $template = 'view-bulk';
 
   protected $quotaData;
-  protected $pendingMeta;
-  protected $selected_folders = array();
 
 	protected static $instance;
 
@@ -63,29 +55,21 @@ class BulkViewController extends \SPAATG\ViewController
     {
         $this->view->error = true;
         $this->view->errorTitle = __('Quota Exceeded','shortpixel-image-optimiser');
-        $this->view->errorContent = __('Can\'t start the Bulk Process due to lack of credits.', 'shortpixel-image-optimiser');
+        $this->view->errorContent = __('Can\'t start the Bulk AI SEO process due to lack of credits.', 'shortpixel-image-optimiser');
         $this->view->errorText = __('Please check or add quota and refresh the page', 'shortpixel-image-optimiser');
         $this->view->showError = 'quota';
 
     }
 
-		$this->view->mediaErrorLog = $this->loadCurrentLog('media');
-		$this->view->customErrorLog = $this->loadCurrentLog('custom');
+			$this->view->mediaErrorLog = $this->loadCurrentLog('media');
 
 		$this->view->buyMoreHref = 'https://shortpixel.com/' . ($keyControl->getKeyForDisplay() ? 'login/' . $keyControl->getKeyForDisplay() . '/spio-unlimited' : 'pricing');
 
 
     $custom_operation_media = $bulkController->getCustomOperation('media');
-    $custom_operation_custom = $bulkController->getCustomOperation('custom');
-
     $custom_operation_media = (false === $custom_operation_media) ? $this->checkBulkViaPanelArg() : $custom_operation_media; 
-    $custom_operation_custom = (false === $custom_operation_custom) ? $this->checkBulkViaPanelArg() : $custom_operation_custom;
 
     $this->view->customOperationMedia = (false !== $custom_operation_media) ? $this->getCustomLabel($custom_operation_media) : false;
-    $this->view->customOperationCustom = (false !== $custom_operation_custom) ? $this->getCustomLabel($custom_operation_custom) : false;
-    // Not in use : 
-    //$this->view->customOperationMediaName = $custom_operation_media; 
-    //$this->view->customerOperationCustomName = $custom_operation_custom;
     
 
     $noticesController = AdminNoticesController::getInstance(); 
@@ -121,17 +105,8 @@ class BulkViewController extends \SPAATG\ViewController
   {
       switch($operation)
       {
-          case 'bulk-restore':
-            $label = __('Bulk Restore', 'shortpixel-image-optimiser');
-          break;
-          case 'migrate':
-            $label = __('Bulk Migrate Optimization Data', 'shortpixel-image-optimiser');
-          break;
-          case 'removeLegacy':
-            $label = __('Bulk Remove Legacy Data', 'shortpixel-image-optimiser');
-          break;
           case 'bulk-undoAI':
-            $label = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');           
+            $label = __('Bulk Revert AI SEO Data', 'shortpixel-image-optimiser');
           break; 
       }
 
@@ -155,17 +130,8 @@ class BulkViewController extends \SPAATG\ViewController
 
       switch($panel)
       {
-         case 'bulk-migrate': 
-            $action = 'migrate'; 
-         break;
-         case 'bulk-restore':
-            $action = 'bulk-restore'; 
-         break; 
          case 'bulk-restoreAI':
             $action = 'bulk-undoAI';
-         break; 
-         case 'bulk-removeLegacy': 
-            $action = 'removeLegacy'; 
          break; 
       }
 
@@ -176,8 +142,8 @@ class BulkViewController extends \SPAATG\ViewController
 	// Double with ApiNotice . @todo Fix.
 	protected function getActivationNotice()
 	{
-		$message = "<p>" . __('In order to start generating AI image SEO data, you need to validate your API Key on the '
-						. '<a href="options-general.php?page=wp-spaatg-settings">ShortPixel AI Alt Text Generator</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
+				$message = "<p>" . __('In order to start generating AI image SEO data, you need to validate your API Key on the '
+							. '<a href="options-general.php?page=wp-spaatg-settings">ShortPixel AI SEO</a> page in your WordPress Admin.','shortpixel-image-optimiser') . "
 		</p>
 		<p>" .  __('If you don’t have an API Key, just fill out the form and a key will be created.','shortpixel-image-optimiser') . "</p>";
 		return $message;
@@ -185,57 +151,21 @@ class BulkViewController extends \SPAATG\ViewController
 
 	  protected function getApproxData()
 	  {
-			$otherMediaController = OtherMediaController::getInstance();
-
-    $approx = new \stdClass; // guesses on basis of the statsController SQL.
+    $approx = new \stdClass;
     $approx->media = new \stdClass;
     $approx->custom = new \stdClass;
     $approx->total = new \stdClass;
 
-	    $sc = StatsController::getInstance();
-	    $sc->reset(); // Get a fresh stat.
-
-		if (true === OptimizerBase::isImageOptimizationDisabled())
-		{
 			$pendingAiItems = AiDataModel::countCandidateMediaItems();
 
+	    $approx->custom->images = 0;
+			$approx->custom->has_custom = false;
 			$approx->media->items = $pendingAiItems;
 			$approx->media->thumbs = 0;
 			$approx->media->total = $pendingAiItems;
 			$approx->media->isLimited = false;
 
-			$approx->custom->images = 0;
-			$approx->custom->has_custom = false;
-
-			$approx->total->images = $pendingAiItems;
-
-			return $approx;
-		}
-
-	    $excludeSizes = \wpSPAATG()->settings()->excludeSizes;
-
-
-    $approx->media->items = $sc->find('media', 'itemsTotal') - $sc->find('media', 'items');
-
-    // ThumbsTotal - Approx thumbs in installation - Approx optimized thumbs (same query)
-    $approx->media->thumbs = $sc->find('media', 'thumbsTotal') - $sc->find('media', 'thumbs');
-
-    // If sizes are excluded, remove this count from the approx.
-    if (is_array($excludeSizes) && count($excludeSizes) > 0)
-    {
-      $approx->media->thumbs = $approx->media->thumbs - ($approx->media->items * count($excludeSizes));
-    }
-
-    // Total optimized items + Total optimized (approx) thumbnails
-    $approx->media->total = $approx->media->items + $approx->media->thumbs;
-
-
-    $approx->custom->images = $sc->find('custom', 'itemsTotal') - $sc->find('custom', 'items');
-		$approx->custom->has_custom = $otherMediaController->hasCustomImages();
-
-    $approx->total->images = $approx->media->total + $approx->custom->images; // $sc->totalImagesToOptimize();
-
-		$approx->media->isLimited = $sc->find('media', 'isLimited');
+	    $approx->total->images = $pendingAiItems;
 
 		// Prevent any guesses to go below zero.
 		foreach($approx->media as $item => $value)
@@ -320,40 +250,17 @@ class BulkViewController extends \SPAATG\ViewController
             $errors = '<a data-action="OpenLog" data-file="' . $logFile->getFileBase() . '" href="' . $fs->pathToUrl($logFile) . '">' . $errors . '</a>';
 					}
 
-					$op = (isset($logData['operation'])) ? $logData['operation'] : false;
+						$op = (isset($logData['operation'])) ? $logData['operation'] : false;
 
-					// BulkName is just to compile a user-friendly name for the operation log.
-					$bulkName = '';
-
-					switch($logData['type'])
-					{
-						 case 'custom':
-						 	$bulkName = __('Custom Media Bulk', 'shortpixel-image-optimiser');
-						 break;
-						 case 'media':
-						 	$bulkName = __('Media Library Bulk', 'shortpixel-image-optimiser');
-						 break;
-
-					}
-
-					$bulkName  .= ' '; // add a space.
+						$bulkName = __('Media Library Bulk', 'shortpixel-image-optimiser') . ' ';
 
 					switch($op)
 					{
-							 case 'bulk-restore':
-							 	$bulkName .= __('Restore', 'shortpixel-image-optimiser');
-							 break;
-							 case 'migrate':
-							 	$bulkName .= __('Migrate old Metadata', 'shortpixel-image-optimiser');
-							 break;
-							 case 'removeLegacy':
-								$bulkName = __('Remove Legacy Data', 'shortpixel-image-optimiser');
-							 break;
 							 case 'bulk-undoAI':
-								$bulkName  = __('Bulk Remove AI Data', 'shortpixel-image-optimiser');
+								$bulkName  = __('Bulk Revert AI SEO Data', 'shortpixel-image-optimiser');
 							 break;
-							 default:
-							 	$bulkName .= __('Optimization', 'shortpixel-image-optimiser');
+								 default:
+									$bulkName .= __('AI SEO Generation', 'shortpixel-image-optimiser');
 							 break;
 					}
 

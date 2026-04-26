@@ -5,20 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
 
-use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
-
 use SPAATG\Helper\UiHelper as UiHelper;
-use SPAATG\Helper\UtilHelper as UtilHelper;
 
-
-use SPAATG\Controller\ApiKeyController as ApiKeyController;
 use SPAATG\Controller\Optimizer\OptimizeAiController;
-use SPAATG\Controller\Optimizer\OptimizerBase;
-use SPAATG\Controller\QuotaController as QuotaController;
-use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\Model\AiDataModel;
-use SPAATG\Model\Image\ImageModel as ImageModel;
-use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
 
 
 // Controller for the MediaLibraryView
@@ -44,11 +34,6 @@ class ListMediaViewController extends \SPAATG\ViewController
   {
     add_filter( 'manage_media_columns', array( $this, 'headerColumns' ) );//add media library column header
     add_action( 'manage_media_custom_column', array( $this, 'doColumn' ), 10, 2 );//generate the media library column
-    //Sort and filter on ShortPixel Compression column
-    //add_filter( 'manage_upload_sortable_columns', array( $this, 'registerSortable') );
-
-    add_action('loop_end', array($this, 'loadComparer'));
-
   }
 
   public function headerColumns($defaults)
@@ -122,7 +107,6 @@ class ListMediaViewController extends \SPAATG\ViewController
 		$allActions = array_merge($list_actions, $actions);
 
     if (
-      true === OptimizerBase::isImageOptimizationDisabled() &&
       true === $optimizeAiController->isAiEnabled() &&
       false === is_null($aiDataModel) &&
       0 === strlen(trim(wp_strip_all_tags((string) $this->view->text)))
@@ -142,37 +126,12 @@ class ListMediaViewController extends \SPAATG\ViewController
     }
 
   	$checkBoxActions = array();
-    foreach($allActions as $action => $data)
-    {
-        if (isset($data['is-optimizable']))
-        {
-           $checkBoxActions[] = 'is-optimizable';
-        }
-    }
-
-
-		if (array_key_exists('restore', $allActions))
-		{
-				$checkBoxActions[] = 'is-restorable';
-		}
-
     if (array_key_exists('spaatg-generateai', $allActions))
     {
        $checkBoxActions[] = 'ai-action'; 
     }
 
 		$infoData  = array(); // stuff to write as data-tag.
-
-		if ($mediaItem->isOptimized())
-		{
-				$compressionType = $mediaItem->getMeta('compressionType');
-		}
-		else {
-				$compressionType = \wpSPAATG()->settings()->compressionType;
-		}
-
-
-		$infoData['compression'] = $compressionType;
 
 		$this->view->infoClass = implode(' ', $checkBoxActions);
 		$this->view->infoData = $infoData;
@@ -230,37 +189,6 @@ class ListMediaViewController extends \SPAATG\ViewController
 
      return $AiDataModel;
 
-
-  }
-
-  public function loadComparer()
-  {
-    $this->loadView('snippets/part-comparer');
-  }
-
-  /*
-  * @hook restrict_manage_posts
-  */
-  public function mediaAddFilterDropdown() {
-      $scr = get_current_screen();
-      if ( $scr->base !== 'upload' ) return;
-
-      $status   = filter_input(INPUT_GET, 'spaatg_status', FILTER_UNSAFE_RAW );
-
-      $options = array(
-          'all' => __('Any ShortPixel State', 'shortpixel-image-optimiser'),
-          'optimized' => __('Optimized', 'shortpixel-image-optimiser'),
-          'unoptimized' => __('Unoptimized', 'shortpixel-image-optimiser'),
-					'prevented' => __('Optimization Error', 'shortpixer-image-optimiser'),
-      );
-
-      echo  "<select name='spaatg_status' id='spaatg_status'>\n";
-      foreach($options as $optname => $optval)
-      {
-          $selected = ($status == $optname) ? esc_attr('selected') : '';
-          echo "<option value='". esc_attr($optname) . "' $selected >" . esc_html($optval) . "</option>\n";
-      }
-      echo "</select>";
 
   }
 

@@ -7,7 +7,7 @@
     </button>
     <button type="button" id="save-bulk" class='save-bulk' name='save-bulk' value='check' setting-action="SubmitSettingsFormEvent">
         <i class='shortpixel-icon bulk'></i>
-        <?php esc_attr_e('Save and Go to Bulk Process','shortpixel-image-optimiser');?>
+        <?php esc_attr_e('Save and Go to Bulk AI SEO','shortpixel-image-optimiser');?>
     </button>
 
 

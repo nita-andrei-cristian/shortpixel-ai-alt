@@ -102,15 +102,15 @@ if ( ! defined( 'ABSPATH' ) ) {
               </div>
               <div class="banner-line-container">
                   <span class="shortpixel-icon ok"></span>
-                  <p><?php _e('Unlimited WebP/AVIF ', 'shortpixel-image-optimiser'); ?></p>
+                  <p><?php _e('Unlimited AI image SEO generation ', 'shortpixel-image-optimiser'); ?></p>
               </div>
               <div class="banner-line-container">
                   <span class="shortpixel-icon ok"></span>
-                  <p><?php _e('500GB CDN/month ', 'shortpixel-image-optimiser'); ?></p>
+                  <p><?php _e('Bulk SEO generation for your Media Library ', 'shortpixel-image-optimiser'); ?></p>
               </div>
               <div class="banner-line-container">
                   <span class="shortpixel-icon ok"></span>
-                  <p><?php _e('SmartCompress & more ', 'shortpixel-image-optimiser'); ?></p>
+                  <p><?php _e('Alt text, captions, descriptions and titles ', 'shortpixel-image-optimiser'); ?></p>
               </div>
               <div class='banner-upgrade-button'>
                   <button type="button" class="button button-primary" id="upgrade" onclick="window.open('https://shortpixel.com/ms/af/KZYK08Q28044', '_blank');">
@@ -134,16 +134,9 @@ if ( ! defined( 'ABSPATH' ) ) {
           <?php $this->loadView('settings/part-ai'); ?>
           <?php $this->loadView('settings/part-preview'); ?>
           <?php $this->loadView('settings/part-help'); ?>
-          <?php $this->loadView('settings/part-overview'); ?>
-          <?php $this->loadView('settings/part-optimisation'); ?>
-          <?php $this->loadView('settings/part-processing'); ?>
-          <?php $this->loadView('settings/part-webp'); ?>
-          <?php $this->loadView('settings/part-integrations'); ?>
-          <?php $this->loadView('settings/part-exclusions'); ?>
 
 					<?php $this->loadView('settings/part-nokey'); ?>
       </form>
-          <?php $this->loadView('settings/part-tools'); ?>
           <?php
             if (Log::debugIsActive())
             {
@@ -164,34 +157,4 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </section>
 
-<article id="spaatg-settings-tabs" class="sp-tabs">
-    <?php if (! $view->key->is_verifiedkey)
-    {
-    } ?>
-
-  <?php
-    if ($view->key->is_verifiedkey):
-      ?>
-      <div class='section-wrapper'>
-				<form name='wp_shortpixel_options' action='<?php echo esc_url(add_query_arg('noheader', 'true')) ?>'  method='post' id='wp_shortpixel_options' class='wp-spaatg-options wp-shortpixel-options'>
-	        <input type='hidden' name='display_part' value="<?php echo esc_attr($this->display_part) ?>" />
-	        <?php wp_nonce_field($this->form_action, 'sp-nonce'); ?>
-
-        <?php
-        if (! $this->view->cloudflare_constant) // @todo
-        {
-
-        }
-
-
-        ?>
-			</form>
-
-			</div> <!-- wrappur -->
-      <?php
-    endif;
-    ?>
-
-</article>
-<?php $this->loadView('settings/part-wso'); ?>
 <?php $this->loadView('snippets/part-inline-modal'); ?>

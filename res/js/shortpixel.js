@@ -350,7 +350,7 @@ var SPAATG = function() {
         }
     }
 
-    // used in bulk restore all interface
+    // Used by confirmation fields in bulk/safety screens.
     function checkRandomAnswer(e)
     {
         var value = jQuery(e.target).val();
@@ -384,108 +384,6 @@ var SPAATG = function() {
             var shown = e.target.parentElement.classList.contains("sp-show");
             jQuery('.sp-dropdown.sp-show').removeClass('sp-show');
             if(!shown) e.target.parentElement.classList.add("sp-show");
-    }
-
-// @todo Comparer should probably move to screen-base js
-    function loadComparer(id, type) {
-        this.comparerData.origUrl = false;
-         if(this.comparerData.cssLoaded === false) {
-            jQuery('<link>')
-                .appendTo('head')
-                .attr({
-                    type: 'text/css',
-                    rel: 'stylesheet',
-                    href: this.WP_PLUGIN_URL + '/res/css/twentytwenty.min.css'
-                });
-            this.comparerData.cssLoaded = 2;
-        }
-        if(this.comparerData.jsLoaded === false) {
-             jQuery.getScript(this.WP_PLUGIN_URL + '/res/js/jquery.twentytwenty.min.js', function(){
-                SPAATG.comparerData.jsLoaded = 2;
-
-            });
-            this.comparerData.jsLoaded = 1;
-        }
-
-        if(this.comparerData.origUrl === false) {
-               if (typeof type == 'undefined')
-                  var type = 'media';  // default.
-            jQuery.ajax({
-                type: "POST",
-                url: SPAATG.AJAX_URL,
-								data: { action: 'spaatg_ajaxRequest', screen_action : 'getComparerData', id : id, type: type, nonce: SPAATGProcessorData.nonce_ajaxrequest },
-                success: function(response) {
-                  //  data = JSON.parse(response);
-
-                    jQuery.extend(SPAATG.comparerData, response);
-                    if(SPAATG.comparerData.jsLoaded == 2) {
-                        SPAATG.displayComparerPopup(SPAATG.comparerData.width, SPAATG.comparerData.height, SPAATG.comparerData.origUrl, SPAATG.comparerData.optUrl);
-                    }
-                }
-            });
-            this.comparerData.origUrl = '';
-        }
-    }
-
-    function displayComparerPopup(width, height, imgOriginal, imgOptimized) {
-        //image sizes
-        var origWidth = width;
-        //depending on the sizes choose the right modal
-        var sideBySide = (height < 150 || width < 350);
-        var modal = jQuery(sideBySide ? '#spUploadCompareSideBySide' : '#spUploadCompare');
-        var modalShade = jQuery('.sp-modal-shade');
-
-        if(!sideBySide) {
-            jQuery("#spCompareSlider").html('<img alt="' +  spaatgTr.originalImage + '" class="spUploadCompareOriginal"/><img alt="' +  spaatgTr.optimizedImage + '" class="spUploadCompareOptimized"/>');
-        }
-        //calculate the modal size
-        width = Math.max(350, Math.min(800, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
-        height = Math.max(150, (sideBySide ? (origWidth > 350 ? 2 * (height + 45) : height + 45) : height * width / origWidth));
-
-        var marginLeft = '-' + Math.round(width/2); // center
-
-        //set modal sizes and display
-        jQuery(".sp-modal-body", modal).css("width", width);
-        jQuery(".shortpixel-slider", modal).css("width", width);
-        modal.css("width", width);
-        modal.css('marginLeft',  marginLeft + 'px');
-				modal.removeClass('shortpixel-hide');
-        jQuery(".sp-modal-body", modal).css("height", height);
-        modal.show();
-        //modal.parent().css('display', 'block');
-        modalShade.show();
-
-        if(!sideBySide) {
-            jQuery("#spCompareSlider").twentytwenty({slider_move: "mousemove"});
-        }
-
-        // Close Options
-        jQuery(".sp-close-button").on('click',  { modal: modal}, SPAATG.closeComparerPopup);
-        jQuery(document).on('keyup.sp_modal_active', { modal: modal}, SPAATG.closeComparerPopup );
-        jQuery('.sp-modal-shade').on('click', { modal: modal},  SPAATG.closeComparerPopup, );
-
-        //change images srcs
-        var imgOpt = jQuery(".spUploadCompareOptimized", modal);
-        jQuery(".spUploadCompareOriginal", modal).attr("src", imgOriginal);
-        //these timeouts are for the slider - it needs a punch to work :)
-        setTimeout(function(){
-            jQuery(window).trigger('resize');
-        }, 1000);
-        imgOpt.load(function(){
-            jQuery(window).trigger('resize');
-        });
-        imgOpt.attr("src", imgOptimized);
-
-    }
-
-    function closeComparerPopup(e) {
-
-				e.data.modal.addClass('shortpixel-hide');
-        jQuery('.sp-modal-shade').hide();
-        jQuery(document).unbind('keyup.sp_modal_active');
-        jQuery('.sp-modal-shade').off('click');
-        jQuery(".sp-close-button").off('click');
-
     }
 
     function convertPunycode(url) {
@@ -525,21 +423,10 @@ var SPAATG = function() {
       //  recheckQuota        : recheckQuota,
         openImageMenu       : openImageMenu,
         menuCloseEvent      : false,
-        loadComparer        : loadComparer,
-        displayComparerPopup: displayComparerPopup,
-        closeComparerPopup  : closeComparerPopup,
         convertPunycode     : convertPunycode,
       //  checkExifWarning    : checkExifWarning,
       //  checkBackUpWarning  : checkBackUpWarning,
 			//	checkSmartCropWarning: checkSmartCropWarning,
-        comparerData        : {
-            cssLoaded   : false,
-            jsLoaded    : false,
-            origUrl     : false,
-            optUrl      : false,
-            width       : 0,
-            height      : 0
-        },
         toRefresh       : false,
         resizeSizesAlert: false,
         returnedStatusSearching: 0, // How often this status has come back in a row from server.

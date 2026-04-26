@@ -2,13 +2,10 @@
 namespace SPAATG;
 
 use SPAATG\Helper\UiHelper;
-use SPAATG\Controller\Optimizer\OptimizerBase;
 
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
-
-$isAiOnlyBuild = OptimizerBase::isImageOptimizationDisabled();
 
 ?>
 
@@ -16,10 +13,10 @@ $isAiOnlyBuild = OptimizerBase::isImageOptimizationDisabled();
   <div class="panel-container">
 
     <!--<h3 class="heading"><span>
-      <?php esc_html_e('SPAATG Bulk Optimization - Summary','shortpixel-image-optimiser'); ?>
+      <?php esc_html_e('SPAATG Bulk AI SEO - Summary','shortpixel-image-optimiser'); ?>
     </h3>
 
-    <p class='description'><?php esc_html_e('Welcome to the bulk optimization wizard, where you can select the images that SPAATG will optimize in the background for you.','shortpixel-image-optimiser'); ?></p>
+    <p class='description'><?php esc_html_e('Welcome to the bulk AI SEO wizard, where you can select the images that SPAATG will process in the background for you.','shortpixel-image-optimiser'); ?></p>
 -->
 
     <?php 
@@ -34,51 +31,6 @@ $isAiOnlyBuild = OptimizerBase::isImageOptimizationDisabled();
 
   <div class='credits-wrapper summary-list'>
     <div class='credits-sub-wrapper'>
-      <?php if (false === $isAiOnlyBuild): ?>
-        <!--- ### MEDIA BOX #### --> 
-        <div class="section-wrapper" data-check-visibility data-control="data-check-media-total">
-        <h4><span class='dashicons dashicons-images-alt2'>&nbsp;</span>
-  				<?php esc_html_e('Media Library','shortpixel-image-optimiser'); ?> (<span data-stats-media="in_queue">0</span> <?php esc_html_e('items','shortpixel-image-optimiser'); ?>)</h4>
-          <div class="list-table">
-
-  						<div  class='images'><span><?php esc_html_e('Images','shortpixel-image-optimiser'); ?></span>
-  								<span data-stats-media="images-images_basecount">n/a</span>
-  						</div>
-
-              <div class='filetypes' data-check-visibility data-control="data-check-has-webp">
-  							<span>&nbsp; <?php esc_html_e('+ WebP images','shortpixel-image-optimiser'); ?> </span><span data-stats-media="images-images_webp" data-check-has-webp>&nbsp;</span>
-  						</div>
-              <div class='filetypes' data-check-visibility data-control="data-check-has-avif">
-  							<span>&nbsp; <?php esc_html_e('+ AVIF images','shortpixel-image-optimiser'); ?> </span><span data-stats-media="images-images_avif" data-check-has-avif>&nbsp;</span>
-  						</div>
-
-            <div><h4 class="totals"><?php esc_html_e('Total from Media Library','shortpixel-image-optimiser'); ?></h4><span class="totals" data-stats-media="images-total_images_without_ai">0</span></div>
-
-          </div>
-        </div>
-      <?php endif; ?>
-
-      <!--- ### CUSTOM BOX #### --> 
-    <div class="section-wrapper hidden" data-check-visibility data-control="data-check-custom-total">
-    <h4><span class='dashicons dashicons-open-folder'>&nbsp;</span><?php esc_html_e('Custom Media', 'shortpixel-image-optimiser') ?> (<span data-stats-custom="in_queue">0</span> <?php esc_html_e('items','shortpixel-image-optimiser'); ?>)</h4>
-      <div class="list-table">
-
-				<div><span><?php esc_html_e('Images','shortpixel-image-optimiser'); ?></span>
-					<span data-stats-custom="images-images_basecount">n/a</span>
-				</div>
-
-					<div class='filetypes' data-check-visibility data-control="data-check-has-custom-webp" ><span>&nbsp; <?php esc_html_e('+ WebP images','shortpixel-image-optimiser'); ?></span>
-						<span data-stats-custom="images-images_webp" data-check-has-custom-webp>&nbsp;</span>
-					</div>
-
-					<div class='filetypes' data-check-visibility data-control="data-check-has-custom-avif">
-						<span>&nbsp; <?php esc_html_e('+ AVIF images','shortpixel-image-optimiser'); ?></span><span data-stats-custom="images-images_avif" data-check-has-custom-avif>&nbsp;</span>
-					</div>
-
-        <div><h4 class="totals"><?php esc_html_e('Total from Custom Media','shortpixel-image-optimiser'); ?></h4><span class="totals" data-stats-custom="images-images">0</span></div>
-      </div>
-    </div>
-
   <?php
     $quotaData = $this->view->quotaData;
 ?>
@@ -87,19 +39,11 @@ $isAiOnlyBuild = OptimizerBase::isImageOptimizationDisabled();
       <p class='heading totals'><span>
         
         <?php
-          if (true === $isAiOnlyBuild) {
-            $quotaData->unlimited ? esc_html_e('Total AI credits','shortpixel-image-optimiser') : esc_html_e('Total AI credits needed','shortpixel-image-optimiser');
-          } else {
-            $quotaData->unlimited ? esc_html_e('Total','shortpixel-image-optimiser') : esc_html_e('Total credits needed','shortpixel-image-optimiser');
-          }
+          $quotaData->unlimited ? esc_html_e('Total AI credits','shortpixel-image-optimiser') : esc_html_e('Total AI credits needed','shortpixel-image-optimiser');
               ?>: 
         </span>
          <span class='hidden' data-stats-total="images-images" data-check-total-total>0</span>
-        <?php if (true === $isAiOnlyBuild): ?>
-          <span class="number" data-stats-media="images-images_ai" data-check-has-ai >0</span>
-        <?php else: ?>
-          <span class="number" data-stats-total="images-total_images_without_ai" data-check-total-without-ai >0</span>
-        <?php endif; ?>
+        <span class="number" data-stats-media="images-images_ai" data-check-has-ai >0</span>
       </p>
   <?php 
       if(true === $quotaData->unlimited): ?>
@@ -216,7 +160,7 @@ $isAiOnlyBuild = OptimizerBase::isImageOptimizationDisabled();
         else
         {
           ?>
-            <p><?php esc_html_e('Start Bulk Alt Text Generation', 'shortpixel-image-optimiser'); ?></p>
+            <p><?php esc_html_e('Start Bulk AI SEO Generation', 'shortpixel-image-optimiser'); ?></p>
           <?php 
         } ?>
 				

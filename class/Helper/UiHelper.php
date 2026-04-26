@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SPAATG\Model\Image\ImageModel as ImageModel;
 use SPAATG\Controller\ApiKeyController as ApiKeyController;
 use SPAATG\Controller\Optimizer\OptimizeAiController;
-use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\Controller\QuotaController as QuotaController;
 use SPAATG\Controller\QueueController as QueueController;
 use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
@@ -367,111 +366,6 @@ class UiHelper
       $queueController = new QueueController();
       $isItemInQueue = $queueController->isItemInQueue($mediaItem);
 
-      if ($mediaItem->isSomethingOptimized() )
-      {
-						list($u, $optimizable) = $mediaItem->getCountOptimizeData('thumbnails');
-						list($u, $optimizableWebp)   =  $mediaItem->getCountOptimizeData('webp');
-						list($u, $optimizableAvif)   =  $mediaItem->getCountOptimizeData('avif');
-
-           if ($mediaItem->isProcessable() && ! $mediaItem->isOptimizePrevented())
-           {
-             $action = self::getAction('optimizethumbs', $id);
-             if ($optimizable > 0)
-             {
-							 $total = $optimizable + $optimizableWebp + $optimizableAvif;
-               $thumbObj = $mediaItem->getSomethingOptimized(); 
-               if (false !== $thumbObj)
-               {
-                  $compressionType = $thumbObj->getMeta('compressionType'); 
-                  $action = self::getAction('optimizethumbs', $id, ['compressionType' => $compressionType]);
-               }
-
-							 if ($optimizableWebp > 0 || $optimizableAvif > 0)
-							 	   $itemText = __('items', 'shortpixel-image-optimiser');
-								else {
-									 $itemText = __('thumbnails', 'shortpixel-image-optimiser');
-								}
-               $action['text']  = sprintf(__('Optimize %s  %s','shortpixel-image-optimiser'),$total, $itemText);
-
-
-             }
-             else
-             {
-                 if ($optimizableWebp > 0 && $optimizableAvif > 0)
-                   $text  = sprintf(__('Optimize %s webps and %s avif','shortpixel-image-optimiser'),$optimizableWebp, $optimizableAvif);
-                 elseif ($optimizableWebp > 0)
-                   $text  = sprintf(__('Optimize %s webps','shortpixel-image-optimiser'),$optimizableWebp);
-                 else
-                    $text  = sprintf(__('Optimize %s avifs','shortpixel-image-optimiser'),$optimizableAvif);
-                 $action['text'] = $text;
-             }
-             $list_actions['optimizethumbs'] = $action;
-          }
-
-
-          if ($mediaItem->isRestorable())
-          {
-            if ($mediaItem->get('type') == 'custom')
-            {
-                if ($mediaItem->getExtension() !== 'pdf') // no support for this
-                  $list_actions['comparer'] = self::getAction('compare-custom', $id);
-            }
-            else
-            {
-                // PDF without thumbnail can't be compared.
-                $showCompare = true;
-                if ($mediaItem->getExtension() == 'pdf')
-                {
-  				            if (! $mediaItem->getThumbnail('full'))
-  					               $showCompare = false;
-  				            elseif(! $mediaItem->getThumbnail('full')->hasBackup())
-  					             $showCompare = false;
-  			         }
-
-  				       if ($showCompare)
-                   $list_actions['comparer'] = self::getAction('compare', $id);
-            }
-			 			if ($mediaItem->isRestorable())
-						{
-							 $compressionType = $mediaItem->getMeta('compressionType');
-		           switch($compressionType)
-		           {
-		               case ImageModel::COMPRESSION_LOSSLESS:
-		                 $list_actions['reoptimize-lossy'] = self::getAction('reoptimize-lossy', $id);
-		                 $list_actions['reoptimize-glossy'] = self::getAction('reoptimize-glossy', $id);
-
-		               break;
-		               case ImageModel::COMPRESSION_LOSSY:
-		                 $list_actions['reoptimize-lossless'] = self::getAction('reoptimize-lossless', $id);
-		                 $list_actions['reoptimize-glossy'] = self::getAction('reoptimize-glossy', $id);
-
-		               break;
-		               case ImageModel::COMPRESSION_GLOSSY:
-		                 $list_actions['reoptimize-lossy'] = self::getAction('reoptimize-lossy', $id);
-		                 $list_actions['reoptimize-lossless'] = self::getAction('reoptimize-lossless', $id);
-		               break;
-		           }
-
-							 if ($mediaItem->get('type') === 'media')
-							 {
-							 		$list_actions['reoptimize-smartcrop'] = self::getAction('reoptimize-smartcrop', $id, array('compressionType' => $compressionType));
-							 		$list_actions['reoptimize-smartcropless'] = self::getAction('reoptimize-smartcropless', $id, array('compressionType' => $compressionType));
-								}
-		          		$list_actions['restore'] = self::getAction('restore', $id);
-							} // isRestorable
-						else
-						{
-
-						}
-        } // hasBackup
-
-				if (\wpSPAATG()->env()->is_debug && $mediaItem->get('type') == 'media')
-				{
-					 $list_actions['redo_legacy'] = self::getAction('redo_legacy', $id);
-				}
-      } //isOptimized
-
-
 	      if (false === is_null($aiDataModel) && $aiDataModel->isProcessable() && 'media' === $mediaItem->get('type') )
 	      {
 	         $list_actions['spaatg-generateai'] = self::getAction('spaatg-generateai', $id);
@@ -479,9 +373,7 @@ class UiHelper
 
       if(! $quotaControl->hasQuota())
       {
-         $remove = array('reoptimize-lossy' => '', 'reoptimize-glossy' => '', 'reoptimize-lossless' => '', 'optimizethumbs' => '');
-         $list_actions = array_diff_key($list_actions, $remove);
-
+         $list_actions = array();
       }
       if (true === $isItemInQueue)
       {
@@ -516,12 +408,6 @@ class UiHelper
 			return [];
     }
 
-    $isAiOnlyMediaAction = (
-      true === OptimizerBase::isImageOptimizationDisabled() &&
-      'media' === $mediaItem->get('type') &&
-      true === $optimizeAiController->isAiEnabled()
-    );
-
     $isItemInQueue = $queueController->isItemInQueue($mediaItem);
 
     if(! $quotaControl->hasQuota())
@@ -529,23 +415,14 @@ class UiHelper
        $actions['extendquota'] = self::getAction('extendquota', $id);
        $actions['checkquota'] = self::getAction('checkquota', $id);
     }
-    elseif ($isAiOnlyMediaAction)
+    elseif ('media' === $mediaItem->get('type') && true === $optimizeAiController->isAiEnabled())
     {
       $aiDataModel = AiDataModel::getModelByAttachment($id);
 
       if (false !== $aiDataModel && $aiDataModel->isProcessable())
       {
-        $actions['optimize'] = self::getAction('optimize', $id);
+        $actions['spaatg-generateai'] = self::getAction('spaatg-generateai', $id);
       }
-    }
-    elseif($mediaItem->isProcessable() && false === $mediaItem->isSomethingOptimized() && ! $mediaItem->isOptimizePrevented())
-    {
-       $actions['optimize'] = self::getAction('optimize', $id);
-       $actions['markCompleted']  = self::getAction('markCompleted', $id);
-    }
-    elseif ($mediaItem->isUserExcluded() && false === $mediaItem->isSomethingOptimized())
-    {
-      $actions['optimize'] = self::getAction('forceOptimize', $id);
     }
 
     if (true === $isItemInQueue)
@@ -560,7 +437,6 @@ class UiHelper
   {
     $keyControl = ApiKeyController::getInstance();
     $queueController = new QueueController();
-    $settings = \wpSPAATG()->settings();
 
     $text = '';
 
@@ -570,27 +446,9 @@ class UiHelper
     {
       $text = __('Invalid API Key. <a href="options-general.php?page=wp-spaatg-settings">Check your Settings</a>','shortpixel-image-optimiser');
     }
-		// This basically happens when a NextGen gallery is not added to Custom Media.
 		elseif ($mediaItem->get('id') === 0)
 		{
-			 if ($mediaItem->isProcessable(true) === false)
-			 {
-				 $text = __('Not Processable: ','shortpixel_image_optimiser');
-				 $text  .= $mediaItem->getProcessableReason();
-			 }
-			 else {
-         if (\wpSPAATG()->env()->has_nextgen && false == $settings->includeNextGen)
-         {
-           $text = __('This image was not found in our database. Enable "Optimize nextgen galleries" in the settings, or add this folder manually. ', 'shortpixel-image-optimiser');
-         }
-         else {
-           $text = __('This image was not found in our database. Refresh folders, or add this gallery', 'shortpixel-image-optimiser');
-         }
-			 }
-		}
-    elseif ($mediaItem->isSomethingOptimized())
-    {
-       $text = UiHelper::renderSuccessText($mediaItem);
+       $text = __('This media item could not be loaded.', 'shortpixel-image-optimiser');
     }
     elseif (false === $mediaItem->isProcessable()  )
     {
@@ -607,7 +465,7 @@ class UiHelper
     }
     elseif( $queueController->isItemInQueue($mediaItem) === true)
 		{
-			 $text = '<p>' . __('This item is waiting to be processed', 'shortpixel-image-optimiser') . '</p>';
+			 $text = '<p>' . __('This item is waiting for AI SEO generation', 'shortpixel-image-optimiser') . '</p>';
 			 $action = self::getAction('cancelOptimize', $mediaItem->get('id'));
 
 			 if ($access->imageIsEditable($mediaItem))
@@ -615,55 +473,6 @@ class UiHelper
 			 	$text .= '<p><a href="javascript:' . $action['function'] . '">' . $action['text'] . '</a></p>';
 		 	 }
 		}
-
-    if ($mediaItem->isOptimizePrevented() !== false)
-    {
-          $retry = self::getAction('retry', $mediaItem->get('id'));
-          $unmark = self::getAction('unMarkCompleted', $mediaItem->get('id'));
-					$redo_legacy = false;
-
-					if ($mediaItem->get('type') == 'media')
-					{
-	 					$was_converted = get_post_meta($mediaItem->get('id'), '_spaatg_was_converted', true);
-						$updateTs = 1656892800; // July 4th 2022 - 00:00 GMT
-
-						if ($was_converted < $updateTs)
-						{
-							$meta = $mediaItem->getWPMetaData();
-							if (is_array($meta) && isset($meta['SPAATG']))
-							{
-								$redo_legacy = self::getAction('redo_legacy', $mediaItem->get('id'));
-							}
-						}
-					}
-
-          $status = $mediaItem->getMeta('status');
-          $text = ''; // reset text
-
-          if (ImageModel::FILE_STATUS_MARKED_DONE == $status)
-          {
-            $text .= "<div class='shortpixel-image-notice'>" . esc_html($mediaItem->getReason('processable'));
-
-            $text .= "<p class='shortpixel-error-reset'>" . sprintf(__('%s Click to unmark as completed %s', 'shortpixel-image-optimiser'), '<a href="javascript:' . $unmark['function'] . '">', '</a>') . '</p>';
-            $text .= '</div>';
-          }
-          else {
-            $text .= "<div class='shortpixel-image-error'>" . esc_html($mediaItem->getReason('processable'));
-            $text .= "<span class='shortpixel-error-reset'>" . sprintf(__('After you have fixed this issue, you can %s click here to retry %s', 'shortpixel-image-optimiser'), '<a href="javascript:' . $retry['function'] . '">', '</a>') . '</span>';
-            $text .= '</div>';
-          }
-
-
-
-					if ($redo_legacy !== false)
-					{
-						$text .= "<div class='shortpixel-image-error'><span class='shortpixel-error-reset'>";
-
-						$text .= sprintf(esc_html__('It seems you have older converted legacy data, which might cause this issue. You can try to %s %s %s . If nothing changes, this is not the cause. ','shortpixel-image-optimiser'), '<a href="javascript:' . $redo_legacy['function'] . '">', $redo_legacy['text'], '</a>');
-						$text .= "</span></div>";
-					}
-
-      }
 
     return $text;
   }
@@ -713,136 +522,19 @@ class UiHelper
      $action = array('function' => '', 'type' => '', 'text' => '', 'display' => '');
      $keyControl = ApiKeyController::getInstance();
 
-		 $compressionType = isset($args['compressionType']) ? $args['compressionType'] : null;
-     $disabled = ! empty($args['disabled']);
+	     $disabled = ! empty($args['disabled']);
 
-    switch($name)
-    {
-      case 'optimize':
-         if (true === OptimizerBase::isImageOptimizationDisabled())
-         {
-           $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
-           $action['text'] = __('Generate AI SEO', 'shortpixel-image-optimiser');
-           $action['ai-action'] = true;
-         }
-         else
-         {
-           $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ')';
-           $action['text'] = __('Optimize Now', 'shortpixel-image-optimiser');
-         }
-         $action['type']  = 'js';
-         $action['display'] = 'button';
-         $action['is-optimizable'] = true;
-      break;
-      case 'forceOptimize':
-        $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ', true)';
-        $action['type']  = 'js';
-        $action['text'] = __('Override exclusions and optimize now', 'shortpixel-image-optimiser');
-        $action['display'] = 'button';
-        $action['is-optimizable'] = true;
-      break;
-			case 'cancelOptimize':
-				 $action['function'] = 'window.SPAATGProcessor.screen.CancelOptimizeItem(' . $id . ')';
-				 $action['type']  = 'js';
-				 $action['text'] = __('Cancel item optimization', 'shortpixel-image-optimiser');
-				 $action['display'] = 'button';
-			break;
-      case 'markCompleted':
-          $action['function'] = 'window.SPAATGProcessor.screen.MarkCompleted(' . $id . ')';
-          $action['type']  = 'js';
-          $action['text'] = __('Mark as Completed', 'shortpixel-image-optimiser');
-          $action['display'] = 'button-secondary';
-          $action['layout'] = 'paragraph';
-          $action['title'] = __('This will cause the plugin to skip this image for optimization', 'shortpixel-image-optimiser');
-      break;
-      case 'unMarkCompleted':
-          $action['function'] = 'window.SPAATGProcessor.screen.UnMarkCompleted(' . $id . ')';
-          $action['type']  = 'js';
-          $action['text'] = __('Click to unmark this item as done', 'shortpixel-image-optimiser');
-          $action['display'] = 'js';
-      break;
-      case 'optimizethumbs':
-          if (! is_null($compressionType))
-          {
-            $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ', null, ' . $compressionType . ');';
-          }
-          else
-          {
-            $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ');';
-          }
-
-          $action['type'] = 'js';
-          $action['text']  = '';
-          $action['display'] = 'inline';
-          $action['is-optimizable'] = true;
-      break;
-      case 'retry':
-         $action['function'] = 'window.SPAATGProcessor.screen.Optimize(' . $id . ');';
-         $action['type']  = 'js';
-         $action['text'] = __('Retry', 'shortpixel-image-optimiser') ;
-         $action['display'] = 'button';
-         $action['is-optimizable'] = true;
-     break;
-		 case 'redo_legacy':
-		 			$action['function'] = 'window.SPAATGProcessor.screen.RedoLegacy(' . $id . ');';
-		 			$action['type']  = 'js';
-		 			$action['text'] = __('Redo Conversion', 'shortpixel-image-optimiser') ;
-		 			$action['display'] = 'button';
-		 break;
-
-     case 'restore':
-         $action['function'] = 'window.SPAATGProcessor.screen.RestoreItem(' . $id . ');';
-         $action['type'] = 'js';
-         $action['text'] = __('Restore backup','shortpixel-image-optimiser');
-         $action['display'] = 'inline';
-     break;
-
-     case 'compare':
-        $action['function'] = 'SPAATG.loadComparer(' . $id . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Compare', 'shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-     case 'compare-custom':
-        $action['function'] = 'SPAATG.loadComparer(' . $id . ',"custom")';
-        $action['type'] = 'js';
-        $action['text'] = __('Compare', 'shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-     case 'reoptimize-glossy':
-        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_GLOSSY . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Glossy','shortpixel-image-optimiser') ;
-        $action['display'] = 'inline';
-     break;
-     case 'reoptimize-lossy':
-        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSY . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Lossy','shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-
-     case 'reoptimize-lossless':
-        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . ImageModel::COMPRESSION_LOSSLESS . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Re-optimize Lossless','shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-		 case 'reoptimize-smartcrop':
-        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROP . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Re-optimize with SmartCrop','shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-		 case 'reoptimize-smartcropless':
-        $action['function'] = 'window.SPAATGProcessor.screen.ReOptimize(' . $id . ',' . $compressionType . ',' . ImageModel::ACTION_SMARTCROPLESS . ')';
-        $action['type'] = 'js';
-        $action['text'] = __('Re-optimize without SmartCrop','shortpixel-image-optimiser');
-        $action['display'] = 'inline';
-     break;
-     case 'spaatg-generateai': 
-      $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
-      $action['type'] = 'js';
+	    switch($name)
+	    {
+			 case 'cancelOptimize':
+					 $action['function'] = 'window.SPAATGProcessor.screen.CancelOptimizeItem(' . $id . ')';
+					 $action['type']  = 'js';
+					 $action['text'] = __('Cancel AI SEO generation', 'shortpixel-image-optimiser');
+					 $action['display'] = 'button';
+				break;
+	     case 'spaatg-generateai':
+	      $action['function'] = 'window.SPAATGProcessor.screen.RequestAlt(' . $id . ')';
+	      $action['type'] = 'js';
       $action['text'] = __('Generate AI SEO','shortpixel-image-optimiser');
       $action['display'] = 'button';
       $action['ai-action'] = true;

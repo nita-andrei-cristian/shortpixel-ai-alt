@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
 use SPAATG\Notices\NoticeController as Notice;
 use SPAATG\Helper\UiHelper as UiHelper;
-use SPAATG\Helper\UtilHelper as UtilHelper;
 use SPAATG\Helper\InstallHelper as InstallHelper;
 
 use SPAATG\Model\AccessModel as AccessModel;
@@ -16,7 +15,6 @@ use SPAATG\Model\SettingsModel as SettingsModel;
 use SPAATG\Model\ApiKeyModel as ApiKeyModel;
 
 use SPAATG\Controller\ApiKeyController as ApiKeyController;
-use SPAATG\Controller\BulkController as BulkController;
 use SPAATG\Controller\StatsController as StatsController;
 use SPAATG\Controller\QuotaController as QuotaController;
 use SPAATG\Controller\AdminNoticesController as AdminNoticesController;
@@ -24,22 +22,16 @@ use SPAATG\Controller\QueueController as QueueController;
 
 use SPAATG\Controller\CacheController as CacheController;
 use SPAATG\Controller\Optimizer\OptimizeAiController;
-use SPAATG\Controller\View\BulkViewController as BulkViewController;
-use SPAATG\External\Offload\Offloader;
 use SPAATG\Model\AiDataModel;
-use SPAATG\NextGenController as NextGenController;
 
 class SettingsViewController extends \SPAATG\ViewController
 {
 
      //env
-     protected $is_nginx;
-     protected $is_htaccess_writable;
 		 protected $has_image_library;
 		 protected $is_curl_installed;
      protected $is_multisite;
      protected $is_mainsite;
-     protected $has_nextgen;
      protected $do_redirect = false;
      protected $disable_heavy_features = false; // if virtual and stateless, might disable heavy file ops.
 
@@ -52,7 +44,7 @@ class SettingsViewController extends \SPAATG\ViewController
      );
 
      protected $display_part = 'account';
-     protected $all_display_parts = array('account', 'ai', 'preview', 'help', 'overview', 'optimisation','exclusions', 'processing', 'webp', 'integrations', 'debug', 'tools');
+     protected $all_display_parts = array('account', 'ai', 'preview', 'help', 'debug');
      protected $form_action = 'save-settings';
      protected $view_mode = 'simple'; // advanced or simple
 		 protected $is_ajax_save = false; // checker if saved via ajax ( aka no redirect / json return )
@@ -269,22 +261,10 @@ class SettingsViewController extends \SPAATG\ViewController
 
 				$action = isset($_REQUEST['bulk']) ? sanitize_text_field($_REQUEST['bulk']) : null;
 
-				if ('migrate' == $action)
-				{
-					$this->doRedirect('bulk-migrate');
-				}
-				elseif ('restore' == $action)
-				{
-					$this->doRedirect('bulk-restore');
-				}
-        elseif ('restoreAI' == $action)
+        if ('restoreAI' == $action)
         {
           $this->doRedirect('bulk-restoreAI');
         }
-				elseif ('removeLegacy' == $action)
-				{
-					 $this->doRedirect('bulk-removeLegacy');
-				}
 			}
 
       /** Button in part-debug, routed via custom Action */
@@ -363,15 +343,13 @@ class SettingsViewController extends \SPAATG\ViewController
                   $this->doRedirect('');
               }
 				 		 	$statsMedia = $opt->getQueue('media');
-				 			$statsCustom = $opt->getQueue('custom');
 
               $opt = new QueueController(['is_bulk' => true]);
 
 
-				 		 	$bulkMedia = $opt->getQueue('media');
-				 			$bulkCustom = $opt->getQueue('custom');
+							$bulkMedia = $opt->getQueue('media');
 
-				 			$queues = array('media' => $statsMedia, 'custom' => $statsCustom, 'mediaBulk' => $bulkMedia, 'customBulk' => $bulkCustom);
+							$queues = array('media' => $statsMedia, 'mediaBulk' => $bulkMedia);
 
 					   if ( strtolower($queue) == 'all')
 						 {
@@ -429,23 +407,6 @@ class SettingsViewController extends \SPAATG\ViewController
 
       protected function processSave()
       {
-          // Split this in the several screens. I.e. settings, advanced, Key Request IF etc.
-          if (isset($this->postData['includeNextGen']) && $this->postData['includeNextGen'] == 1)
-          {
-              $nextgen = NextGenController::getInstance();
-              $previous = $this->model->includeNextGen;
-          //    $nextgen->enableNextGen(true);
-
-              // Reset any integration notices when updating settings.
-              AdminNoticesController::resetIntegrationNotices();
-          }
-
-					// If the compression type setting changes, remove all queued items to prevent further optimizing with a wrong type.
-					if (intval($this->postData['compressionType']) !== intval($this->model->compressionType))
-					{
-						 QueueController::resetQueues();
-					}
-
           // write checked and verified post data to model. With normal models, this should just be call to update() function
           foreach($this->postData as $name => $value)
           {
@@ -497,35 +458,13 @@ class SettingsViewController extends \SPAATG\ViewController
          $this->view->data = (Object) $this->model->getData();
 
 				 $this->loadAPiKeyData();
-         $this->loadDashBoardInfo();
 
          if ($this->keyModel->is_verified()) // supress quotaData alerts when handing unset API's.
           $this->loadQuotaData();
         else
           InstallHelper::checkTables();
 
-         $statsControl = StatsController::getInstance();
-
-         $this->view->minSizes = $this->getMaxIntermediateImageSize();
-
-				 $excludeOptions = UtilHelper::getWordPressImageSizes();
-				 $mainOptions = array(
-					 'shortpixel_main_donotuse' =>  array('nice-name' => __('Main (scaled) Image', 'shortpixel-image-optimiser')),
-					 'shortpixel_original_donotuse' => array('nice-name' => __('Original Image', 'shortpixel-image-optimiser')),
-				 );
-
-				 $excludeOptions = array_merge($mainOptions, $excludeOptions);
-
-         $this->view->allThumbSizes = $excludeOptions;
-         $this->view->averageCompression = $statsControl->getAverageCompression();
-
-        // $this->view->savedBandwidth = UiHelper::formatBytes( intval($this->view->data->savedSpace) * 10000,2);
-
-         // @todo this might be converted at some point tho view->env or something to divide better. 
-         $offLoader = Offloader::getInstance();
-         $this->view->cloudflare_constant = defined('SPAATG_CFTOKEN') ? true : false;
          $this->view->is_unlimited =  (!is_null($this->quotaData) && $this->quotaData->unlimited) ? true : false;
-         $this->view->is_wpoffload = $offLoader->isActive('wp-offload');
 
          require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
          $this->view->languages = wp_get_available_translations();
@@ -540,13 +479,6 @@ class SettingsViewController extends \SPAATG\ViewController
            $this->view->hide_banner = true; 
          }
           
-
-         //$this->view->latest_ai = $this->getLatestAIExamples();
-
-         $settings = \wpSPAATG()->settings();
-
-				 if ($this->view->data->createAvif == 1)
-           $this->avifServerCheck();
 
          // Set viewMode
 				 if (false === $this->view->key->is_verifiedkey)
@@ -566,72 +498,6 @@ class SettingsViewController extends \SPAATG\ViewController
 				 $this->view_mode = $view_mode;
 
 				 $this->loadView('view-settings');
-      }
-
-
-      public function loadDashBoardInfo()
-      {
-        $bulkController = BulkController::getInstance();
-        $logs = $bulkController->getLogs();
-
-        $this->view->dashboard  = new \stdClass;
-        $mainblock = new \stdClass;
-
-        $mainblock->ok = true;
-        $mainblock->icon = 'ok';
-        $mainblock->cocktail = true;
-        $mainblock->header = __('Everything running smoothly.', 'shortpixel-image-optimiser');
-        $mainblock->message = __('Keep calm and carry on', 'shortpixel-image-optimiser');
-
-        if (false === $this->view->key->is_verifiedkey)
-        {
-						/*
-						$mainblock->ok = false;
-            $mainblock->header = __('Issue with API Key', 'shortpixel-image-optimiser');
-            $mainblock->message = __('Add your API Key to start generating alt text', 'shortpixel-image-optimiser');
-            $mainblock->cocktail = false;
-            $mainblock->icon = 'alert';
-						*/
-        }
-				else { // If not errors
-						 $statsController = StatsController::getInstance();
-
-						 $media_total = $statsController->find('media', 'images');
-						 $custom_total = $statsController->find('custom', 'images');
-
-						 $custom_text = ($custom_total > 0) ? sprintf(esc_html__('and %s custom images ', 'shortpixel-image-optimiser'), $custom_total) : '';
-            // $mainblock->message = '';
-
-             if ($media_total > 0)
-             {
-						         $mainblock->message = sprintf(esc_html__('%s media items %s optimized', 'shortpixel-image-optimiser'), $media_total, $custom_text);
-                     $total_sum = intval($media_total) + intval($custom_text);
-                     $mainblock->optimized = sprintf(esc_html__('%s', 'shortpixel-image-optimiser'), $total_sum);
-             }
-
-				}
-
-        $BulkViewController = BulkViewController::getInstance();
-
-        $logs = $BulkViewController->getLogs();
-        $date = '';
-
-        if (count($logs) > 0)
-        {
-           $latest = $logs[0];
-           $date = $latest['date'];
-        }
-
-        $message = (count($logs) == 0) ? esc_html__('No bulk processing has been performed yet', 'shortpixel-image-optimiser') : sprintf(__('The last bulk processing ran on:  %s','shortpixel-image-optimiser'), '<br>' . $date );
-
-        $bulkblock = new \stdClass;
-        $bulkblock->icon = 'ok';
-        $bulkblock->message = $message;
-        $bulkblock->link = admin_url("upload.php?page=wp-spaatg-bulk");
-        $bulkblock->show_button = (count($logs) == 0) ? true : false;
-
-        $this->view->dashboard->bulkblock = $bulkblock;
-        $this->view->dashboard->mainblock = $mainblock;
       }
 
 			protected function loadAPiKeyData()
@@ -671,35 +537,16 @@ class SettingsViewController extends \SPAATG\ViewController
 				 $this->view->key = $keyObj;
 			}
 
-			protected function avifServerCheck()
-      {
-           return;
-           /*
-
-            This has been superseeded in hacky solution in the Model tiself.
-    			$noticeControl = AdminNoticesController::getInstance();
-					$notice = $noticeControl->getNoticeByKey('MSG_AVIF_ERROR');
-
-          if (is_object($notice))
-          {
-					     $notice->check();
-          } */
-      }
-
       /** Checks on things and set them for information. */
       protected function loadEnv()
       {
           $env = wpSPAATG()->env();
 
-          $this->is_nginx = $env->is_nginx;
           $this->has_image_library = ($env->is_gd_installed || $env->is_imagick_installed); // Any library 
           $this->is_curl_installed = $env->is_curl_installed;
 
-          $this->is_htaccess_writable = $this->HTisWritable();
-
           $this->is_multisite = $env->is_multisite;
           $this->is_mainsite = $env->is_mainsite;
-          $this->has_nextgen = $env->has_nextgen;
 
           $this->disable_heavy_features = (false === \wpSPAATG()->env()->useVirtualHeavyFunctions()) ? true : false;
 
@@ -738,45 +585,6 @@ class SettingsViewController extends \SPAATG\ViewController
           $html = sprintf('<a href="%s" class="%s" data-menu-link="%s" %s >%s</a>', $link, $class, $args['part'], $active, $title);
 
           return $html;
-      }
-
-      /* Temporary function to check if HTaccess is writable.
-      * HTaccess is writable if it exists *and* is_writable, or can be written if directory is writable.
-      */
-      private function HTisWritable()
-      {
-          if ($this->is_nginx)
-            return false;
-
-					$file = \wpSPAATG()->filesystem()->getFile(get_home_path() . '.htaccess');
-					if ($file->is_writable())
-					{
-						 return true;
-					}
-
-          return false;
-      }
-
-      protected function getMaxIntermediateImageSize() {
-          global $_wp_additional_image_sizes;
-
-          $width = 0;
-          $height = 0;
-          $get_intermediate_image_sizes = get_intermediate_image_sizes();
-
-          // Create the full array with sizes and crop info
-          if(is_array($get_intermediate_image_sizes)) foreach( $get_intermediate_image_sizes as $_size ) {
-              if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
-                  $width = max($width, get_option( $_size . '_size_w' ));
-                  $height = max($height, get_option( $_size . '_size_h' ));
-                  //$sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
-              } elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
-                  $width = max($width, $_wp_additional_image_sizes[ $_size ]['width']);
-                  $height = max($height, $_wp_additional_image_sizes[ $_size ]['height']);
-                  //'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
-              }
-          }
-          return array('width' => max(100, $width), 'height' => max(100, $height));
       }
 
 			// @param Force.  needed on settings save because it sends off the HTTP Auth
@@ -821,21 +629,6 @@ class SettingsViewController extends \SPAATG\ViewController
             $this->do_redirect = true;
           }
 
-          // handle 'reverse' checkbox.
-          $exif = isset($post['exif']) ? 0 : 1;
-          $post['exif'] = $exif;
-
-          // checkbox overloading
-          $png2jpg = (isset($post['png2jpg']) ? (isset($post['png2jpgForce']) ? 2 : 1): 0);
-          $post['png2jpg'] = $png2jpg;
-
-          // must be an array
-          $post['excludeSizes'] = (isset($post['excludeSizes']) && is_array($post['excludeSizes']) ? $post['excludeSizes']: array());
-
-          $post = $this->processWebp($post);
-          $post = $this->processExcludeFolders($post);
-        //  $post = $this->processCloudFlare($post);
-
 					$check_key = false;
 
           if (false === $this->keyModel->is_constant())
@@ -864,43 +657,6 @@ class SettingsViewController extends \SPAATG\ViewController
             }
             unset($post['apiKey']); // unset, since keyModel does the saving.
 
-          }
-
-          $post_useCDN = isset($post['useCDN']) ? true : false; 
-          $post_CDNDomain = isset($post['CDNDomain']) ? sanitize_text_field($post['CDNDomain']) : ''; 
-
-          $setting_useCDN = $this->model->useCDN; 
-          $setting_CDNDomain = $this->model->CDNDomain; 
-
-          $CDNcontroller = new \SPAATG\Controller\Front\CDNController();
-
-          if ($post_useCDN !== $setting_useCDN)
-          {
-              
-              if (true === $post_useCDN)
-              {
-                 $CDNcontroller->registerDomain(); 
-              }
-              else{
-                // Deregister off for now.
-               // $controller->registerDomain(['action' => 'deregister']);
-              }
-          }
-
-          if ($post_useCDN)
-          {
-              $check = $CDNcontroller->validateCDNDomain($post_CDNDomain);
-              if (true !== $check)
-              {
-                 $this->addReturnFormData([
-                    'field' => 'CDNDomain', 
-                    'old_value' => $post_CDNDomain, 
-                    'new_value' => $check, 
-                    'hook_query' => 'info.useCDN', 
-                    'message' => sprintf(__('CDN Domain has been changed from %s to %s . SPIO needs a path component', 'shortpixel-image-optimiser'), $post_CDNDomain, $check),
-                 ]);
-                 $post['CDNDomain'] = $check;
-              }
           }
 
         if (false === isset($post['enable_ai']))
@@ -967,110 +723,6 @@ class SettingsViewController extends \SPAATG\ViewController
 
       }
 
-      protected function addReturnFormData($data)
-      {
-        
-          $this->returnFormData[] = $data; 
-
-      }
-
-      /** Function for the WebP settings overload
-      *
-      */
-      protected function processWebP($post)
-      {
-        $deliverwebp = 0;
-        if (! $this->is_nginx)
-          UtilHelper::alterHtaccess(false, false); // always remove the statements.
-
-			  $webpOn = isset($post['createWebp']) && $post['createWebp'] == 1;
-				$avifOn = isset($post['createAvif']) && $post['createAvif'] == 1;
-
-            if (isset($post['deliverWebp']) && $post['deliverWebp'] == 1)
-            {
-              $type = isset($post['deliverWebpType']) ? $post['deliverWebpType'] : '';
-              $altering = isset($post['deliverWebpAlteringType']) ? $post['deliverWebpAlteringType'] : '';
-
-              if ($type == 'deliverWebpAltered')
-              {
-                  if ($altering == 'deliverWebpAlteredWP')
-                  {
-                      $deliverwebp = 2;
-                  }
-                  elseif($altering = 'deliverWebpAlteredGlobal')
-                  {
-                      $deliverwebp = 1;
-                  }
-              }
-              elseif ($type == 'deliverWebpUnaltered') {
-                $deliverwebp = 3;
-              }
-            }
-
-        if (! $this->is_nginx && $deliverwebp == 3) // deliver webp/avif via htaccess, write rules
-        {
-          UtilHelper::alterHtaccess(true, true);
-        }
-
-         $post['deliverWebp'] = $deliverwebp;
-         unset($post['deliverWebpAlteringType']);
-         unset($post['deliverWebpType']);
-
-         return $post;
-      }
-
-      protected function processExcludeFolders($post)
-      {
-        $patterns = array();
-
-        if (false === isset($post['exclusions']))
-        {
-					 $post['excludePatterns'] = [];
-           return $post;
-        }
-
-        $exclusions  = $post['exclusions'];
-        $accepted = array();
-        foreach($exclusions as $index => $exclusions)
-        {
-            $accepted[] = json_decode(html_entity_decode( stripslashes($exclusions)), true);
-        }
-
-        foreach($accepted as $index => $pair)
-        {
-          $pattern = $pair['value'];
-          $type = $pair['type'];
-
-          if ($type == 'regex-name' || $type == 'regex-path')
-          {
-            if ( @preg_match($pattern, false) === false)
-            {
-               $accepted[$index]['has-error'] = true;
-               Notice::addWarning(sprintf(__('Regular Expression Pattern %s returned an error. Please check if the expression is correct. %s * Special characters should be escaped. %s * A regular expression must be contained between two slashes  ', 'shortpixel-image-optimiser'), $pattern, "<br>", "<br>" ));
-            }
-          }
-          if ('date' === $type)
-          { 
-             try {
-              $date = new \DateTime($pattern);
-             }
-             catch (\Exception $e)
-             {
-               Notice::addWarning(sprintf(__('Date format %s return an error %s . Accepted are formats that are valid for PHP dateFormat', 'shortpixel-image-optimiser'), 
-                 $pattern, $e->getMessage()
-             ));
-             }
-          }
-        }
-
-        $post['excludePatterns'] = $accepted;
-
-
-        return $post; 
-
-      }
-
-
 			/**
 			* Each form save / action results in redirect
 			*
@@ -1097,22 +749,10 @@ class SettingsViewController extends \SPAATG\ViewController
         {
           $url = admin_url("upload.php?page=wp-spaatg-bulk");
         }
-				elseif('bulk-migrate' == $redirect)
-				{
-					 $url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-migrate');
-				}
-				elseif ('bulk-restore' == $redirect)
-				{
-						$url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-restore');
-				}
         elseif ('bulk-restoreAI' == $redirect)
         {
             $url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-restoreAI');
         }
-				elseif ('bulk-removeLegacy' == $redirect)
-				{
-						$url = admin_url('upload.php?page=wp-spaatg-bulk&panel=bulk-removeLegacy');
-				}
 
         if (true === $this->is_ajax_save)
 				{

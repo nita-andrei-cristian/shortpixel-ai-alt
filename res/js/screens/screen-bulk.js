@@ -3,16 +3,13 @@
 class SPAATGScreen extends SPAATGScreenBase
 {
 
-  isCustom = true;
+  isCustom = false;
   isMedia = true;
 
   panels = [];
   currentPanel = 'dashboard';
 
   debugCounter = 0;
-
-	averageOptimization = 0;
-	numOptimizations = 0;
 
 	Init()
 	{
@@ -21,7 +18,6 @@ class SPAATGScreen extends SPAATGScreenBase
 		// Hook up the button and all.
 			this.LoadPanels();
 			this.LoadActions();
-      this.LoadDatePicker(); 
 
 			window.addEventListener('spaatg.processor.paused', this.TogglePauseNotice.bind(this));
 			window.addEventListener('spaatg.processor.responseHandled', this.CheckPanelData.bind(this));
@@ -131,29 +127,6 @@ class SPAATGScreen extends SPAATGScreenBase
 					}
 					*/
       });
-  }
-
-  LoadDatePicker()
-  {
-    // Used -https://thedatepicker.github.io/thedatepicker/
-    let containers = document.querySelectorAll('.date-picker-container');
-      for (let i = 0; i < containers.length; i++)
-      {
-        let container = containers[i]; 
-        let input = container.querySelector('input'); 
-
-        let datepicker = new TheDatepicker.Datepicker(input);
-        datepicker.options.setMaxDate(new Date());
-
-        datepicker.options.onSelect(function (ev)
-        {
-          let formatDate = datepicker.getSelectedDateFormatted('Y/m/d'); 
-          input.dataset.formatteddate = formatDate; 
-        }); 
-
-        datepicker.render();
-
-      }
   }
 
 	DoActionEvent(event)
@@ -283,7 +256,7 @@ class SPAATGScreen extends SPAATGScreenBase
      var data = {screen_action: 'createBulk', callback: 'spaatg.PrepareBulk'}; //
 
      data.mediaActive = (document.getElementById('media_checkbox').checked) ? true : false;
-     data.customActive = (document.getElementById('custom_checkbox').checked) ? true : false;
+     data.customActive = false;
      data.webpActive = (document.getElementById('webp_checkbox') !== null && document.getElementById('webp_checkbox').checked) ? true : false;
      data.avifActive = (document.getElementById('avif_checkbox') !== null && document.getElementById('avif_checkbox').checked) ? true : false;
      
@@ -331,7 +304,7 @@ class SPAATGScreen extends SPAATGScreenBase
 */
      this.UpdatePanelStatus('loading', 'selection');
 
-     // Prepare should happen after selecting what the optimize.
+     // Prepare should happen after selecting what to generate.
      window.addEventListener('spaatg.PrepareBulk', this.PrepareBulk.bind(this), {'once': true} );
      this.processor.AjaxRequest(data);
   }
@@ -400,191 +373,6 @@ class SPAATGScreen extends SPAATGScreenBase
       }
 
   }
-  HandleImage(resultItem, type)
-  {
-
-    var apiName = (typeof resultItem.apiName !== 'undefined') ? resultItem.apiName : 'optimize'; 
-    var imagePreviewSection = document.querySelector('.image-preview-section');
-
-    if (imagePreviewSection === null)
-    {
-      return false;
-    }
-
-
-      if ( this.processor.fStatus[resultItem.fileStatus] == 'FILE_DONE')
-      {
-
-        if (imagePreviewSection.classList.contains('hidden'))
-        {
-             imagePreviewSection.classList.remove('hidden');
-        }
-        /*
-        if (false === resultItem.improvements)
-        {
-           imagePreviewSection.classList.add('hidden');
-        } */
-        
-        
-     //   if ('ai' !== apiName)
-      //  {
-            this.UpdateData('result', resultItem);
-
-            this.HandleImageEffect(resultItem.original, resultItem.optimized);
-
-            var improvementItems = imagePreviewSection.querySelectorAll('.improvement-item');
-            var showImp = false; 
-
-            if (resultItem.improvements && resultItem.improvements.totalpercentage)
-            {
-                // Opt-Circle-Image is average of the file itself.
-                var circle = imagePreviewSection.querySelector('.opt-circle-image');
-
-                var total_circle = 289.027;
-                if(resultItem.improvements.totalpercentage >0 ) {
-                    total_circle = Math.round(total_circle-(total_circle*resultItem.improvements.totalpercentage/100));
-                }
-
-                for( var i = 0; i < circle.children.length; i++)
-                {
-                  var child = circle.children[i];
-                  if (child.classList.contains('path'))
-                  {
-                      child.style.strokeDashoffset = total_circle + 'px';
-                  }
-                  else if (child.classList.contains('text'))
-                  {
-                      child.textContent = resultItem.improvements.totalpercentage + '%';
-                  }
-                }
-
-                this.AddAverageOptimization(resultItem.improvements.totalpercentage);
-                showImp = true; 
-            }
-            else
-            {
-              showImp = false; 
-            }
-
-            for( var i = 0; i < improvementItems.length; i++)
-            {
-                let item = improvementItems[i]; 
-                if (true === showImp && item.classList.contains('hidden'))
-                {
-                   item.classList.remove('hidden');
-                }
-                else if (false === showImp && false === item.classList.contains('hidden'))
-                {
-                  item.classList.add('hidden');
-                }
-            }
-
-     //     }
-					return true; // This prevents flooding.
-      }
-
-
-			return false;
-  }
-
-	// Function to neatly slide the new / old images around.
-	HandleImageEffect(originalSrc, optimizedSrc)
-	{
-
-		var preview = document.getElementById('preview-structure');
-		var offset = preview.offsetWidth;
-
-		var placeHolder = preview.dataset.placeholder;
-
-     if (preview.querySelector('.preview-image.old') !== null)
-		 {
-			  preview.querySelector('.preview-image.old').remove();
-		 }
-
-		var currentItem = preview.children[0];
-		var newItem = preview.children[1];
-		var cloneNode = newItem.cloneNode(true);
-
-
-		if (originalSrc)
-		{
-			 preview.querySelector('.new.preview-image .image.source img').src = originalSrc;
-		}
-		else {
-			preview.querySelector('.new.preview-image .image.source').style.display = 'none';
-		}
-
-		if (optimizedSrc)
-		{
-			 preview.querySelector('.new.preview-image .image.result img').src = optimizedSrc;
-		}
-		else {
-			 preview.querySelector('.new.preview-image .image.result img').src = placeHolder;
-			 preview.querySelector('.new.preview-image .image.result img').classList.add('notempty');
-
-		}
-		currentItem.style.marginLeft = '-' + offset + 'px';
-		setTimeout(function() {
-
-			newItem.classList.remove('new');
-			newItem.classList.add('current');
-
-			currentItem.remove();
-		}, 1000);
-
-		if (typeof cloneNode !== 'undefined')
-		{
-			cloneNode.querySelector('.image.source img').src = placeHolder;
-			cloneNode.querySelector('.image.result img').src = placeHolder;
-			preview.appendChild(cloneNode);
-		}
-
-	}
-
-	AddAverageOptimization(num)
-	{
-			this.numOptimizations++;
-			this.averageOptimization += num;
-
-			var total = this.averageOptimization / this.numOptimizations;
-
-			// There are circles on process and finished.
-			var circles = document.querySelectorAll('.opt-circle-average');
-      var elements = document.querySelectorAll('.average-optimization');
-
-			circles.forEach(function (circle)
-			{
-				var total_circle = 289.027;
-				if( total  >0 ) {
-						total_circle = Math.round(total_circle-(total_circle * total /100));
-				}
-
-				for(var i = 0; i < circle.children.length; i++)
-				{
-					 var child = circle.children[i];
-					 if (child.classList.contains('path'))
-					 {
-							child.style.strokeDashoffset = total_circle + 'px';
-					 }
-					 else if (child.classList.contains('text'))
-					 {
-							child.textContent = Math.round(total) + '%';
-					 }
-				}
-			}); // circles;
-
-      // Show them only when a values enters. 
-      for(var i = 0; i < elements.length; elements++)
-      {
-          if (elements[i].classList.contains('shortpixel-hide'))
-          {
-             elements[i].classList.remove('shortpixel-hide');
-          }
-      }
-
-	}
-
-
   UpdateStats(stats, type)
   {
       this.UpdateData('stats', stats, type);
@@ -810,7 +598,7 @@ class SPAATGScreen extends SPAATGScreenBase
       console.log('Starting to Bulk!');
       var data = {screen_action: 'startBulk', callback: 'spaatg.bulk.started'}; //
 
-      // Prepare should happen after selecting what the optimize.
+      // Prepare should happen after selecting what to generate.
       //window.addEventListener('spaatg.prepareBulk', this.PrepareBulk.bind(this), {'once': true} );
       this.processor.AjaxRequest(data);
 
@@ -1049,44 +837,6 @@ class SPAATGScreen extends SPAATGScreenBase
       }
   }
 
-  BulkRestoreAll(event)
-  {
-    console.log('Start Restore All');
-	//	var media = document.getElementById('restore_media_checkbox');
-		var media = document.getElementById('restore_media_checkbox');
-		var custom = document.getElementById('restore_custom_checkbox');
-		var queues = [];
-
-		// no checkboxes, only media in system => do media.
-		if (media == null && custom == null)
-		{
-			 queues.push('media');
-		}
-		else if (media.checked == false && custom.checked == false) // pick one
-		{
-			 document.getElementById('restore_media_warn').classList.remove('hidden');
-			 return false;
-		}
-		else // check which one
-		{
-			if (media.checked == true)
-				queues.push('media');
-			if (custom.checked == true)
-				queues.push('custom');
-		}
-    var data = {screen_action: 'startRestoreAll', callback: 'spaatg.startRestoreAll', queues: queues}; //
-
-    this.RemovePanelFromURL(spaatgScreen.panel);
-
-    this.UpdatePanelStatus('loading', 'selection');
-    this.SwitchPanel('selection');
-
-
-    // Prepare should happen after selecting what the optimize.
-    window.addEventListener('spaatg.startRestoreAll', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
-    this.processor.AjaxRequest(data);
-  }
   BulkUndoAI(event)
   {
     var data = {screen_action: 'startBulkUndoAI', callback: 'spaatg.startUndoAI'}; //
@@ -1097,43 +847,10 @@ class SPAATGScreen extends SPAATGScreenBase
   	//this.SwitchPanel('process');
     this.RemovePanelFromURL(spaatgScreen.panel);
 
-    // Prepare should happen after selecting what the optimize.
+    // Prepare should happen after selecting what to revert.
     window.addEventListener('spaatg.startUndoAI', this.PrepareBulk.bind(this), {'once': true} );
     window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
     this.processor.AjaxRequest(data);    
-  }
-
-  BulkMigrateAll(event)
-  {
-    var data = {screen_action: 'startMigrateAll', callback: 'spaatg.startMigrateAll'}; //
-
-		this.UpdatePanelStatus('loading', 'selection');
-		this.SwitchPanel('selection');
-
-  	//this.SwitchPanel('process');
-    this.RemovePanelFromURL(spaatgScreen.panel);
-
-
-    // Prepare should happen after selecting what the optimize.
-    window.addEventListener('spaatg.startMigrateAll', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
-    this.processor.AjaxRequest(data);
-  }
-	BulkRemoveLegacy(event)
-  {
-
-    var data = {screen_action: 'startRemoveLegacy', callback: 'spaatg.startRemoveLegacy'}; //
-
-    this.SwitchPanel('selection');
-    this.UpdatePanelStatus('loading', 'selection');
-
-
-    this.RemovePanelFromURL(spaatgScreen.panel);
-
-    // Prepare should happen after selecting what the optimize.
-    window.addEventListener('spaatg.startRemoveLegacy', this.PrepareBulk.bind(this), {'once': true} );
-    window.addEventListener('spaatg.bulk.onSwitchPanel', this.StartBulk.bind(this), {'once': true});
-    this.processor.AjaxRequest(data);
   }
 
 

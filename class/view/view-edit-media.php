@@ -67,5 +67,3 @@ if (! is_null($view->debugInfo) && is_array($view->debugInfo) && count($view->de
   </div>
 
   <div id='shortpixel-errorbox' class="errorbox">&nbsp;</div>
-
-<?php $this->loadView('snippets/part-comparer'); ?>

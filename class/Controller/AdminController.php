@@ -6,20 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use SPAATG\Controller\Optimizer\OptimizeAiController;
-use SPAATG\Controller\Optimizer\OptimizerBase;
 use SPAATG\ShortPixelLogger\ShortPixelLogger as Log;
-use SPAATG\Notices\NoticeController as Notices;
 use SPAATG\Controller\Queue\Queue as Queue;
 
-use SPAATG\Model\Converter\Converter as Converter;
-use SPAATG\Model\Converter\ApiConverter as ApiConverter;
-
-use SPAATG\Model\Image\MediaLibraryModel as MediaLibraryModel;
-use SPAATG\Model\Image\ImageModel as ImageModel;
 use SPAATG\Model\AiDataModel;
 
 use SPAATG\Model\AccessModel as AccessModel;
-use SPAATG\Helper\UtilHelper as UtilHelper;
 
 
 /* AdminController is meant for handling events, hooks, filters in WordPress where there is *NO* specific or more precise  ShortPixel Page active.
@@ -30,8 +22,6 @@ class AdminController extends \SPAATG\Controller
 {
     protected static $instance;
 
-		private static $preventUploadHook = array();
-
     public static function getInstance()
     {
       if (is_null(self::$instance))
@@ -40,41 +30,7 @@ class AdminController extends \SPAATG\Controller
       return self::$instance;
     }
 
-    public function addAttachmentHook($post_id)
-    {
-          $fs = \wpSPAATG()->filesystem();
-
-          // If attachment doesn't come back as an valid image
-          $mediaItem = $fs->getImage($post_id, 'media');
-          if (false === $mediaItem)
-          {
-             return;
-          }
-
-          $converter = Converter::getConverter($mediaItem, true);
-
-            if (is_object($converter) && $converter->isConvertable())
-            {
-              do_action('shortpixel/converter/prevent-offload', $post_id);
-            }
-    }
-
-		public function filterMediaRowActions($actions, $post)
-		{
-				if (isset($actions['remove_background']))
-				{
-						unset($actions['remove_background']);
-				}
-
-				return $actions;
-		}
-
-		public function filterMediaColumns($columns)
-			{
-					return $columns;
-			}
-
-		public function registerMediaBulkActions($actions)
+			public function registerMediaBulkActions($actions)
 		{
 			$optimizeAiController = OptimizeAiController::getInstance();
 			if (false === $optimizeAiController->isAiEnabled())
@@ -228,106 +184,6 @@ class AdminController extends \SPAATG\Controller
 			}
 		}
 
-		public function removeEmrFeatureNotice()
-		{
-			if (! class_exists('\EnableMediaReplace\Notices\NoticeController') || ! class_exists('\EnableMediaReplace\UIHelper')) {
-				return;
-			}
-
-			\EnableMediaReplace\Notices\NoticeController::removeNoticeByID(
-				\EnableMediaReplace\UIHelper::NOTICE_NEW_FEATURE
-			);
-		}
-
-
-    /** Handling upload actions
-    * @hook wp_generate_attachment_metadata
-    */
-    public function handleImageUploadHook($meta, $id)
-    {
-
-        // Media only hook
-				if ( in_array($id, self::$preventUploadHook))
-				{
-					 return $meta;
-				}
-
-        // todo add check here for mediaitem
-			  $fs = \wpSPAATG()->filesystem();
-				$fs->flushImageCache(); // it's possible file just changed by external plugin.
-        $mediaItem = $fs->getImage($id, 'media');
-
-					if ($mediaItem === false)
-					{
-						 Log::addError('Handle Image Upload Hook triggered, by error in image :' . $id );
-						 return $meta;
-					}
-
-					if (true === OptimizerBase::isImageOptimizationDisabled())
-					{
-						 return $meta;
-					}
-
-					if ($mediaItem->getExtension()  == 'pdf')
-					{
-					$settings = \wpSPAATG()->settings();
-					if (! $settings->optimizePdfs)
-					{
-						 Log::addDebug('Image Upload Hook detected PDF, which is turned off - not optimizing');
-						 return $meta;
-					}
-				}
-
-        $handleImage = apply_filters('shortpixel/media/uploadhook', true, $mediaItem, $meta, $id);
-
-        // Short-circuit in certain cases if needed.
-        if (false === $handleImage)
-        {
-           return $meta;
-        }
-
-        // Load compat stuff if ajax, just to be sure. When null is meta, this can be an integration
-        if (wp_doing_ajax() || is_null($meta))
-        {
-          $this->loadCronCompat();
-        }
-
-				if ($mediaItem->isProcessable())
-				{
-					$converter = Converter::getConverter($mediaItem, true);
-
-          // Convert only done by PNG atm, the rest is done via ImageModelToQueue.
-          if (is_object($converter) && $converter->isConvertable())
-					{
-							$args = array('runReplacer' => false);
-
-						 	$res = $converter->convert($args);
-							$mediaItem = $fs->getImage($id, 'media', false);
-
-							$meta = $converter->getUpdatedMeta();
-
-              //do_action('shortpixel/converter/prevent-offload-off', $id);
-           }
-
-         // $autoAi = $settings->
-         $optimizeAiController = OptimizeAiController::getInstance(); 
-         $queueController = new QueueController();
-
-        /* if ($optimizeAiController->isAutoAiEnabled())
-         {
-            $args = ['action' => 'requestAlt'];
-            $queueController->addItemToQueue($mediaItem, $args); 
-         } */
-                 
-          
-        	$queueController->addItemToQueue($mediaItem);
-				}
-				else {
-					Log::addWarn('Passed mediaItem is not processable', $mediaItem);
-				}
-        return $meta; // It's a filter, otherwise no thumbs
-    }
-
     /** Handle AI processing on upload image 
      * 
      * @param mixed $meta 
@@ -336,12 +192,6 @@ class AdminController extends \SPAATG\Controller
      */
     public function handleAiImageUploadHook($meta, $id)
     {
-              // Media only hook
-				if ( in_array($id, self::$preventUploadHook))
-				{
-					 return $meta;
-				}
-
         $fs = \wpSPAATG()->filesystem();
 				$fs->flushImageCache(); // it's possible file just changed by external plugin.
         $mediaItem = $fs->getImage($id, 'media');
@@ -360,45 +210,6 @@ class AdminController extends \SPAATG\Controller
          
         return $meta;
     }
-
-
-    /**
-     * Prevent autohandling image for integrations, i.e. when external source wants to generate thumbnails or edit attachments
-     * @param  integer $id            media id
-     * @return null
-     */
-		public function preventImageHook($id)
-		{
-			  self::$preventUploadHook[] = $id;
-		}
-
-		// Placeholder function for heic and such, return placeholder URL in image to help w/ database replacements after conversion.
-		public function checkPlaceHolder($url, $post_id)
-		{
-
-			$extension = pathinfo($url,  PATHINFO_EXTENSION);
-			if (false === in_array($extension, ApiConverter::CONVERTABLE_EXTENSIONS))
-			{
-				 return $url;
-			}
-
-			$fs = \wpSPAATG()->filesystem();
-			$mediaImage = $fs->getImage($post_id, 'media');
-
-			if (false === $mediaImage)
-			{
-				 return $url;
-			}
-
-			if (false === $mediaImage->getMeta()->convertMeta()->hasPlaceholder())
-			{
-				return $url;
-			}
-
-			$url = str_replace($extension, 'jpg', $url);
-
-			return $url;
-		}
 
     /* Function to process Hook coming from the WP cron system */
     public function processCronHook($bulk)
@@ -427,7 +238,7 @@ class AdminController extends \SPAATG\Controller
 				$defaults = array(
 					'wait' => 3, // amount of time to wait for next round. Prevents high loads
 					'run_once' => false, //  If true queue must be run at least every few minutes. If false, it tries to complete all.
-					'queues' => array('media','custom'),
+						'queues' => array('media'),
 					'bulk' => false, // changing this might change important behavior
           'max_runs' => -1, // if < 0 run until end, otherwise cut out at some point.
           'source' => 'hook', // not used but can be used in the filter to see what type of job is running
@@ -495,105 +306,7 @@ class AdminController extends \SPAATG\Controller
 				}
 		}
 
-    public function scanCustomFoldersHook($args = array())
-    {
-      $defaults = array(
-        'force' => false,
-        'wait' => 3,
-        'amount' => -1,  // amount of directories to refresh.
-        'interval' => 6 * HOUR_IN_SECONDS,
-      );
-
-      $args = wp_parse_args($args, $defaults);
-
-      $otherMediaController = OtherMediaController::getInstance();
-      if (false === $otherMediaController->hasCustomImages())
-      {
-         return false;
-      }
-
-
-
-      $args = apply_filters('shortpixel/othermedia/scan_custom_folder', $args);
-
-      $running = true;
-      $i = 0;
-
-      while (true === $running)
-      {
-        $result = $otherMediaController->doNextRefreshableFolder($args);
-        if (false === $result) // stop on false return.
-        {
-           $running = false;
-        }
-        sleep($args['wait']);
-
-        $i++;
-        if ($args['amount'] > 0 && $i >= $args['amount'])
-        {
-           break;
-        }
-
-      }
-
-    }
-
-    public function checkRestMedia($result, $server, $request )
-    {
-      $data = $result->data; 
-      if (! is_array($data) || ! isset($data['type']) || $data['type'] !== 'attachment') // check if for us. 
-      {
-         return $result; 
-      }
-
-      $attach_id = $data['id'];
-       
-      $fs = \wpSPAATG()->filesystem();
-			$mediaImage = $fs->getImage($attach_id, 'media');
-
-      if (false === $mediaImage)
-      {
-         return $result; 
-      }
-
-      $urls = $mediaImage->getAllUrls(); 
-      $webps = $urls['webp']; 
-      $avifs = $urls['avif']; 
-
-      if (count($webps) == 0 && count($avifs) == 0)
-      {
-         return $result; 
-      }
-
-      $mainKey = $mediaImage->getImageKey('main'); 
-
-
-      if (isset($webps[$mainKey]))
-      {
-        $result->data['source_url_webp'] = $webps[$mainKey];
-      }
-
-      if (isset($avifs[$mainKey]))
-      {
-        $result->data['source_url_avif'] = $avifs[$mainKey];
-      }
-
-      foreach($data['media_details']['sizes'] as $sizeName => $sizeData )
-      {
-          if (isset($webps[$sizeName]))
-          {
-             $result->data['media_details']['sizes'][$sizeName]['source_url_webp'] = $webps[$sizeName];
-          }
-          if (isset($avifs[$sizeName]))
-          {
-             $result->data['media_details']['sizes'][$sizeName]['source_url_avif'] = $avifs[$sizeName];
-          }
-      }
-
-      return $result; 
-    }
-
-		// WP functions that are not loaded during Cron Time.
+			// WP functions that are not loaded during Cron Time.
 		protected function loadCronCompat()
 		{
 			  if (false === function_exists('download_url'))
@@ -607,225 +320,10 @@ class AdminController extends \SPAATG\Controller
          }
 		}
 
-    /** Filter for Medialibrary items in list and grid view. Because grid uses ajax needs to be caught more general.
-    * @handles pre_get_posts
-    * @param WP_Query $query
-    *
-    * @return WP_Query
-    */
-    public function filter_listener($query)
-    {
-      global $pagenow;
-
-      if ( empty( $query->query_vars["post_type"] ) || 'attachment' !== $query->query_vars["post_type"] ) {
-        return $query;
-      }
-
-      if ( ! in_array( $pagenow, array( 'upload.php', 'admin-ajax.php' ) ) ) {
-        return $query;
-      }
-
-      $filter = $this->selected_filter_value( 'spaatg_status', 'all' );
-
-      // No filter
-      if ($filter == 'all')
-      {
-         return $query;
-      }
-
-//      add_filter( 'posts_join', array( $this, 'filter_join' ), 10, 2 );
-  		add_filter( 'posts_where', array( $this, 'filter_add_where' ), 10, 2 );
-//  		add_filter( 'posts_orderby', array( $this, 'query_add_orderby' ), 10, 2 );
-
-      return $query;
-    }
-
-    public function filter_add_where ($where, $query)
-    {
-        global $wpdb;
-        $filter = $this->selected_filter_value( 'spaatg_status', 'all' );
-        $tableName = UtilHelper::getPostMetaTable();
-
-        switch($filter)
-        {
-             case 'all':
-
-             break;
-             case 'unoptimized':
-              // The parent <> %d exclusion is meant to also deselect duplicate items ( translations ) since they don't have a status, but shouldn't be in a list like this.
-                $sql = " AND " . $wpdb->posts . '.ID not in ( SELECT  attach_id FROM ' . $tableName . " WHERE (parent = %d and status = %d) OR parent <> %d ) ";
-  					    $where .= $wpdb->prepare($sql, MediaLibraryModel::IMAGE_TYPE_MAIN, ImageModel::FILE_STATUS_SUCCESS, MediaLibraryModel::IMAGE_TYPE_MAIN);
-             break;
-             case 'optimized':
-								$sql = ' AND ' . $wpdb->posts . '.ID in ( SELECT distinct attach_id FROM ' . $tableName . ' WHERE status = %d) ';
-   					    $where .= $wpdb->prepare($sql, ImageModel::FILE_STATUS_SUCCESS);
-             break;
-             case 'prevented':
-
-                $sql = sprintf('AND %s.ID in (SELECT post_id FROM %s WHERE meta_key = %%s)', $wpdb->posts, $wpdb->postmeta);
-
-                $sql .= sprintf(' AND %s.ID not in ( SELECT attach_id FROM %s WHERE parent = 0 and status = %s)', $wpdb->posts, $tableName, ImageModel::FILE_STATUS_MARKED_DONE);
-
-                $where = $wpdb->prepare($sql, '_spaatg_prevent_optimize');
-            break;
-        }
-
-        return $where;
-    }
-
-
-    /**
-  	 * Safely retrieve the selected filter value from a dropdown.
-  	 *
-  	 * @param string $key
-  	 * @param string $default
-  	 *
-  	 * @return string
-  	 */
-  	private function selected_filter_value( $key, $default ) {
-  		if ( wp_doing_ajax() ) {
-  			if ( isset( $_REQUEST['query'][ $key ] ) ) {
-  				$value = sanitize_text_field( $_REQUEST['query'][ $key ] );
-  			}
-  		} else {
-  			if ( ! isset( $_REQUEST['filter_action'] )  ) {
-  				return $default;
-  			}
-
-  			if ( ! isset( $_REQUEST[ $key ] ) ) {
-  				return $default;
-  			}
-
-  			$value = sanitize_text_field( $_REQUEST[ $key ] );
-  		}
-
-  		return ! empty( $value ) ? $value : $default;
-  	}
-
-    /**
-		* When replacing happens.
-    * @hook wp_handle_replace
-		* @integration Enable Media Replace
-    */
-    public function handleReplaceHook($params)
-    {
-      if(isset($params['post_id'])) { //integration with EnableMediaReplace - that's an upload for replacing an existing ID
-
-          $post_id = intval($params['post_id']);
-          $fs = \wpSPAATG()->filesystem();
-
-          $imageObj = $fs->getImage($post_id, 'media');
-          // In case entry is corrupted data, this might fail.
-          if (is_object($imageObj))
-          {
-            $imageObj->onDelete();
-          }
-      }
-
-    }
-
-		/** This function is bound to enable-media-replace hook and fire when a file was replaced
-		*
-		*
-		*/
-		public function handleReplaceEnqueue($target, $source, $post_id)
-		{
-				// Delegate this to the hook, so all checks are done there.
-				$this->handleImageUploadHook(array(), $post_id);
-
-		}
-
     public function generatePluginLinks($links) {
         $in = '<a href="options-general.php?page=wp-spaatg-settings">Settings</a>';
         array_unshift($links, $in);
         return $links;
-    }
-
-    /** Allow certain mime-types if we will be using those.
-    *
-    */
-    public function addMimes($mimes)
-    {
-        $settings = \wpSPAATG()->settings();
-        if ($settings->createWebp)
-        {
-            if (! isset($mimes['webp']))
-              $mimes['webp'] = 'image/webp';
-        }
-        if ($settings->createAvif)
-        {
-            if (! isset($mimes['avif']))
-              $mimes['avif'] = 'image/avif';
-        }
-
-				if (! isset($mimes['heic']))
-				{
-					$mimes['heic'] = 'image/heic';
-				}
-
-				if (! isset($mimes['heif']))
-				{
-					$mimes['heif'] = 'image/heif';
-				}
-
-        return $mimes;
-    }
-
-		/** Media library gallery view, attempt to add fields that looks like the SPIO status */
-		public function editAttachmentScreen($fields, $post)
-		{
-      return;
-				// Prevent this thing running on edit media screen. The media library grid is before the screen is set, so just check if we are not on the attachment window.
-				$screen_id = \wpSPAATG()->env()->screen_id;
-				if ($screen_id == 'attachment')
-				{
-					return $fields;
-				}
-
-				$fields["shortpixel-image-optimiser"] = array(
-							"label" => esc_html__("ShortPixel", "shortpixel-image-optimiser"),
-							"input" => "html",
-							"html" => '<div id="spaatg-data-' . $post->ID . '">--</div>',
-						);
-
-				return $fields;
-		}
-
-		public function printComparer()
-		{
-
-				$screen_id = \wpSPAATG()->env()->screen_id;
-				if ($screen_id !== 'upload')
-				{
-					return false;
-				}
-
-				$view = \SPAATG\Controller\View\ListMediaViewController::getInstance();
-				$view->loadComparer();
-		}
-
-    /** When an image is deleted
-    * @hook delete_attachment
-    * @param int $post_id  ID of Post
-    * @return itemHandler ItemHandler object.
-    */
-    public function onDeleteAttachment($post_id) {
-        Log::addDebug('onDeleteImage - Image Removal Detected ' . $post_id);
-        $result = null;
-        $fs = \wpSPAATG()->filesystem();
-
-        try
-        {
-          $imageObj = $fs->getImage($post_id, 'media');
-					//Log::addDebug('OnDelete ImageObj', $imageObj);
-          if ($imageObj !== false)
-            $result = $imageObj->onDelete();
-        }
-        catch(\Exception $e)
-        {
-          Log::addError('OndeleteImage triggered an error. ' . $e->getMessage(), $e);
-        }
-        return $result;
     }
 
 

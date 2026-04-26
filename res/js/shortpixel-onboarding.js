@@ -29,6 +29,10 @@ class SPAATGOnboarding
          this.InitNewKeySwitch();
 
          var addButton = this.root.querySelector('button[name="add-key"]');
+         if (addButton === null)
+         {
+            return;
+         }
          addButton.addEventListener('click', this.AddKeyEvent.bind(this));
 
          var loginApiKey = this.root.querySelector('input[name="login_apiKey"]');
@@ -124,7 +128,13 @@ class SPAATGOnboarding
        var formData = new FormData();
        var submit = true;
        // Form Nonce.
-       var spNonce = this.root.querySelector('input[name="sp-nonce"]').value;
+       var nonceInput = this.root.querySelector('input[name="sp-nonce"]');
+       if (activePanel === null || nonceInput === null)
+       {
+          return false;
+       }
+
+       var spNonce = nonceInput.value;
 
        formData.append('sp-nonce', spNonce);
 

@@ -2,8 +2,6 @@
 namespace SPAATG;
 
 use SPAATG\Controller\Optimizer\OptimizeAiController;
-use SPAATG\Helper\UiHelper;
-
 if ( ! defined( 'ABSPATH' ) ) {
  exit; // Exit if accessed directly.
 }
@@ -14,17 +12,13 @@ $approx = $this->view->approx;
 
 <section class='panel selection' data-panel="selection" data-status="loaded" >
   <div class="panel-container">
-			<span class='hidden' data-check-custom-hascustom >
-				<?php echo  ($this->view->approx->custom->has_custom === true) ? 1 : 0;  ?>
-			</span>
-
 	 <?php $this->loadView('bulk/part-progressbar', false,  ['part' => 'selection']); ?>
 
       <div class='load wrapper' >
          <div class='loading'>
              <span><img src="<?php echo esc_url(\wpSPAATG()->plugin_url('res/img/bulk/loading-hourglass.svg')); ?>" /></span>
              <span>
-             <p><?php esc_html_e('Please wait, ShortPixel is checking the images to be processed...','shortpixel-image-optimiser'); ?><br>
+             <p><?php esc_html_e('Please wait, ShortPixel is checking the images for AI SEO generation...','shortpixel-image-optimiser'); ?><br>
                <span class="number" data-stats-total="total">x</span> <?php esc_html_e('items found', 'shortpixel-image-optimiser'); ?></p>
            </span>
          </div>
@@ -36,7 +30,7 @@ $approx = $this->view->approx;
 
 					 </span>
 					 <span>
-	 						 <p><?php _e("Clicking this button will start optimization of the items added to the queue. The remaining items can be processed in a new bulk. After completion, you can start bulk and the system will continue with the unprocessed images.",'shortpixel-image-optimiser'); ?></p>
+						 <p><?php _e("Clicking this button will start AI SEO generation for the items already added to the queue. The remaining items can be processed in a new bulk.",'shortpixel-image-optimiser'); ?></p>
 						</span>
 					</nav>
 				</div>
@@ -50,44 +44,16 @@ $approx = $this->view->approx;
        <div class="interface wrapper">
 
 	   <h3 class="heading">
-        <?php esc_html_e('ShortPixel Bulk Alt Text Generation - Select Images', 'shortpixel-image-optimiser'); ?>
+        <?php esc_html_e('ShortPixel Bulk AI SEO Generation - Select Images', 'shortpixel-image-optimiser'); ?>
       </h3>
 
-      <p class='description'><?php esc_html_e('Select the type of images for which ShortPixel should generate alt text and SEO data.','shortpixel-image-optimiser'); ?></p>
+      <p class='description'><?php esc_html_e('Select the images for which ShortPixel should generate AI SEO data: alt text, captions, descriptions and titles.','shortpixel-image-optimiser'); ?></p>
 				 <div class="option-block">
-
-					<!-- <h2><?php esc_html_e('Optimize:','shortpixel-image-optimiser'); ?> </h2> -->
-				<!--	 <p><?php printf(esc_html__('ShortPixel has %sestimated%s the number of images that can still be optimized. %sAfter you select the options, the plugin will calculate exactly how many images to optimize.','shortpixel-image-optimiser'), '<b>','</b>', '<br />'); ?></p>
-
-					 <?php if ($approx->media->isLimited): ?>
-						 <h4 class='count_limited'><?php esc_html_e('ShortPixel has detected a high number of images. This estimates are limited for performance reasons. On the next step an accurate count will be produced', 'shortpixel-image-optimiser'); ?></h4>
-					 <?php endif; ?>
-				 -->
 
 		         <div class="media-library optiongroup hidden">
 		            <input type="checkbox" class="switch" id="media_checkbox" checked>
 		            <span class="hidden" data-check-approx-total><?php echo esc_html($approx->total->images) ?></span>
 		         </div>
-
-
-					<?php if (! \wpSPAATG()->settings()->processThumbnails): ?>
-					<div class='thumbnails optiongroup'>
-						<div class='switch_button'>
-							<label>
-								<input type="checkbox" class="switch" id="thumbnails_checkbox" <?php checked(\wpSPAATG()->settings()->processThumbnails); ?>>
-								<div class="the_switch">&nbsp; </div>
-							</label>
-						</div>
-						<h4><label for="thumbnails_checkbox"><?php esc_html_e('Process Image Thumbnails','shortpixel-image-optimiser'); ?></label></h4>
-						<div class='option'>
-							<label><?php esc_html_e('Thumbnails (estimate)','shortpixel-image-optimiser'); ?></label>
-							 <span class="number" ><?php echo esc_html($approx->media->total) ?> </span>
-						</div>
-
-						<p><?php esc_html_e('It is recommended to process the WordPress thumbnails. These are the small images that are most often used in posts and pages. This option changes the global ShortPixel AI Alt Text Generator settings of your site.','shortpixel-image-optimiser'); ?></p>
-
-					</div>
-				<?php endif; ?>
 
 				<?php
 				$optimizeAiController = OptimizeAiController::getInstance(); 
@@ -107,44 +73,13 @@ $approx = $this->view->approx;
 			 </div>
 
 			<?php endif ?>
-			
-	         <div class="custom-images optiongroup hidden"  data-check-visibility data-control="data-check-custom-hascustom" >
-	           <div class='switch_button'>
-	             <label>
-	               <input type="checkbox" class="switch" id="custom_checkbox" disabled>
-	               <div class="the_switch">&nbsp; </div>
-	             </label>
-	           </div>
-	           <h4><label for="custom_checkbox"><?php esc_html_e('Custom Media images','shortpixel-image-optimiser') ?></label></h4>
-	            <div class='option'>
-	              <label><?php esc_html_e('Images (estimate)','shortpixel-image-optimiser'); ?></label>
-	               <span class="number" ><?php echo esc_html($approx->custom->images) ?></span>
-	            </div>
-	         </div>
-
-<!--
-			<div class='maximum-items'> 
-			<div class='switch_button'>
-			<br>
-				<div class='switch_button'>
-	             <label>
-	               <input type="checkbox" class="switch" id="limit_items" name='limit_items' >
-	               <div class="the_switch">&nbsp; </div>
-				   <?php printf(esc_html__('Limit Items to %s and then start', 'shortpixel-image-optimiser'), 
-				'<input type="text" name="limit_numitems" value="1000">'); ?>
-				</div>	
-				</label>
-	           </div>
-
-			</div>
-			-->			
 
 				</div> <!-- // option top block -->
 
 	 	 	 <div class="option-block all-round hidden" data-check-visibility="false" data-control="data-check-approx-total">
        <div class='optiongroup'>
           <h3><?php esc_html_e('No images found', 'shortpixel-image-optimiser'); ?></h3>
-          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any images that need alt text generation.','shortpixel-image-optimiser'); ?></p>
+          <p><?php esc_html_e('ShortPixel Bulk couldn\'t find any images that need AI SEO generation.','shortpixel-image-optimiser'); ?></p>
        </div>
 
 			 </div>
